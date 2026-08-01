@@ -1,0 +1,41 @@
+# HTTP response headers, applied by Cloudflare Pages.
+# Docs: https://developers.cloudflare.com/pages/configuration/headers/
+#
+# The CSP is strict: scripts and fetch() only from this origin (that
+# covers the search script and its /index.json index), styles and images
+# only from this origin, nothing loaded from anywhere else. The
+# <script type="application/ld+json"> SEO blocks are inert data and are
+# not affected by script-src.
+#
+# If you ever add:
+#   - an image hosted on another domain -> extend img-src
+#   - another script                    -> host it on this origin
+#   - embeds (YouTube etc.)             -> COEP below will block them; relax it knowingly
+
+/*
+  Content-Security-Policy: default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self'; font-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), autoplay=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), usb=(), web-share=()
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+  Cross-Origin-Resource-Policy: same-origin
+  X-Permitted-Cross-Domain-Policies: none
+
+# Fingerprinted assets: the filename changes when the content changes,
+# so these can be cached forever.
+/css/*
+  Cache-Control: public, max-age=31536000, immutable
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/favicon.svg
+  Cache-Control: public, max-age=604800
+/favicon.ico
+  Cache-Control: public, max-age=604800
+/apple-touch-icon.png
+  Cache-Control: public, max-age=604800
+/og-card.png
+  Cache-Control: public, max-age=86400

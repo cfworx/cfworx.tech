@@ -1,0 +1,8 @@
+{{- /* Best available description for the current page, ~155 chars. */ -}}
+{{- $desc := .Description -}}
+{{- if not $desc }}{{ with .Params.blurb }}{{ $desc = . }}{{ end }}{{ end -}}
+{{- if and (not $desc) .IsPage -}}
+{{- $desc = .Summary | plainify | chomp | truncate 155 -}}
+{{- end -}}
+{{- $desc = $desc | default site.Params.description -}}
+{{- return (trim ($desc | plainify) "\n ") -}}

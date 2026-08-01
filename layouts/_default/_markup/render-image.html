@@ -1,0 +1,16 @@
+{{- /* Custom image rendering for Markdown images:
+       - .gif files render as text-height inline icons (no border). If a
+         "-still.png" twin exists in static/, visitors with "reduce motion"
+         enabled get the still image instead of the animation.
+       - everything else gets lazy loading and async decoding. */ -}}
+{{- $dest := .Destination -}}
+{{- if and (strings.HasSuffix $dest ".gif") (not (strings.HasPrefix $dest "http")) -}}
+{{- $still := replace $dest ".gif" "-still.png" -}}
+{{- if fileExists (printf "static%s" $still) -}}
+<picture><source srcset="{{ $still }}" media="(prefers-reduced-motion: reduce)"><img class="gif-icon" src="{{ $dest }}" alt="{{ .Text }}"></picture>
+{{- else -}}
+<img class="gif-icon" src="{{ $dest }}" alt="{{ .Text }}">
+{{- end -}}
+{{- else -}}
+<img src="{{ $dest }}" alt="{{ .Text }}"{{ with .Title }} title="{{ . }}"{{ end }} loading="lazy" decoding="async">
+{{- end -}}

@@ -1,0 +1,13 @@
+# CFWorx, full content of every post
+# {{ site.Params.description }}
+# Index of this file: {{ "llms.txt" | absURL }}
+{{ range where site.RegularPages "Section" "ne" "" }}
+---
+title: {{ .Title }}
+url: {{ .Permalink }}
+date: {{ .Date.Format "2006-01-02" }}
+section: {{ .Parent.Title }}
+---
+
+{{ .Plain | chomp }}
+{{ end }}

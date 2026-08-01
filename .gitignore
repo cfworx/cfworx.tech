@@ -1,0 +1,13 @@
+# Hugo build output; Cloudflare Pages builds fresh from source
+/public/
+/resources/_gen/
+.hugo_build.lock
+
+# OS and editor noise
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+
+# scratch folder for files set aside during cleanup
+/_to_delete/

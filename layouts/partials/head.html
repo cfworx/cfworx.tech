@@ -1,0 +1,48 @@
+{{- /* Metadata only. This site ships zero JavaScript by design. */ -}}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{{- $isPost := and .IsPage (ne .Section "") }}
+{{- $title := printf "%s · %s" .Title site.Title }}
+{{- if .IsHome }}{{ $title = printf "%s - %s" site.Title site.Params.tagline }}{{ end }}
+<title>{{ $title }}</title>
+{{- $desc := partial "meta-desc.html" . }}
+<meta name="description" content="{{ $desc }}">
+<meta name="author" content="{{ site.Params.author }}">
+<link rel="canonical" href="{{ .Permalink }}">
+<meta property="og:site_name" content="{{ site.Title }}">
+<meta property="og:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
+<meta property="og:description" content="{{ $desc }}">
+<meta property="og:type" content="{{ if $isPost }}article{{ else }}website{{ end }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:image" content="{{ "og-card.png" | absURL }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{{ site.Title }}: {{ site.Params.tagline }}">
+{{- if $isPost }}
+<meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+<meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
+<meta property="article:section" content="{{ .Parent.Title }}">
+{{- end }}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
+<meta name="twitter:description" content="{{ $desc }}">
+<meta name="twitter:image" content="{{ "og-card.png" | absURL }}">
+<meta name="theme-color" content="#faf9f5">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+{{- /* Guarded with `with`/`if` so a build never dies if an asset file is
+       momentarily missing (e.g. mid-sync in OneDrive). */ -}}
+{{- $main := resources.Get "css/main.css" }}
+{{- $chroma := resources.Get "css/chroma.css" }}
+{{- if and $main $chroma }}
+{{- $css := slice $main $chroma | resources.Concat "css/site.css" | fingerprint }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+{{- end }}
+{{- if .IsHome }}
+{{- with resources.Get "js/search.js" }}
+{{- $js := . | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- end }}
+{{- end }}
+{{- partial "jsonld.html" . }}

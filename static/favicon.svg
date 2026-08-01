@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- RJ45 plug, patch-cable blue on warm paper -->
+  <rect width="32" height="32" rx="5" fill="#faf9f5"/>
+  <path fill="none" stroke="#0057b8" stroke-width="2.4" d="M6.2 5.2h19.6v21.6h-5.4v-3.8H11.6v3.8H6.2z"/>
+  <g stroke="#0057b8" stroke-width="1.7">
+    <path d="M10 5.2v5.8"/>
+    <path d="M13 5.2v5.8"/>
+    <path d="M16 5.2v5.8"/>
+    <path d="M19 5.2v5.8"/>
+    <path d="M22 5.2v5.8"/>
+  </g>
+</svg>

@@ -1,0 +1,29 @@
+{{ define "main" }}
+<article>
+  <header class="post-header">
+    <h1>{{ .Title }}</h1>
+    {{- if ne .Section "" }}
+    <p class="post-meta">
+      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+      &middot; in <a href="{{ .Parent.RelPermalink }}">{{ .Parent.Title }}</a>
+      {{- if ne (.Lastmod.Format "2006-01-02") (.Date.Format "2006-01-02") }}
+      &middot; updated <time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "January 2, 2006" }}</time>
+      {{- end }}
+    </p>
+    {{- end }}
+  </header>
+  {{ .Content }}
+</article>
+{{- if ne .Section "" }}
+{{- if or .PrevInSection .NextInSection }}
+<nav class="post-nav" aria-label="More in {{ .Parent.Title }}">
+  {{- with .NextInSection }}
+  <a class="newer" href="{{ .RelPermalink }}">&larr; newer: {{ .Title }}</a>
+  {{- end }}
+  {{- with .PrevInSection }}
+  <a class="older" href="{{ .RelPermalink }}">older: {{ .Title }} &rarr;</a>
+  {{- end }}
+</nav>
+{{- end }}
+{{- end }}
+{{ end }}

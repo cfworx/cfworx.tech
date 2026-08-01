@@ -1,0 +1,20 @@
+# CFWorx
+
+> {{ site.Params.description }}
+
+CFWorx is the personal knowledge base of Cory, an IT professional. Posts
+are study notes written to be re-read: clear, self-contained explanations
+of one topic at a time.
+
+## Sections
+{{ range $slug := site.Params.sectionOrder }}{{ with site.GetPage (printf "/%s" $slug) }}- [{{ .Title }}]({{ .Permalink }}): {{ .Params.blurb }}
+{{ range .Sections }}- [{{ .Title }}]({{ .Permalink }}): {{ .Params.blurb }}
+{{ end }}{{ end }}{{ end }}
+## Posts (newest first)
+{{ range where site.RegularPages "Section" "ne" "" }}- [{{ .Title }}]({{ .Permalink }}) ({{ .Date.Format "2006-01-02" }}){{ with .Description }}: {{ . }}{{ end }}
+{{ end }}
+## Meta
+- [About Cory]({{ "about/" | absURL }}): who runs this site and how to reach him
+- Contact: p3@cfworx.tech
+- [Sitemap]({{ "sitemap.xml" | absURL }})
+- [Full text of every post]({{ "llms-full.txt" | absURL }})

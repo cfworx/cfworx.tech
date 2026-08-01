@@ -1,0 +1,6 @@
+{{- /* Renders a list of posts as date / title rows. Context: a page slice. */ -}}
+<ul class="postlist">
+{{- range . }}
+  <li><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+{{- end }}
+</ul>

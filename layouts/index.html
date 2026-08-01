@@ -1,0 +1,37 @@
+{{ define "main" }}
+<section class="intro">
+{{ .Content }}
+</section>
+
+{{- /* Hidden until search.js enables it, so no dead controls without JS. */}}
+<div class="site-search" id="site-search" hidden>
+  <form role="search">
+    <label class="visually-hidden" for="search-input">Search post titles</label>
+    <input id="search-input" type="search" placeholder="search post titles" autocomplete="off" spellcheck="false">
+  </form>
+  <p id="search-count" class="search-count" role="status"></p>
+  <ul id="search-results" class="postlist" hidden></ul>
+</div>
+
+{{- $posts := where site.RegularPages "Section" "ne" "" }}
+
+<section class="post-block" aria-labelledby="h-recent">
+  <h2 id="h-recent">Recent</h2>
+  {{ partial "postlist.html" (first 8 $posts) }}
+</section>
+
+{{- range $slug := site.Params.sectionOrder }}
+{{- with site.GetPage (printf "/%s" $slug) }}
+<section class="post-block" aria-labelledby="h-{{ $slug }}">
+  <h2 id="h-{{ $slug }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+  {{- with .Params.blurb }}
+  <p class="blurb">{{ . }}</p>
+  {{- end }}
+  {{ partial "postlist.html" (first 5 .RegularPagesRecursive) }}
+  {{- if gt (len .RegularPagesRecursive) 5 }}
+  <p class="more"><a href="{{ .RelPermalink }}">all {{ len .RegularPagesRecursive }} {{ lower .Title }} notes &rarr;</a></p>
+  {{- end }}
+</section>
+{{- end }}
+{{- end }}
+{{ end }}

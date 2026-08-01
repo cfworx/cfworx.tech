@@ -1,0 +1,7 @@
+/* TEAM */
+  Builder: Cory
+  Contact: p3@cfworx.tech
+
+/* SITE */
+  Stack: Hugo, hand-written CSS, one small search script
+  Standards: HTML5, CSS, WCAG 2.1 AA

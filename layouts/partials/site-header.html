@@ -1,0 +1,13 @@
+<header class="site-header">
+  {{- $glyph := `<svg class="rj45" viewBox="0 0 32 32" width="19" height="19" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2.2" d="M6 5h20v22h-5v-4H11v4H6z"/><g stroke="currentColor" stroke-width="1.6"><path d="M9.5 5v8"/><path d="M12.1 5v8"/><path d="M14.7 5v8"/><path d="M17.3 5v8"/><path d="M19.9 5v8"/><path d="M22.5 5v8"/></g></svg>` -}}
+  {{- if .IsHome }}
+  <h1 class="site-title"><a href="/">{{ $glyph | safeHTML }}CFWorx</a></h1>
+  {{- else }}
+  <p class="site-title"><a href="/">{{ $glyph | safeHTML }}CFWorx</a></p>
+  {{- end }}
+  <p class="tagline">{{ site.Params.tagline }}</p>
+  <nav aria-label="Site">
+    <a href="/"{{ if .IsHome }} aria-current="page"{{ end }}>home</a>
+    <a href="/about/"{{ if eq .RelPermalink "/about/" }} aria-current="page"{{ end }}>about</a>
+  </nav>
+</header>

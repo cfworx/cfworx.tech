@@ -1,0 +1,8 @@
+# Line endings: store as LF in the repo, check out per-OS.
+# Keeps Windows (your PC) and Linux (Cloudflare's build servers) agreeing.
+* text=auto
+
+# Binary files, never line-ending-converted
+*.png binary
+*.gif binary
+*.ico binary
