@@ -1,5 +1,5 @@
 ---
-title: Homelab
-description: "Homelab"
-blurb: "At home tinkering"
+title: Lab
+description: "lab work"
+blurb: "Lab tinkering"
 ---
