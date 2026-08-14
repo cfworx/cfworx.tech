@@ -4,7 +4,7 @@ date: 2026-08-14
 description: "CCNA lab notes on Cisco IOS EXEC modes, CLI help and shortcuts, configuration files, terminal history, and output filtering."
 draft: false
 ---
-![Getting Started with the Cisco CLI](/certs/ccna/images/getting-started-cisco-cli.png)
+![Getting Started with the Cisco CLI](/homelab/images/getting-started-cisco-cli.png)
 
 Lab: navigating the Cisco IOS CLI on a switch (SW2) and router (R1) — moving between modes, using built-in help, managing running vs. startup config, and filtering command output.
 
