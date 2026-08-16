@@ -22,6 +22,15 @@
   </section>
 </div>
 
+{{- /* The five newest posts across all sections, so a first-time
+       visitor sees fresh work without opening any dropdowns. */}}
+{{- with first 5 (where site.RegularPages "Section" "ne" "") }}
+<section class="post-block" aria-labelledby="h-recent">
+  <h2 id="h-recent">Recently added</h2>
+  {{ partial "postlist.html" . }}
+</section>
+{{- end }}
+
 {{- range $slug := site.Params.sectionOrder }}
 {{- with site.GetPage (printf "/%s" $slug) }}
 <section class="post-block" aria-labelledby="h-{{ $slug }}">
