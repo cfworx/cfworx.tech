@@ -1,3 +1,6 @@
-{{- /* Search index: every post's title, url and date. Rebuilt on every build. */ -}}
+{{- /* Search index: every post's title, url, date and plain-text body.
+       Rebuilt on every build. The body ("text") is the rendered content
+       stripped of HTML, with whitespace collapsed, so search.js can
+       match inside posts and show a snippet around the hit. */ -}}
 {{- $posts := where site.RegularPages "Section" "ne" "" -}}
-[{{ range $i, $p := $posts }}{{ if $i }},{{ end }}{"title":{{ $p.Title | jsonify }},"url":{{ $p.RelPermalink | jsonify }},"date":{{ $p.Date.Format "2006-01-02" | jsonify }}}{{ end }}]
+[{{ range $i, $p := $posts }}{{ if $i }},{{ end }}{"title":{{ $p.Title | jsonify }},"url":{{ $p.RelPermalink | jsonify }},"date":{{ $p.Date.Format "2006-01-02" | jsonify }},"text":{{ $p.Plain | htmlUnescape | replaceRE `\s+` " " | jsonify }}}{{ end }}]

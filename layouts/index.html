@@ -3,33 +3,52 @@
 {{ .Content }}
 </section>
 
-{{- /* Hidden until search.js enables it, so no dead controls without JS. */}}
+{{- /* Hidden until search.js enables it, so no dead controls without JS.
+       Two result sections: matching titles first, then matches found in
+       the body text of posts (with a snippet around the hit). */}}
 <div class="site-search" id="site-search" hidden>
   <form role="search">
-    <label class="visually-hidden" for="search-input">Search post titles</label>
-    <input id="search-input" type="search" placeholder="search post titles" autocomplete="off" spellcheck="false">
+    <label class="visually-hidden" for="search-input">Search posts</label>
+    <input id="search-input" type="search" placeholder="search posts" autocomplete="off" spellcheck="false">
   </form>
   <p id="search-count" class="search-count" role="status"></p>
-  <ul id="search-results" class="postlist" hidden></ul>
+  <section id="search-title-section" hidden aria-labelledby="h-search-titles">
+    <h2 id="h-search-titles" class="search-section">Post titles</h2>
+    <ul id="search-title-results" class="postlist"></ul>
+  </section>
+  <section id="search-text-section" hidden aria-labelledby="h-search-text">
+    <h2 id="h-search-text" class="search-section">Inside posts</h2>
+    <ul id="search-text-results" class="postlist search-snippets"></ul>
+  </section>
 </div>
-
-{{- $posts := where site.RegularPages "Section" "ne" "" }}
-
-<section class="post-block" aria-labelledby="h-recent">
-  <h2 id="h-recent">Recent</h2>
-  {{ partial "postlist.html" (first 8 $posts) }}
-</section>
 
 {{- range $slug := site.Params.sectionOrder }}
 {{- with site.GetPage (printf "/%s" $slug) }}
 <section class="post-block" aria-labelledby="h-{{ $slug }}">
   <h2 id="h-{{ $slug }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-  {{- with .Params.blurb }}
-  <p class="blurb">{{ . }}</p>
+  {{- if .Sections }}
+  {{- /* Sections with subsections (certs) render one <details> per
+         subsection so every post stays visibly attached to its cert.
+         Native disclosure widget: no JS. All groups start closed;
+         control ordering with `weight` in each cert's _index.md. */}}
+  {{- range $i, $sub := .Sections }}
+  <details class="post-group">
+    <summary>
+      <span class="post-group-name">{{ $sub.Title }}</span>
+      <span class="post-group-count">{{ len $sub.RegularPagesRecursive }} {{ if eq (len $sub.RegularPagesRecursive) 1 }}note{{ else }}notes{{ end }}</span>
+    </summary>
+    {{ partial "postlist.html" $sub.RegularPagesRecursive }}
+  </details>
   {{- end }}
+  {{- /* Any loose posts sitting directly in the section root. */}}
+  {{- with .RegularPages }}
+  {{ partial "postlist.html" . }}
+  {{- end }}
+  {{- else }}
   {{ partial "postlist.html" (first 5 .RegularPagesRecursive) }}
   {{- if gt (len .RegularPagesRecursive) 5 }}
   <p class="more"><a href="{{ .RelPermalink }}">all {{ len .RegularPagesRecursive }} {{ lower .Title }} notes &rarr;</a></p>
+  {{- end }}
   {{- end }}
 </section>
 {{- end }}

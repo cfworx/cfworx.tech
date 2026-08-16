@@ -190,6 +190,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 .intro p { margin: 0.6em 0; }
 
 .post-block h2,
+.search-section,
 .year {
   font: 700 0.8rem var(--sans);
   text-transform: uppercase;
@@ -210,6 +211,54 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 }
 
 .more { font: 0.8rem var(--sans); margin: 0.45rem 0 0; }
+
+/* ---- collapsible per-cert groups (home) ---------------------------------
+   Native <details>/<summary>: no JS, keyboard-accessible for free. */
+
+.post-group summary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55em;
+  cursor: pointer;
+  padding: 0.4em 0;
+  font: 700 0.85rem var(--sans);
+  list-style: none;               /* hide default marker (Firefox) */
+  -webkit-user-select: none;
+  user-select: none;
+}
+.post-group summary::-webkit-details-marker { display: none; } /* Safari */
+
+.post-group summary::before {
+  content: "\25B8";               /* right-pointing triangle */
+  color: var(--enet);
+  font-size: 0.8em;
+  line-height: 1;
+  flex: none;
+}
+.post-group[open] summary::before {
+  content: "\25BE";               /* down-pointing triangle */
+}
+
+.post-group summary:hover .post-group-name {
+  color: var(--enet);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.post-group-count {
+  margin-left: auto;
+  font: 0.72rem var(--sans);
+  font-weight: 400;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.post-group .postlist {
+  padding-left: 1.15em;           /* align rows under the group name */
+  margin-bottom: 0.35rem;
+}
+
+.post-group + .post-group { border-top: 1px solid var(--rule); }
 
 /* ---- post lists ----------------------------------------------------------
    date / title rows */
@@ -251,6 +300,25 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
   font: 0.8rem var(--sans);
   color: var(--muted);
   margin: 0.5rem 0 0;
+}
+
+/* Section headings inside the results ("Post titles" / "Inside posts")
+   reuse the .post-block h2 look via the shared rule above; tighten the
+   gap between heading and its list. */
+.site-search .search-section { margin-top: 1.6rem; }
+
+/* Body-text matches: the snippet stacks under the title inside the
+   row's second column, with the matched words highlighted. */
+.search-snippets .snippet {
+  margin-top: 0.15em;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.search-snippets .snippet mark {
+  background: #f5e6a8;
+  color: var(--ink);
+  padding: 0 0.08em;
 }
 
 /* tiny inline animated GIFs, the 90s way (see the render-image hook) */
