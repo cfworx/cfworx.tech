@@ -260,6 +260,12 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 
 .post-group + .post-group { border-top: 1px solid var(--rule); }
 
+/* Loose posts listed above the collapsible groups: a hairline separates
+   them from the first group so the two read as distinct rows. */
+.post-block > .postlist + .post-group {
+  border-top: 1px solid var(--rule);
+}
+
 /* ---- post lists ----------------------------------------------------------
    date / title rows */
 

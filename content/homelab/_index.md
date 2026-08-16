@@ -1,5 +1,4 @@
 ---
-title: Lab
+title: Labs
 description: "lab work"
-blurb: "Lab tinkering"
 ---

@@ -22,7 +22,8 @@ manual work and automating processes that were long done by hand.
 
 I'm also the lead IT instructor at new employee orientation, where I brief
 all incoming staff on our systems, applications, ticketing, and security
-practices.
+practices. It keeps my soft skills sharp: presenting to a room, fielding
+questions on the spot, and explaining technical topics in plain language.
 
 Over the last four years I've resolved more than 5,000 tickets while
 holding a 4.98/5 average customer satisfaction rating in our IT service
@@ -30,36 +31,24 @@ management system.
 
 ## Outside of work
 
-IT is not just my job, it's my hobby. A good friend of mine is what I'd
-call a true IT wizard, and he's a big part of why I set that goal for
-myself. I want to be an expert at everything IT, and I enjoy the
-learning as much as the work. A lot of my free time goes into my
-homelab, where I manage my own home network and build out infrastructure,
-running a little mini enterprise environment in my house. I've also gone deep on AI, well
-past the chat window. I've self-hosted autonomous agent frameworks in my
-lab, configured their tools, memory, and permissions, and wired them
-into my home network and messaging platforms to handle scheduled tasks,
-monitor my network and alert me when something's off, and run research
-for me and report back with the answer. I've used them to build full applications and automations from the
-ground up.
+IT is my hobby as much as my job. A good friend of mine is a true IT
+wizard, and he's a big part of why I set that goal for myself. Most of
+my free time goes into my homelab, a little mini enterprise environment
+in my house, and into AI: I've self-hosted autonomous agent frameworks,
+wired them into my network and messaging platforms, and put them to work
+on scheduled tasks, monitoring, and research.
 
-I'm a family man first, and a recent homeowner, which has been an
-education of its own. I'm always trying to optimize something, and the
-lawn is next on the list. I will have the best yard in the neighborhood.
-Yes, I'm that guy now.
+I'm a family man first, and a recent homeowner. I'm always optimizing
+something, and the lawn is next. I will have the best yard in the
+neighborhood. Yes, I'm that guy now.
 
-I'm also a gamer. Lately I've been hooked on World of Warcraft lore and am
-working through my third Warcraft book, and I still hop into the game here
-and there. Most of my playtime lands on my racing sim these days, a
-triple-screen rig with three 32-inch curved monitors, where I've been
-putting hours into MotorTown: Behind The Wheel. I recently picked up
-Warhammer mini painting, though I have yet to actually learn the game, and
-I play guitar from time to time.
+I'm also a gamer: working through my third Warcraft book, putting hours
+into MotorTown: Behind The Wheel on my triple-screen racing sim, and
+painting Warhammer minis I haven't learned to play yet.
 
-Away from the screens I've gotten serious about coffee: whole bean only,
-ground at home, brewed in a French press. I enjoy a tobacco pipe now and then, and
-I follow baseball, football, basketball, and the UFC. This year I got into fantasy
-baseball, and fantasy football is up next.
+Away from the screens it's coffee and sports: baseball,
+football, basketball, and the UFC. I actively play fantasy baseball,
+football, and basketball.
 
 ## Education
 

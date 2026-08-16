@@ -40,6 +40,11 @@
          subsection so every post stays visibly attached to its cert.
          Native disclosure widget: no JS. All groups start closed;
          control ordering with `weight` in each cert's _index.md. */}}
+  {{- /* Loose posts sitting directly in the section root list first,
+         above the collapsible groups. */}}
+  {{- with .RegularPages }}
+  {{ partial "postlist.html" . }}
+  {{- end }}
   {{- range $i, $sub := .Sections }}
   <details class="post-group">
     <summary>
@@ -48,10 +53,6 @@
     </summary>
     {{ partial "postlist.html" $sub.RegularPagesRecursive }}
   </details>
-  {{- end }}
-  {{- /* Any loose posts sitting directly in the section root. */}}
-  {{- with .RegularPages }}
-  {{ partial "postlist.html" . }}
   {{- end }}
   {{- else }}
   {{ partial "postlist.html" (first 5 .RegularPagesRecursive) }}
