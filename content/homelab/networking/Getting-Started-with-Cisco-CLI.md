@@ -1,16 +1,22 @@
 ---
-title: "Getting Started with the Cisco CLI"
+title: "Navigating the Cisco CLI"
 date: 2026-08-14
 description: "CCNA lab notes on Cisco IOS EXEC modes, CLI help and shortcuts, configuration files, terminal history, and output filtering."
 draft: false
 ---
 ![Getting Started with the Cisco CLI](/homelab/images/getting-started-cisco-cli.png)
 
-Lab: navigating the Cisco IOS CLI on a switch (SW2) and router (R1) — moving between modes, using built-in help, managing running vs. startup config, and filtering command output.
+First lab on the Cisco CLI. I worked on a switch (SW2) and a router (R1),
+moving between modes, trying the built-in help, playing with the config
+files, and filtering show output. These are my notes from the session so
+I can find this stuff again later.
 
 ## Command Modes
 
-
+Logged into SW2 and landed at `Switch>`. That's user EXEC. Typed `enable`
+and the prompt changed to `Switch#`, which is privileged EXEC. From there
+`configure terminal` got me to `Switch(config)#`, and `interface Eth0/0`
+dropped me into `Switch(config-if)#`.
 
 | Mode | Prompt | Enter with | Leave with |
 |---|---|---|---|
@@ -19,10 +25,16 @@ Lab: navigating the Cisco IOS CLI on a switch (SW2) and router (R1) — moving b
 | Global Config | `Switch(config)#` | `configure terminal` | `end`, `exit`, or `Ctrl-Z` |
 | Interface Config | `Switch(config-if)#` | `interface <id>` | `exit` (up one level) or `end` (straight to privileged EXEC) |
 
-- `end` and `Ctrl-Z` jump all the way back to privileged EXEC from any config sub-mode; `exit` only backs out one level.
-- The available command set differs by mode — `?` in user EXEC shows far fewer commands than in privileged EXEC.
+Things I noticed while bouncing between modes:
+
+- `exit` only backs out one level. `end` and `Ctrl-Z` jump all the way
+  back to privileged EXEC from any config sub-mode.
+- `?` in user EXEC shows way fewer commands than in privileged EXEC. The
+  command set changes with the mode.
 
 ## Getting Help
+
+Spent some time just poking at `?` to see how it behaves:
 
 | Input | Result |
 |---|---|
@@ -32,25 +44,29 @@ Lab: navigating the Cisco IOS CLI on a switch (SW2) and router (R1) — moving b
 | `show r?` | Arguments starting with "r" |
 | `Tab` | Completes a unique abbreviation |
 
-**The space matters.** `s?` filters command names; `s ?` asks what arguments follow the command `s`.
+The space matters. `s?` filters command names, but `s ?` asks what
+arguments follow a command called `s`.
 
-**Abbreviation and Tab both need enough characters to be unambiguous.** `sh` + Tab completes to `show`. `con` + Tab does nothing — `configure` and `connect` both match. Use `con?` to see why it's ambiguous.
+Tab completion needs enough characters to be unambiguous. `sh` + Tab
+completed to `show`, but `con` + Tab did nothing. Typed `con?` and saw
+why: `configure` and `connect` both match.
 
 ### Paging Through Output
 
 At the `--More--` prompt:
 
-- **Space** — next page
-- **Enter** — next line
-- **Ctrl-C**, **Q**, or another key — quit the output (varies by device and IOS version)
+- **Space** goes to the next page
+- **Enter** goes to the next line
+- **Ctrl-C**, **Q**, or another key quits the output (varies by device and IOS version)
 
 ## Editing and Terminal History
 
-Recall commands with the **Up / Down arrow** keys.
+Up and Down arrows recall previous commands. Two things I learned here:
 
-**Separate history buffers exist per mode** — while in config mode you won't see the EXEC commands you typed before entering it, and vice versa.
-
-History stores every command you *entered*, including mistyped ones that never executed — which is what makes it useful for fixing typos.
+- Each mode keeps its own history buffer. In config mode I couldn't
+  recall the EXEC commands I typed earlier, and vice versa.
+- History stores every command I entered, including the mistyped ones
+  that never ran. That's what makes it useful for fixing typos.
 
 | Shortcut | Action |
 |---|---|
@@ -60,9 +76,12 @@ History stores every command you *entered*, including mistyped ones that never e
 | `Backspace` | Delete character left of cursor |
 | `Ctrl-Z` | Exit config mode |
 
-**Typo-fix pattern:** Up Arrow to recall → `Ctrl-A` → arrow right to the bad character → `Backspace` → type the fix → `Enter`.
+My typo-fix routine ended up being: Up Arrow to recall, `Ctrl-A`, arrow
+right to the bad character, `Backspace`, type the fix, `Enter`.
 
-This same recall-and-edit approach handles repetitive config. Configuring `Serial 1/1` after `Serial 1/0` is three Up-Arrow recalls with one character changed each time.
+Same trick handles repetitive config. After setting up `Serial 1/0` on
+R1, configuring `Serial 1/1` was three Up-Arrow recalls with one
+character changed each time.
 
 ## Configuration Files
 
@@ -76,14 +95,19 @@ This same recall-and-edit approach handles repetitive config. Configuring `Seria
 | `show running-config` | Display active config |
 | `show startup-config` | Display saved config |
 | `copy running-config startup-config` | Save changes so they survive reload |
-| `erase startup-config` | Wipe saved config (**cannot be abbreviated**) |
+| `erase startup-config` | Wipe saved config (cannot be abbreviated) |
 | `reload` | Reboot the device |
 
-**The key behavior to internalize:** config changes are live but volatile. Reload without copying and the device reverts to startup-config. Answer **No** to the save prompt on reload if you want to discard changes — saying yes overwrites startup-config.
+I proved the volatility to myself on SW2: changed the hostname, ran
+`reload`, answered No to the save prompt, and the device came back with
+the old name. Changes live in RAM until you copy them to NVRAM. Saying
+yes at that prompt overwrites startup-config, so No is how you throw
+changes away on purpose.
 
-Erasing startup-config and reloading returns the device to factory defaults, including the default hostname `Switch`.
+I also ran `erase startup-config` and reloaded, which took the switch
+back to factory defaults, including the default hostname `Switch`.
 
-### Commands Used
+What I entered on R1:
 
 ```
 hostname Temp
@@ -92,11 +116,13 @@ interface Serial 1/0
  no shutdown
 ```
 
-`no shutdown` overrides the default administratively-down state on router interfaces.
+`no shutdown` was needed because router interfaces default to
+administratively down.
 
 ## Output Filtering
 
-Append a pipe `|` after a show command, then a filter keyword and an expression.
+Append a pipe `|` after a show command, then a filter keyword and an
+expression.
 
 | Filter | Shows |
 |---|---|
@@ -104,6 +130,8 @@ Append a pipe `|` after a show command, then a filter keyword and an expression.
 | `exclude` | Only lines *not* containing the expression |
 | `begin` | Everything from the first match onward |
 | `section` | The matching line plus its indented sub-lines |
+
+What I ran:
 
 ```
 show running-config | include hostname
@@ -113,7 +141,9 @@ show running-config | section interface
 show running-config | exclude !
 ```
 
-`section` is the one worth remembering for config review — it pulls a whole interface block, not just the header line. `exclude !` strips the comment lines that pad out `show running-config`.
+`section` is the one I'll actually use for config review. It pulls the
+whole interface block, not just the header line. `exclude !` strips the
+comment lines that pad out `show running-config`.
 
 ## Exam Takeaways
 
@@ -121,4 +151,4 @@ show running-config | exclude !
 - `enable` / `disable` move between user and privileged EXEC; `configure terminal` enters global config.
 - `erase startup-config` cannot be shortened.
 - Changes live in RAM until copied to NVRAM.
-- `include`, `exclude`, `begin`, and `section` — know what each one returns.
+- `include`, `exclude`, `begin`, and `section`: know what each one returns.
