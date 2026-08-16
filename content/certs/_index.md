@@ -1,4 +1,4 @@
 ---
-title: Certs
+title: Certifications
 description: "Certification study notes"
 ---

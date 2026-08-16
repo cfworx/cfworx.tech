@@ -69,7 +69,7 @@ football, and basketball.
 
 ## Currently studying
 
-- **CCNA** (Cisco Certified Network Associate). Notes as I go are in [Certs](/certs/ccna/).
+- **CCNA** (Cisco Certified Network Associate). Notes as I go are in [Certifications](/certs/ccna/).
 
 ## Elsewhere
 
