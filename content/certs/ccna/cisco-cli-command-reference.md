@@ -16,9 +16,13 @@ A running list of every Cisco IOS command I pick up, grouped by what it's for. A
 | `configure terminal` | Privileged EXEC → global config |
 | `exit` | Back out one level (or log off from user EXEC) |
 | `end` | Return to privileged EXEC from any config sub-mode |
+| `logout` | End the session |
+| `quit` | End the session (same as `logout` from user EXEC) |
 | `interface <type/number>` | Global config → interface config for that port |
 
 `Ctrl-Z` does the same thing as `end`.
+
+From `(config-if)`, typing another `interface <type/number>` jumps straight to that interface. No need to `exit` first, but the prompt won't show which interface you're on.
 
 ## Device Configuration
 
@@ -52,16 +56,28 @@ Router interfaces are shut down by default; switch access ports are not.
 
 Running config is volatile. Anything not copied to startup-config is gone after `reload`.
 
+`copy` also moves files to and from a TFTP server (config backups, IOS images).
+
 ## Verification / Show Commands
 
 | Command | What It Does |
 |---|---|
 | `show ip route` | Display the routing table |
 | `show ip interface brief` | One-line-per-interface summary: IP, status, protocol |
+| `show vlan brief` | One-line-per-VLAN summary with port assignments |
+| `show vlan id <n>` | Details for a single VLAN |
 | `show clock` | Display the current device time |
 | `show version` | IOS version, uptime, hardware, config register |
 
 `show ip interface brief` is the fastest first check on interface status.
+
+VLAN 1 and 1002-1005 always exist by default and are reserved.
+
+## Terminal / Session
+
+| Command | What It Does |
+|---|---|
+| `terminal monitor` | Show syslog messages in an SSH/Telnet session (console sees them by default) |
 
 ## Output Filters
 
@@ -82,20 +98,59 @@ show running-config | exclude !
 
 ## CLI Shortcuts
 
+### Help and completion
+
 | Key | What It Does |
 |---|---|
 | `?` | List available commands in the current mode |
 | `<partial>?` | List commands starting with those characters (no space) |
 | `<command> ?` | List valid arguments after the command (with space) |
-| `Tab` | Complete an unambiguous abbreviation |
-| `Up / Down Arrow` | Scroll through command history |
-| `Ctrl-A` | Move cursor to start of line |
-| `Ctrl-E` | Move cursor to end of line |
-| `Ctrl-Z` | Exit config mode |
-| `Ctrl-C` | Abort the current command or output |
-| `Space` (at `--More--`) | Next page of output |
-| `Enter` (at `--More--`) | Next line of output |
+| `Tab` | Complete a partial command once it's unambiguous |
+
+### Cursor movement
+
+| Key | What It Does |
+|---|---|
+| `Ctrl-A` | Start of line |
+| `Ctrl-E` | End of line |
+| `Ctrl-B` | Back one character |
+| `Ctrl-F` | Forward one character |
+| `Esc-B` | Back one word |
+| `Esc-F` | Forward one word |
+
+### Editing and deleting
+
+| Key | What It Does |
+|---|---|
+| `Backspace` | Delete one character left of the cursor |
+| `Ctrl-D` | Delete the character at the cursor |
+| `Ctrl-W` | Erase the word left of the cursor |
+| `Ctrl-U` | Erase the whole line |
+| `Ctrl-R` | Redisplay the current line (useful after syslog output interrupts your typing) |
+
+### History
+
+| Key | What It Does |
+|---|---|
+| `Ctrl-P` or `Up Arrow` | Previous command |
+| `Ctrl-N` or `Down Arrow` | Next (more recent) command |
 
 EXEC mode and config mode keep separate history buffers.
+
+### Interrupting and exiting
+
+| Key | What It Does |
+|---|---|
+| `Ctrl-C` | Abort the current command and exit config mode |
+| `Ctrl-Z` | End config mode, return to privileged EXEC |
+| `Ctrl-Shift-6` | Interrupt a running IOS process (ping, traceroute) |
+
+### Paged output (`--More--`)
+
+| Key | What It Does |
+|---|---|
+| `Space` | Next page |
+| `Enter` | Next line |
+| `q` | Quit the output and return to the prompt |
 
 ---
