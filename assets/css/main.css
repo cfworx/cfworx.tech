@@ -260,6 +260,13 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 
 .post-group + .post-group { border-top: 1px solid var(--rule); }
 
+/* Nested groups (a subsection inside a subsection, e.g. General under
+   CCNA) indent under their parent and use a lighter summary. */
+.post-group .post-group {
+  margin-left: 1.15em;
+}
+.post-group .post-group summary { font-size: 0.8rem; }
+
 /* Loose posts listed above the collapsible groups: a hairline separates
    them from the first group so the two read as distinct rows. */
 .post-block > .postlist + .post-group {

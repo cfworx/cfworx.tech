@@ -51,7 +51,21 @@
       <span class="post-group-name">{{ $sub.Title }}</span>
       <span class="post-group-count">{{ len $sub.RegularPagesRecursive }} {{ if eq (len $sub.RegularPagesRecursive) 1 }}note{{ else }}notes{{ end }}</span>
     </summary>
-    {{ partial "postlist.html" $sub.RegularPagesRecursive }}
+    {{- /* One more level: subsections inside a subsection (e.g. General
+           under CCNA) get their own nested dropdown, then any posts
+           sitting directly in the subsection root list below them. */}}
+    {{- range $subsub := $sub.Sections }}
+    <details class="post-group post-subgroup">
+      <summary>
+        <span class="post-group-name">{{ $subsub.Title }}</span>
+        <span class="post-group-count">{{ len $subsub.RegularPagesRecursive }} {{ if eq (len $subsub.RegularPagesRecursive) 1 }}note{{ else }}notes{{ end }}</span>
+      </summary>
+      {{ partial "postlist.html" $subsub.RegularPagesRecursive }}
+    </details>
+    {{- end }}
+    {{- with $sub.RegularPages }}
+    {{ partial "postlist.html" . }}
+    {{- end }}
   </details>
   {{- end }}
   {{- else }}

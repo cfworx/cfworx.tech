@@ -41,8 +41,12 @@ From `(config-if)`, typing another `interface <type/number>` jumps straight to t
 | `description <text>` | Label the interface (documentation only, no effect on operation) |
 | `shutdown` | Administratively disable the interface |
 | `no shutdown` | Enable the interface |
+| `duplex full \| half \| auto` | Set duplex mode (auto is the Catalyst default) |
+| `speed 10 \| 100 \| 1000 \| auto` | Set port speed (auto is the Catalyst default) |
 
 Router interfaces are shut down by default; switch access ports are not.
+
+Hardcode duplex/speed on switch-to-switch links; leave auto toward PCs. A failed autonegotiation defaults the port to half duplex, and a mismatch shows up as late collisions.
 
 ## Configuration Files
 
@@ -64,6 +68,7 @@ Running config is volatile. Anything not copied to startup-config is gone after 
 |---|---|
 | `show ip route` | Display the routing table |
 | `show ip interface brief` | One-line-per-interface summary: IP, status, protocol |
+| `show interfaces <name>` | Full interface detail: duplex, speed, MTU, error counters (late collisions = duplex mismatch) |
 | `show vlan brief` | One-line-per-VLAN summary with port assignments |
 | `show vlan id <n>` | Details for a single VLAN |
 | `show clock` | Display the current device time |
