@@ -1,0 +1,19 @@
+{{- /* The tools section: a plain list of the tools themselves, no
+       dates or year groupings (tools are destinations, not posts). */}}
+{{ define "main" }}
+<article class="section-page">
+  <header class="post-header">
+    <h1>{{ .Title }}</h1>
+    {{- with .Params.blurb }}
+    <p class="blurb">{{ . }}</p>
+    {{- end }}
+  </header>
+  {{ .Content }}
+
+  <ul class="toollist">
+    {{- range .RegularPages.ByTitle }}
+    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+    {{- end }}
+  </ul>
+</article>
+{{ end }}

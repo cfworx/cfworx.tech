@@ -23,6 +23,8 @@
   --box:          #f1efe7;   /* code / quote background */
   --box-border:   #dcd7c6;
   --enet:         #0057b8;
+  --ok:           #1e6f33;   /* quiz "correct" green, 5.9:1 on --bg */
+  --bad:          #a4262c;   /* quiz "wrong" red, 6.9:1 on --bg */
 
   --serif: Georgia, 'Times New Roman', Times, serif;
   --sans:  Verdana, Geneva, Tahoma, 'DejaVu Sans', sans-serif;
@@ -447,6 +449,90 @@ td {
   font: 0.85rem var(--sans);
 }
 .post-nav .older { margin-left: auto; text-align: right; }
+
+/* ---- tools (/tools/ and the subnetting quiz) -------------------------------
+   The quiz ships hidden in the HTML; subnetting.js reveals it. These are
+   the first <button>s on the site: sans labels, box backgrounds, with the
+   patch-cable blue reserved for the primary action. */
+
+.toollist {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 1.4rem;
+  font: 0.9rem var(--sans);
+}
+.toollist li {
+  border: 1px solid var(--rule);
+  background: var(--box);
+  border-radius: 3px;
+  padding: 0.45em 0.8em;
+  margin: 0.4em 0;
+}
+
+.quiz { margin: 1.7rem 0 0; }
+
+.quiz-progress {
+  font: 0.78rem var(--sans);
+  color: var(--muted);
+  margin: 0 0 1rem;
+}
+
+.quiz-question { margin: 0 0 0.9rem; }
+.quiz-question code { white-space: nowrap; }
+
+/* very long chips (full IPv6 addresses, dotted-binary quads) may wrap
+   on narrow screens instead of overflowing the page */
+.quiz code.q-long { white-space: normal; word-break: break-all; }
+
+.quiz input[type="text"] {
+  width: 100%;
+  max-width: 24rem;
+  font: 0.95rem var(--mono);
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--box-border);
+  border-radius: 3px;
+  padding: 0.5em 0.7em;
+}
+
+.quiz-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+}
+
+.quiz button {
+  font: 700 0.8rem var(--sans);
+  color: var(--ink);
+  background: var(--box);
+  border: 1px solid var(--box-border);
+  border-radius: 3px;
+  padding: 0.55em 1.1em;
+  cursor: pointer;
+}
+.quiz button:hover:not(:disabled) { border-color: var(--enet); color: var(--enet); }
+.quiz button:disabled { color: var(--muted); background: transparent; cursor: default; }
+
+#quiz-submit {
+  color: #fff;
+  background: var(--enet);
+  border-color: var(--enet);
+}
+#quiz-submit:hover:not(:disabled) {
+  color: #fff;
+  background: var(--link-hover);
+  border-color: var(--link-hover);
+}
+
+.quiz-feedback {
+  font: 0.9rem var(--sans);
+  margin: 1rem 0 0;
+  min-height: 1.6em;   /* reserve the line so the page doesn't jump */
+}
+.quiz-feedback.ok { color: var(--ok); }
+.quiz-feedback.no { color: var(--bad); }
+.quiz-feedback code { white-space: nowrap; }
 
 /* ---- footer -------------------------------------------------------------- */
 

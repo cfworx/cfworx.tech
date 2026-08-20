@@ -28,10 +28,22 @@ The allocation chain, top down:
 3. A company requests a public IP from its ISP, which assigns one from its block
 4. The company configures it on the router interface (or the router uses DHCP and the ISP assigns it automatically)
 
+## Positional numbering systems
+
+The base matters, but it's the **position** of a digit that gives it value. In any base system, each column to the left raises the exponent by one.
+
+- Decimal (base 10): digits 0-9. Run out at 9, roll to 10; run out at 99, roll to 100. Columns are powers of 10
+  - 27398 = (2 x 10⁴) + (7 x 10³) + (3 x 10²) + (9 x 10¹) + (8 x 10⁰)
+- Binary (base 2): digits 0 and 1 only. Counts 0, 1, 10, 11, 100, 101, 110, 111, 1000... Columns are powers of 2
+  - 10011 = (1 x 2⁴) + (0 x 2³) + (0 x 2²) + (1 x 2¹) + (1 x 2⁰) = 16 + 2 + 1 = 19
+- Contrast: Roman numerals use symbol values (I=1, V=5, X=10, L=50, C=100, D=500, M=1000) with add/subtract rules (smaller before larger = subtract, so MCMXCIV = 1000 + 900 + 90 + 4 = 1994). Position plays a role but not with base-system logic
+
 ## Binary ↔ decimal
 
-- Decimal = base 10 (digits 0-9). Binary = base 2 (just 0 and 1). Computers and network gear work in binary; we type decimal
-- An IPv4 address = 32 bits = four **octets** (8 bits each), separated by periods
+- Computers and network gear work in binary; we type decimal
+- An IPv4 address = 32 bits = four **octets** (8 bits each) in dotted-decimal notation
+  - 192.168.10.22 = `11000000.10101000.00001010.00010110`
+  - Always convert each octet using all 8 bits, leading zeros included
 - Each octet has 8 place values. Memorize them:
 
 | 128 | 64 | 32 | 16 | 8 | 4 | 2 | 1 |

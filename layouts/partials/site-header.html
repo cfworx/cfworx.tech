@@ -8,6 +8,7 @@
   <p class="tagline">{{ site.Params.tagline }}</p>
   <nav aria-label="Site">
     <a href="/"{{ if .IsHome }} aria-current="page"{{ end }}>home</a>
+    <a href="/tools/"{{ if eq .Section "tools" }} aria-current="page"{{ end }}>tools</a>
     <a href="/about/"{{ if eq .RelPermalink "/about/" }} aria-current="page"{{ end }}>about</a>
   </nav>
 </header>

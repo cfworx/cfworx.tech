@@ -18,7 +18,7 @@ disableKinds = ["taxonomy", "term"]
   # Sections shown on the home page and in llms.txt, in this order.
   # Adding a category later = create content/<slug>/_index.md, then add
   # the slug here. Nothing else to touch.
-  sectionOrder = ["certs", "homelab", "work", "misc"]
+  sectionOrder = ["certs", "homelab", "work", "tools", "misc"]
   tagline     = "Cory's IT Spellbook"
   description = "A public notebook of networking and IT knowledge: CCNA study notes, homelab experiments, and lessons learned on the job."
   author      = "Cory"

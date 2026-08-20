@@ -23,8 +23,10 @@
 </div>
 
 {{- /* The five newest posts across all sections, so a first-time
-       visitor sees fresh work without opening any dropdowns. */}}
-{{- with first 5 (where site.RegularPages "Section" "ne" "") }}
+       visitor sees fresh work without opening any dropdowns. The tools
+       are permanent fixtures with their own block below, so they don't
+       count as "recent". */}}
+{{- with first 5 (where site.RegularPages "Section" "not in" (slice "" "tools")) }}
 <section class="post-block" aria-labelledby="h-recent">
   <h2 id="h-recent">Recently added</h2>
   {{ partial "postlist.html" . }}

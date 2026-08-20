@@ -1,0 +1,36 @@
+{{- /* Shared layout for every practice tool under /tools/. The quiz
+       ships hidden and inert; each tool page lists its scripts in
+       front matter (quiz-engine.js + its own data/checking script, see
+       partials/head.html), and the engine reveals and runs the quiz.
+       No JS -> the <noscript> note below explains what the page needs. */}}
+{{ define "main" }}
+<article>
+  <header class="post-header">
+    <h1>{{ .Title }}</h1>
+    <p class="post-meta">in <a href="{{ .Parent.RelPermalink }}">{{ .Parent.Title }}</a></p>
+  </header>
+  {{ .Content }}
+
+  <div class="quiz" id="quiz" hidden>
+    <p class="quiz-progress" id="quiz-progress"></p>
+    <p class="quiz-question" id="quiz-question"></p>
+    <form id="quiz-form">
+      <input id="quiz-input" type="text" aria-labelledby="quiz-question"
+             autocomplete="off" autocapitalize="off" spellcheck="false">
+      <div class="quiz-buttons">
+        <button type="submit" id="quiz-submit">Submit</button>
+        <button type="button" id="quiz-show">Show answer</button>
+        <button type="button" id="quiz-next">Next question</button>
+      </div>
+    </form>
+    <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></p>
+  </div>
+
+  <noscript>
+    <p>These practice tools are the one part of this site that needs
+    JavaScript: the questions, the shuffle and the answer checking all
+    run right here in your browser. Nothing is fetched and nothing
+    leaves the page.</p>
+  </noscript>
+</article>
+{{ end }}

@@ -1,4 +1,6 @@
-{{- /* Metadata only. This site ships zero JavaScript by design. */ -}}
+{{- /* Metadata plus at most one small same-origin script per page:
+       search on the home page, and any tool script a page lists in its
+       `scripts` front matter (e.g. tools/subnetting). */ -}}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 {{- $isPost := and .IsPage (ne .Section "") }}
@@ -41,6 +43,12 @@
 {{- end }}
 {{- if .IsHome }}
 {{- with resources.Get "js/search.js" }}
+{{- $js := . | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- end }}
+{{- end }}
+{{- range .Params.scripts }}
+{{- with resources.Get (printf "js/%s" .) }}
 {{- $js := . | fingerprint }}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
 {{- end }}
