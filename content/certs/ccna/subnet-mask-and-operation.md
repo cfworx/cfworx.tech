@@ -1,6 +1,6 @@
 ---
 title: "Subnet masks and the AND operation"
-date: 2026-08-20
+date: 2026-08-19
 description: "How the subnet mask marks network vs. host bits, calculating the network address with a bitwise AND, and why networks get split up at all."
 draft: false
 ---
@@ -48,13 +48,17 @@ Shortcut when the mask lands on an octet boundary: keep the network octets, zero
 
 ## Why subnet at all
 
-One flat network / broadcast domain scales badly:
+A **flat topology** is a Layer 2 switch-connected network where every device sees every broadcast: one big L2 broadcast domain. Easy to build and manage, cheap to run, and plenty of networks still work this way. But it scales badly:
 
-- **Broadcast noise**: ARP, DHCP Discover, etc. are broadcasts. Thousands of devices shouting degrades everything
-- **Wasted address space**: giant blocks assigned to networks that don't need them
-- **Hard to secure**: no natural boundaries to hang policy on
-- **No logical separation**
+- **Broadcast noise**: ARP, DHCP Discover, etc. are broadcasts. A single broadcast domain generally shouldn't exceed a couple hundred devices before broadcast traffic starts pressuring resources
+- **Security**: no segments = no per-segment policy, and one compromised device can quickly reach everything
+- **Troubleshooting**: no logical separation or hierarchy, so isolating faults gets harder as the network grows
+- **Wasted address space**: a large flat network strands addresses you can't use anywhere else
 
-Splitting into subnets/VLANs (engineering its own subnet, finance its own, etc.) gives easier management and troubleshooting, better address utilization, less broadcast traffic, and cleaner security policy.
+Subnets were invented for IPv4 address shortage but now serve administration, organization, security, and scalability. The 30-story-building picture: company = the network, departments = subnets, department devices = hosts. Split by department, function, or location.
 
-Where this heads next: instead of always using the classful boundary (like /24 with a 192.x address), **borrow bits from the host portion** to carve smaller networks. That's subnetting.
+**Routers** are what separate subnets: each subnet is its own Layer 3 broadcast domain. (L2 broadcast domain = devices that see each other's broadcast *frames*; L3 broadcast domain = devices that see each other's broadcast *packets*.) One router can connect many subnets to the internet, and the internal division is invisible to outside networks.
+
+Benefits: smaller networks that map to geography or function, right-sized address allocation, multiple logical networks from one prefix, less overall traffic, and security applied at subnet interconnection points instead of inside one big blob.
+
+The addressing mechanics: in a flat network every device shares the same network part. When you subnet, each device's address has the same network part AND the same **subnet part**, which is **borrowed from the host part**. That bit-borrowing is subnetting, coming up next.
