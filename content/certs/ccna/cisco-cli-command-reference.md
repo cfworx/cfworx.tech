@@ -43,10 +43,27 @@ From `(config-if)`, typing another `interface <type/number>` jumps straight to t
 | `no shutdown` | Enable the interface |
 | `duplex full \| half \| auto` | Set duplex mode (auto is the Catalyst default) |
 | `speed 10 \| 100 \| 1000 \| auto` | Set port speed (auto is the Catalyst default) |
+| `ip directed-broadcast` | Allow directed broadcasts out this interface (off by default since IOS 12.0, Smurf defense) |
+| `ip address dhcp` | Make the interface a DHCP client — it runs DORA and pulls an address (verify with `show ip interface brief`) |
+| `ip helper-address <server-ip>` | DHCP relay: forward client broadcasts to a server on another subnet — goes on the client-facing interface |
 
 Router interfaces are shut down by default; switch access ports are not.
 
 Hardcode duplex/speed on switch-to-switch links; leave auto toward PCs. A failed autonegotiation defaults the port to half duplex, and a mismatch shows up as late collisions.
+
+## DHCP Server
+
+| Command | What It Does |
+|---|---|
+| `ip dhcp excluded-address <first> [last]` | Global config: keep this range out of the pool (statics, gateway) |
+| `ip dhcp pool <name>` | Create/enter a DHCP pool (name is case sensitive) → `(dhcp-config)` mode |
+| `network <subnet> <mask \| /prefix>` | Define the pool's address range |
+| `default-router <ip>` | Gateway handed to clients |
+| `dns-server <ip>` | DNS server handed to clients |
+| `domain-name <name>` | Domain name handed to clients |
+| `lease <days> [hours] [min] \| infinite` | Lease duration (default 1 day; `lease 0 12` = 12h) |
+| `show ip dhcp pool` | Pool status and usage |
+| `show ip dhcp binding` | Leased IP-to-MAC table |
 
 ## Configuration Files
 

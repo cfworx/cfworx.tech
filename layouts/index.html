@@ -33,7 +33,10 @@
 </section>
 {{- end }}
 
+{{- /* Tools live in the header nav (and llms.txt) but get no section
+       of their own on the home page. */}}
 {{- range $slug := site.Params.sectionOrder }}
+{{- if ne $slug "tools" }}
 {{- with site.GetPage (printf "/%s" $slug) }}
 <section class="post-block" aria-labelledby="h-{{ $slug }}">
   <h2 id="h-{{ $slug }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
@@ -77,6 +80,7 @@
   {{- end }}
   {{- end }}
 </section>
+{{- end }}
 {{- end }}
 {{- end }}
 {{ end }}
