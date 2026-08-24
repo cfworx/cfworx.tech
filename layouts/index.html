@@ -54,7 +54,7 @@
   <details class="post-group">
     <summary>
       <span class="post-group-name">{{ $sub.Title }}</span>
-      <span class="post-group-count">{{ len $sub.RegularPagesRecursive }} {{ if eq (len $sub.RegularPagesRecursive) 1 }}note{{ else }}notes{{ end }}</span>
+      <span class="post-group-count">{{ with len $sub.Sections }}{{ . }} {{ if eq . 1 }}section{{ else }}sections{{ end }}, {{ end }}{{ len $sub.RegularPagesRecursive }} {{ if eq (len $sub.RegularPagesRecursive) 1 }}note{{ else }}notes{{ end }}</span>
     </summary>
     {{- /* One more level: subsections inside a subsection (e.g. General
            under CCNA) get their own nested dropdown, then any posts
