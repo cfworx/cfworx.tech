@@ -89,6 +89,26 @@ Running config is volatile. Anything not copied to startup-config is gone after 
 | `ip default-gateway <ip>` | Gateway for the switch's own management traffic (global config) |
 | `clear counters [interface]` | Zero the `show interfaces` statistics to watch for fresh errors |
 
+## VLANs
+
+| Command | What It Does |
+|---|---|
+| `vlan <id>` | Create a VLAN / enter its config (global config) — accepts single id, comma list, or hyphen range |
+| `no vlan <id>` | Delete the VLAN (1 and 1002-1005 can't be deleted) |
+| `name <name>` | Label the VLAN, 1-32 ASCII chars (otherwise `show vlan` shows VLAN0002-style defaults) |
+| `switchport mode access` | Make the port an access port (one VLAN, untagged, end devices only) |
+| `switchport access vlan <id>` | Assign the access port to that VLAN |
+| `switchport voice vlan <id>` | Add a voice VLAN to an access port — the IP phone tags its own traffic with this id |
+| `show interfaces <name> switchport` | Port's VLAN facts: admin mode, access (data) VLAN, voice VLAN |
+| `switchport mode trunk` | Make the port a trunk (configure both ends of the link) |
+| `switchport trunk allowed vlan <list>` | Prune which VLANs the trunk carries — **replaces** the existing list |
+| `switchport trunk allowed vlan add <id>` | Add to the allowed list without wiping it |
+| `switchport trunk allowed vlan remove <id>` | Remove from the allowed list (no spaces after commas in any vlan list) |
+| `switchport trunk native vlan <id>` | Change the untagged VLAN on the trunk (default 1) — must match on both ends |
+| `switchport trunk encapsulation dot1q` | Older hardware only: pick 802.1Q over ISL before trunking |
+| `show interfaces trunk` | Per-trunk summary: mode, encapsulation, native VLAN, allowed VLANs |
+| `show interfaces status` | One line per port: access VLAN or "trunk", duplex, speed, connected state |
+
 ## Verification / Show Commands
 
 | Command | What It Does |
