@@ -3,52 +3,52 @@ title: About
 description: "About Cory, an IT specialist studying for the CCNA."
 ---
 
-Hi, I'm **Cory**. I'm an IT Specialist in a major organization, where I
-directly support over 3,000 users across three states.
-Before IT, I spent six years in the U.S. Army. My goal is to one day
-become an IT wizard. ![a tiny pixel wizard casting a spell](/images/wizard.gif)
+Hi, I'm **Cory**. I do IT support for a large organization, about 3,000
+users spread across three states. Before that I spent six years in the
+Army. The long-term goal is to become an IT wizard.
+![a tiny pixel wizard casting a spell](/images/wizard.gif)
 
-## My current role
+## What I do
 
-I handle end-user support from first call to resolution, covering
-hardware, software, and network issues. I'm also our region's
-vulnerability management specialist and audit liaison. I track and
-remediate vulnerabilities across all of our sites.
+Day to day, I take support tickets from the first call all the way to
+fixed. Broken hardware, misbehaving software, network stuff, whatever
+comes in. I'm also the vulnerability management guy and audit liaison
+for my region, which means I track down and patch security holes across
+all our sites.
 
-I have a background in web development, and I still put that programming
-experience to work. I've written remediation and automation
-scripts that are now used across the nation, saving hundreds of hours of
-manual work and automating processes that were long done by hand.
+I came up through web development, and that still pays off. Some
+remediation and automation scripts I wrote ended up getting picked up
+throughout the organization. Things that used to eat hundreds of hours
+of somebody's time by hand now just run.
 
-I'm also the lead IT instructor at new employee orientation, where I brief
-all incoming staff on our systems, applications, ticketing, and security
-practices. It keeps my soft skills sharp: presenting to a room, fielding
-questions on the spot, and explaining technical topics in plain language.
+I also teach the IT portion of new employee orientation. Every incoming
+hire gets me for an hour walking them through our systems, ticketing,
+and security practices. It's good practice: standing in front of a room,
+taking questions I didn't prep for, and explaining technical things to
+people who don't care how the sausage is made.
 
-Over the last four years I've resolved more than 5,000 tickets while
-holding a 4.98/5 average customer satisfaction rating in our IT service
-management system.
+Four years in, I've closed over 5,000 tickets with a 4.98/5 satisfaction
+rating.
 
 ## Outside of work
 
-IT is my hobby as much as my job. A good friend of mine is a true IT
-wizard, and he's a big part of why I set that goal for myself. Most of
-my free time goes into my homelab, a little mini enterprise environment
-in my house, and into AI: I've self-hosted autonomous agent frameworks,
-wired them into my network and messaging platforms, and put them to work
-on scheduled tasks, monitoring, and research.
+Honestly, IT is the hobby too. A good friend of mine is an actual IT
+wizard, and he's most of the reason I set that goal in the first place.
+My free time mostly goes to my homelab and to AI. I self-host
+autonomous agent frameworks, wire them into my network and messaging
+apps, and put them to work on scheduled jobs, monitoring, and research.
 
-I'm a family man first, and a recent homeowner. I'm always optimizing
-something, and the lawn is next. I will have the best yard in the
+Family man first, and a recent homeowner, which means I've found a new
+thing to optimize: the lawn. I will have the best yard in the
 neighborhood. Yes, I'm that guy now.
 
-I'm also a gamer: working through my third Warcraft book, putting hours
-into MotorTown: Behind The Wheel on my triple-screen racing sim, and
-painting Warhammer minis I haven't learned to play yet.
+I'm also a gamer. Fourth Warcraft book in progress, way too many hours
+in MotorTown: Behind The Wheel on a triple-screen racing sim, and a
+growing pile of painted Warhammer minis for a game I still haven't
+learned to play.
 
-Away from the screens it's coffee and sports: baseball,
-football, basketball, and the UFC. I actively play fantasy baseball,
-football, and basketball.
+Away from the screens it's coffee and sports: baseball, football,
+basketball, and the UFC.
 
 ## Education
 
@@ -69,7 +69,7 @@ football, and basketball.
 
 ## Currently studying
 
-- **CCNA** (Cisco Certified Network Associate). Notes as I go are in [Certifications](/certs/ccna/).
+- **CCNA** (Cisco Certified Network Associate). Notes as I go are in [Notes](/notes/networking/ccna/).
 
 ## Elsewhere
 

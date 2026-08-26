@@ -1,0 +1,15 @@
+{{- /* Recursive collapsible group for a section: shows nested subsections
+       as their own <details>, then any posts sitting directly in this
+       section. Used by the home page for arbitrarily deep note trees. */}}
+<details class="post-group">
+  <summary>
+    <span class="post-group-name">{{ .Title }}</span>
+    <span class="post-group-count">{{ with len .Sections }}{{ . }} {{ if eq . 1 }}section{{ else }}sections{{ end }}, {{ end }}{{ len .RegularPagesRecursive }} {{ if eq (len .RegularPagesRecursive) 1 }}note{{ else }}notes{{ end }}</span>
+  </summary>
+  {{- range .Sections }}
+  {{ partial "post-group.html" . }}
+  {{- end }}
+  {{- with .RegularPages }}
+  {{ partial "postlist.html" . }}
+  {{- end }}
+</details>

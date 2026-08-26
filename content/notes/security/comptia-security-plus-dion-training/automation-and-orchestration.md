@@ -1,0 +1,37 @@
+---
+title: "Automation and Orchestration"
+date: 2025-12-09
+description: "Security+ notes: SOAR, playbooks vs runbooks, when to automate, automating tickets/onboarding/security, CI/CD pipelines, and API integration (REST/SOAP)."
+draft: false
+---
+
+## Core concepts
+
+- Automation runs a single task without manual intervention (scripting repetitive work) for consistency and fewer errors. Orchestration coordinates multiple automated tasks into a workflow (sequencing IR steps).
+- SOAR (Security Orchestration, Automation, and Response) tools run runbooks and enrich data, often paired with a SIEM.
+- Playbook: a checklist of actions for a specific incident (e.g. phishing response). Runbook: the automated version of a playbook with defined human decision points.
+
+## When to automate
+
+Automate repeatable, stable processes. Decision factors: complexity (routine backups → automate; complex IR → orchestrate), cost (cost-benefit including dev, implementation, maintenance), single points of failure (add redundancy/manual fallback), technical debt (from suboptimal solutions, needs regular review), and ongoing supportability (skills, training, and API/webhook connections). Benefits: efficiency, baseline enforcement, secure scaling, employee retention (less drudgery), faster reaction, and acting as a workforce multiplier.
+
+## Common automation targets
+
+- Support tickets: automate creation (submit → generate → capture info → categorize → prioritize → notify) and escalation (define criteria → rules → escalation actions → track → resolve) to meet SLAs.
+- Onboarding: automate documentation, training scheduling, equipment provisioning, and access rights. User provisioning creates accounts and assigns roles; resource provisioning allocates workstations, licenses, and tools.
+- Security: guardrails (automated safety controls against insecure configs), security groups (virtual firewalls for cloud instances, adjusted dynamically), enabling/disabling services and access, and RBAC-based permissions management (auto provision/deprovision by role).
+
+## CI/CD
+
+| Stage | What it means |
+|---|---|
+| Continuous Integration | frequent code merges with automated build + tests |
+| Continuous Delivery | code always deployable; production deploy stays a manual decision |
+| Continuous Deployment | fully automated deploy to production, no human step |
+
+CI/CD improves code quality, speeds releases, reduces deployment risk, and enables rollback.
+
+## Integrations and APIs
+
+- An API is a set of rules for accessing another application's features programmatically. Common styles: REST (standard HTTP methods, JSON, lightweight) and SOAP (structured XML, more robust and secure, for enterprise transactions).
+- Most automation depends on APIs and webhooks. Test APIs with curl (transfers data over HTTP/HTTPS, returns a JSON response), useful in development and penetration testing.
