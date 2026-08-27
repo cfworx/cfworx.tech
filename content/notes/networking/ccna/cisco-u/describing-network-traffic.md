@@ -28,7 +28,7 @@ Knowing what traffic flows through the network matters less than being able to d
 
 ### Batch
 
-Bulk data transfer with no human involvement after kickoff. User starts it and waits. Bandwidth affects how long it takes but isn't critical — even a slow link finishes eventually.
+Bulk data transfer with no human involvement after kickoff. User starts it and waits. Bandwidth affects how long it takes but isn't critical: even a slow link finishes eventually.
 
 - No ongoing human interaction after the transfer starts
 - Bandwidth affects performance but is not critical
@@ -38,7 +38,7 @@ Examples: FTP/TFTP file transfers, inventory updates, automated file replication
 
 ### Interactive
 
-User acts, then waits for a response. Human-to-machine. Response time matters more than for batch, but strict guarantees usually aren't required — with less bandwidth the transaction just takes longer and still completes.
+User acts, then waits for a response. Human-to-machine. Response time matters more than for batch, but strict guarantees usually aren't required; with less bandwidth the transaction just takes longer and still completes.
 
 - Human-to-machine interaction
 - Acceptable response time depends on how important the app is to the business

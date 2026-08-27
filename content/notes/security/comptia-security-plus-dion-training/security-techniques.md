@@ -7,7 +7,7 @@ draft: false
 
 ## Wireless infrastructure
 
-- WAP placement drives range, coverage, and security. Keep WAPs away from external walls/windows (signal leakage), central and high (ceilings), use unidirectional antennas near walls. An ESS is multiple WAPs providing seamless coverage.
+- WAP placement drives range, coverage, and security. Keep WAPs away from external walls/windows (signal leakage), central and high (ceilings), use unidirectional antennas near walls. An ESS is multiple WAPs providing continuous coverage.
 - Interference: co-channel and adjacent-channel. In 2.4 GHz use non-overlapping channels 1, 6, 11. Plan with site surveys and heat maps.
 
 ## Wireless security standards

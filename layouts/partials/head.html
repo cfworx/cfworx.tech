@@ -47,6 +47,12 @@
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
 {{- end }}
 {{- end }}
+{{- if .IsPage }}
+{{- with resources.Get "js/lightbox.js" }}
+{{- $js := . | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- end }}
+{{- end }}
 {{- range .Params.scripts }}
 {{- with resources.Get (printf "js/%s" .) }}
 {{- $js := . | fingerprint }}

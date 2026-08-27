@@ -89,6 +89,48 @@ a:hover { color: var(--link-hover); }
 
 img { max-width: 100%; height: auto; border: 1px solid var(--rule); }
 
+/* ---- image lightbox (lightbox.js) -------------------------------------- */
+
+article a:has(> img) { cursor: zoom-in; }
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.93);
+  cursor: zoom-out;
+}
+
+.lightbox-img {
+  max-width: 96vw;
+  max-height: 92vh;
+  width: auto;
+  height: auto;
+  border: none;
+  cursor: default;
+}
+
+.lightbox-close {
+  position: fixed;
+  top: 0.5rem;
+  right: 0.9rem;
+  border: 0;
+  background: none;
+  color: #fff;
+  font-size: 2.6rem;
+  line-height: 1;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+}
+
+.lightbox-close:hover { color: #bbb; }
+
+body.lightbox-open { overflow: hidden; }
+
 ul, ol { padding-left: 1.4em; }
 li { margin: 0.25em 0; }
 

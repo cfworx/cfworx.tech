@@ -33,20 +33,21 @@ From `(config-if)`, typing another `interface <type/number>` jumps straight to t
 | `clock timezone <name> <offset>` | Set the timezone (offset in hours from UTC) |
 | `no ip domain-lookup` | Stop the device from trying DNS resolution on mistyped commands |
 
-`no ip domain-lookup` is a quality-of-life one — without it, a typo at the prompt hangs the terminal while IOS tries to resolve it as a hostname.
+`no ip domain-lookup` is a quality-of-life one, without it, a typo at the prompt hangs the terminal while IOS tries to resolve it as a hostname.
 
 ## Interface Configuration
 
 | Command | What It Does |
 |---|---|
+| `interface range <list>` | Configure many ports at once, e.g. `interface range Ethernet0/16-24` |
 | `description <text>` | Label the interface (documentation only, no effect on operation) |
 | `shutdown` | Administratively disable the interface |
 | `no shutdown` | Enable the interface |
 | `duplex full \| half \| auto` | Set duplex mode (auto is the Catalyst default) |
 | `speed 10 \| 100 \| 1000 \| auto` | Set port speed (auto is the Catalyst default) |
 | `ip directed-broadcast` | Allow directed broadcasts out this interface (off by default since IOS 12.0, Smurf defense) |
-| `ip address dhcp` | Make the interface a DHCP client — it runs DORA and pulls an address (verify with `show ip interface brief`) |
-| `ip helper-address <server-ip>` | DHCP relay: forward client broadcasts to a server on another subnet — goes on the client-facing interface |
+| `ip address dhcp` | Make the interface a DHCP client, it runs DORA and pulls an address (verify with `show ip interface brief`) |
+| `ip helper-address <server-ip>` | DHCP relay: forward client broadcasts to a server on another subnet, goes on the client-facing interface |
 
 Router interfaces are shut down by default; switch access ports are not.
 
@@ -73,7 +74,7 @@ Hardcode duplex/speed on switch-to-switch links; leave auto toward PCs. A failed
 | `show running-config` | Display the active config in RAM |
 | `show startup-config` | Display the saved config in NVRAM |
 | `copy running-config startup-config` | Save the active config so it survives a reload |
-| `erase startup-config` | Delete the saved config — **cannot be abbreviated** |
+| `erase startup-config` | Delete the saved config, **cannot be abbreviated** |
 | `reload` | Reboot the device |
 
 Running config is volatile. Anything not copied to startup-config is gone after `reload`.
@@ -84,7 +85,7 @@ Running config is volatile. Anything not copied to startup-config is gone after 
 
 | Command | What It Does |
 |---|---|
-| `interface vlan 1` | Enter the management SVI (global config) — where a L2 switch gets its IP |
+| `interface vlan 1` | Enter the management SVI (global config), where a L2 switch gets its IP |
 | `ip address <ip> <mask>` | Set a static address (on an SVI or router interface) |
 | `ip default-gateway <ip>` | Gateway for the switch's own management traffic (global config) |
 | `clear counters [interface]` | Zero the `show interfaces` statistics to watch for fresh errors |
@@ -93,18 +94,19 @@ Running config is volatile. Anything not copied to startup-config is gone after 
 
 | Command | What It Does |
 |---|---|
-| `vlan <id>` | Create a VLAN / enter its config (global config) — accepts single id, comma list, or hyphen range |
+| `vlan <id>` | Create a VLAN / enter its config (global config), accepts single id, comma list, or hyphen range |
 | `no vlan <id>` | Delete the VLAN (1 and 1002-1005 can't be deleted) |
 | `name <name>` | Label the VLAN, 1-32 ASCII chars (otherwise `show vlan` shows VLAN0002-style defaults) |
 | `switchport mode access` | Make the port an access port (one VLAN, untagged, end devices only) |
 | `switchport access vlan <id>` | Assign the access port to that VLAN |
-| `switchport voice vlan <id>` | Add a voice VLAN to an access port — the IP phone tags its own traffic with this id |
+| `switchport voice vlan <id>` | Add a voice VLAN to an access port, the IP phone tags its own traffic with this id |
 | `show interfaces <name> switchport` | Port's VLAN facts: admin mode, access (data) VLAN, voice VLAN |
 | `switchport mode trunk` | Make the port a trunk (configure both ends of the link) |
-| `switchport trunk allowed vlan <list>` | Prune which VLANs the trunk carries — **replaces** the existing list |
+| `switchport trunk allowed vlan <list>` | Prune which VLANs the trunk carries, **replaces** the existing list |
 | `switchport trunk allowed vlan add <id>` | Add to the allowed list without wiping it |
 | `switchport trunk allowed vlan remove <id>` | Remove from the allowed list (no spaces after commas in any vlan list) |
-| `switchport trunk native vlan <id>` | Change the untagged VLAN on the trunk (default 1) — must match on both ends |
+| `switchport trunk native vlan <id>` | Change the untagged VLAN on the trunk (default 1), must match on both ends |
+| `vlan dot1q tag native` | Tag the native VLAN on all 802.1Q trunks (global config; untagged by default) |
 | `switchport trunk encapsulation dot1q` | Older hardware only: pick 802.1Q over ISL before trunking |
 | `show interfaces trunk` | Per-trunk summary: mode, encapsulation, native VLAN, allowed VLANs |
 | `show interfaces status` | One line per port: access VLAN or "trunk", duplex, speed, connected state |

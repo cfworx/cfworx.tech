@@ -20,7 +20,7 @@ Close and reopen the terminal, then verify:
 
 ```powershell
 git version
-hugo version    # any recent version is fine; the site was built on 0.123.7
+hugo version    # any recent version is fine; the site was built on 0.164.0
 ```
 
 ## 2. Put the site in a Git repo and on GitHub

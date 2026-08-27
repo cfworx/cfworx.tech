@@ -13,7 +13,7 @@ draft: false
 ## Coverage issues
 
 - Site surveys generate heat maps (green → red) of signal strength. Multi-story buildings suffer from floor penetration losses.
-- Fixes: boost transmit power, higher-dBi antennas (5 → 9 dBi can double range in ideal conditions), wireless repeaters (Layer 1, two radios, receive and retransmit at full strength), more APs in an ESS (same SSID, seamless roaming), or wireless mesh systems (repeater + AP combined, no Ethernet home runs).
+- Fixes: boost transmit power, higher-dBi antennas (5 → 9 dBi can double range in ideal conditions), wireless repeaters (Layer 1, two radios, receive and retransmit at full strength), more APs in an ESS (same SSID, roaming without drops), or wireless mesh systems (repeater + AP combined, no Ethernet home runs).
 
 ## Interference and channel planning
 

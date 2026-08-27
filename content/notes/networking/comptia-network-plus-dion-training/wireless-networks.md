@@ -8,7 +8,7 @@ draft: false
 ## Wireless network types
 
 - Ad hoc / IBSS: devices connect peer-to-peer with no AP; quick temporary setups.
-- Infrastructure: devices join wired LANs through APs. BSSID = the AP's MAC by default; SSID = the network name; ESS = multiple APs sharing one SSID (ESSID) for seamless roaming.
+- Infrastructure: devices join wired LANs through APs. BSSID = the AP's MAC by default; SSID = the network name; ESS = multiple APs sharing one SSID (ESSID) so clients roam between them without dropping.
 - Point-to-point: high-gain antennas link two fixed sites with dedicated bandwidth where cabling isn't feasible.
 - Mesh: nodes interconnect with self-healing paths; good for large deployments where cable is impractical.
 - Autonomous APs run standalone (small setups); lightweight APs offload processing to a central wireless controller (big networks).

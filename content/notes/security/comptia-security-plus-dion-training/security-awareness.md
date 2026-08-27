@@ -28,7 +28,7 @@ Social engineering uses deception to exploit human psychology; awareness is the 
 ## Policies and handbooks
 
 - A policy is the rules guiding decisions; a handbook is the detailed reference guide (employee, training, compliance). They cover data protection, remote work, technology use, conflicts of interest.
-- Review at least annually to track the changing threat landscape, and make sure employees are aware of updates. Policies can't cover every scenario, so employees should understand the "why" to make good judgment calls and report gaps.
+- Review at least annually to track new and changing threats, and make sure employees are aware of updates. Policies can't cover every scenario, so employees should understand the "why" to make good judgment calls and report gaps.
 
 ## Remote and hybrid work
 

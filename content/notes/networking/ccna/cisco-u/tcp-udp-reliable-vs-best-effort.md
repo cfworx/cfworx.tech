@@ -1,7 +1,7 @@
 ---
 title: "TCP vs UDP: Reliable vs Best Effort"
 date: 2026-08-23
-description: "CCNA deep dive on TCP reliability vs UDP best effort: three-way handshake, sequence and ack worked example, plus TCP and UDP header fields."
+description: "CCNA notes on TCP reliability vs UDP best effort: three-way handshake, sequence and ack worked example, plus TCP and UDP header fields."
 draft: false
 aliases: ["/certs/ccna/tcp-udp-reliable-vs-best-effort/", "/certs/ccna/cisco-u/tcp-udp-reliable-vs-best-effort/", "/notes/ccna/cisco-u/tcp-udp-reliable-vs-best-effort/"]
 ---

@@ -20,7 +20,7 @@ Intent = the specific goal; motivation = the driving force. The motivation list:
 | Insider | varies; already has access | profit, revenge, or plain carelessness |
 
 - APT: prolonged, stealthy, targeted access to a network, historically synonymous with nation-states.
-- Insider mitigation: zero trust, robust access control, audits, awareness training.
+- Insider mitigation: zero trust, strong access control, audits, awareness training.
 - Shadow IT: tech in use without IT's knowledge or approval; thrives when official security is too restrictive for the work. BYOD sits in this neighborhood.
 
 ## Vectors and surfaces

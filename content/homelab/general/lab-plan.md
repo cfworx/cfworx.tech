@@ -2,6 +2,7 @@
 title: "Lab plan"
 date: 2026-08-16
 description: "My homelab roadmap: what I'm building and in what order."
+aliases: ["/homelab/lab-plan/"]
 draft: false
 ---
 

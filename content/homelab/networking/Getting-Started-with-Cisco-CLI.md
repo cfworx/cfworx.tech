@@ -2,6 +2,7 @@
 title: "Navigating the Cisco CLI"
 date: 2026-08-14
 description: "CCNA lab notes on Cisco IOS EXEC modes, CLI help and shortcuts, configuration files, terminal history, and output filtering."
+aliases: ["/homelab/getting-started-with-cisco-cli/"]
 draft: false
 ---
 ![Getting Started with the Cisco CLI](/homelab/images/getting-started-cisco-cli.png)

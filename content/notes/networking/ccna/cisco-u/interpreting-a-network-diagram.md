@@ -8,13 +8,13 @@ aliases: ["/certs/ccna/interpreting-a-network-diagram/", "/certs/ccna/cisco-u/in
 ![Physical network diagram showing device interconnections](/notes/networking/ccna/images/test.png)
 ## What Network Diagrams Are
 
-Visual maps of a network — they show how it is designed and how it operates, illustrating physical and logical devices plus their interconnections. A single network can have multiple diagrams depending on how much detail you want to present.
+Visual maps of a network. They show how it is designed and how it operates: the physical and logical devices plus their interconnections. A single network can have multiple diagrams depending on how much detail you want to present.
 
 **Common diagram types:**
 
-- **Physical** — how interconnections are physically laid out
-- **Logical** — how devices and networks are logically grouped and addressed
-- **Sequence** — chronological exchange of messages between two or more devices
+- **Physical**: how interconnections are physically laid out
+- **Logical**: how devices and networks are logically grouped and addressed
+- **Sequence**: chronological exchange of messages between two or more devices
 
 Both physical and logical diagrams use **icons** for devices and media, usually annotated with device names and models.
 
@@ -25,13 +25,13 @@ Both physical and logical diagrams use **icons** for devices and media, usually 
 | | Physical Diagram | Logical Diagram |
 |---|---|---|
 | **Focus** | Physical layout of interconnections | Logical grouping and addressing |
-| **Includes** | Device interface labels (which physical ports the media connects to), location identifiers (where the device physically is) | Encircling symbols — ovals, circles, rectangles — showing how devices or cables are grouped |
+| **Includes** | Device interface labels (which physical ports the media connects to), location identifiers (where the device physically is) | Encircling symbols (ovals, circles, rectangles) showing how devices or cables are grouped |
 | **Also shows** | Link speeds, stacking technologies | Logical identifiers such as addresses; configured networking processes such as routing protocols, with basic parameters |
 
 **Typical enterprise link speeds seen on physical diagrams:**
 
-- 1 Gbps — endpoint connections (workstations)
-- 10 / 40 / 100 Gbps — network device interconnectivity
+- 1 Gbps: endpoint connections (workstations)
+- 10 / 40 / 100 Gbps: network device interconnectivity
 - Stacking technologies such as **Cisco StackWise** (multiple switches linked into a single switching unit) are also shown
 
 ---
@@ -48,9 +48,9 @@ Numbering convention depends on device type and model:
 
 **Terms:**
 
-- **Slot** — an opening in a router or switch for installing a module that adds functionality.
+- **Slot**: an opening in a router or switch for installing a module that adds functionality.
 - Fixed-port switches often have no modular slots; all ports are assigned to the built-in default slot, **slot 0**.
-- **Sub-slot** — some modules contain several smaller slots.
+- **Sub-slot**: some modules contain several smaller slots.
 
 ---
 

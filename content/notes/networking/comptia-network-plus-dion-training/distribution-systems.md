@@ -18,7 +18,7 @@ draft: false
 
 - UPS: emergency battery power (typically 15-30 min), surge protection, line conditioning; bottom of each rack, or facility-scale units.
 - PDU: smart rack power strip with monitoring/control; surge protection but no ride-through for full outages.
-- Generators (diesel/gas/propane) cover longer outages; an automatic transfer switch bridges UPS → generator seamlessly.
+- Generators (diesel/gas/propane) cover longer outages; an automatic transfer switch bridges UPS → generator with no break in power.
 - Manage power loads to avoid circuit overloads, and match voltage (120 V US, 230 V Europe), mismatches destroy equipment.
 
 ## HVAC
