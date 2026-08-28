@@ -54,7 +54,8 @@ the device that plugs in still has access to nothing.
 ## Trunk design rules
 
 - Native VLAN must match on both ends of an 802.1Q trunk. A mismatch
-  forwards untagged traffic into the wrong VLAN and CDP tattles:
+  forwards untagged traffic into the wrong VLAN, and CDP logs a
+  mismatch warning:
 
 ```text
 *Mar 31 06:22:46.631: %CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch

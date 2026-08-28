@@ -30,4 +30,4 @@ OSI layer functions are clearly defined, so devices and protocols get named by O
 - **TCP and UDP** = "Layer 4 protocols." Same functions as the OSI transport layer, different specific protocols
 - **Layer 3 switch** = a switch (traditionally L2 only) that can also do L3/internet layer work, which was traditionally router territory
 
-Bottom line: OSI terminology and layer numbers, TCP/IP protocols. That mix is how the industry talks.
+In practice the industry mixes them: OSI terminology and layer numbers, TCP/IP protocols.

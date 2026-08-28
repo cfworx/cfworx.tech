@@ -7,7 +7,7 @@ draft: false
 
 <!-- screenshot: architecture overview or portal resource group view -->
 
-Built my own Azure Virtual Desktop environment from scratch: a pooled
+I built my own Azure Virtual Desktop environment from scratch: a pooled
 host pool delivering both a full desktop and RemoteApps, with FSLogix
 profile containers on an Azure Files share. I deliberately
 misconfigured the permissions at each layer to watch how it fails
@@ -55,7 +55,8 @@ setting.
 Created the lab users (labadmin, labuser1, labuser2) and a security
 group AVD-Users holding the two test users.
 
-Then the trap I defused before it cost me an afternoon: a fresh tenant
+Then the piece that would have been an afternoon of debugging if I'd
+missed it: a fresh tenant
 ships with security defaults on, which force MFA for everyone. Entra
 Kerberos for Azure Files does not support MFA on the storage account's
 app registration, because the Kerberos ticket is retrieved silently at
@@ -78,7 +79,7 @@ miss:
   registration manifest. This one is mandatory for cloud-only
   identities: without it, the Kerberos ticket only carries on-prem group
   SIDs, so ACLs granted to a cloud-only group like AVD-Users never
-  evaluate. Everything looks configured and nothing works.
+  evaluate.
 
 Permissions on the share are two independent layers, and knowing which
 layer is failing is most of the troubleshooting battle:
@@ -180,9 +181,9 @@ Get-AzStorageFileHandle -Context $ctx -ShareName profiles -Recursive |
     Where-Object Path -like "*labuser1*"
 ```
 
-That open handle on the VHDX is the lock. Every locked-profile war story
-comes down to a handle existing when it shouldn't, or permissions
-blocking a handle that should exist.
+That open handle on the VHDX is the lock. Locked-profile problems are
+either a handle that's still open when it shouldn't be, or permissions
+stopping FSLogix from opening one at all.
 
 ## The break/fix experiments
 
@@ -198,9 +199,9 @@ and the user lands on a temp profile. Anything saved there vanishes at
 sign-out, which I demonstrated to myself on purpose. Two patience
 lessons: RBAC changes can take 15-30 minutes to propagate, and cached
 Kerberos tickets mask permission changes in both directions, so it's
-`klist purge` and a fresh logon before trusting any result.
-Layer 1 gates everything below it. Correct NTFS ACLs cannot save you
-from wrong share-level rights.
+`klist purge` and a fresh logon before trusting any result. Share-level
+RBAC is evaluated before NTFS, so correct NTFS ACLs don't help while the
+share-level role is wrong.
 
 **2. Root ACL break (new user).** Removed CREATOR OWNER from the share
 root and dropped AVD-Users to Read, then treated labuser2 as a brand-new
@@ -215,13 +216,15 @@ else fine" ticket shape.
 
 **4. Fail closed instead of failing to temp.** Set
 PreventLoginWithTempProfile=1 and repeated the ACL break. Instead of a
-silent temp profile, the logon is blocked with an error dialog. That's
-the design tradeoff: temp profiles hide data-loss risk from users;
-prevent-login trades availability for safety.
+silent temp profile, the logon is blocked with an error dialog. That's the tradeoff between
+the two settings: a temp profile keeps the user working but hides the
+data-loss risk from them, while prevent-login stops the logon so nothing
+gets silently lost.
 
 <!-- screenshot: temp profile notification or blocked logon dialog -->
 
-**5. The stale locked VHDX.** The real-world classic. With labuser1
+**5. The stale locked VHDX.** This is the failure people actually hit
+in production. With labuser1
 active on avd-sh-01, I power-yanked the host (a portal Restart is a
 graceful shutdown and gives FSLogix time to detach cleanly, so it had to
 be `az vm stop --skip-shutdown`). Reconnected immediately, the broker
@@ -240,8 +243,8 @@ Close-AzStorageFileHandle -Context $ctx -ShareName profiles `
 
 Sign out, sign in, healthy attach.
 
-**6. Deterministic lock.** Handle expiry timing sometimes refuses to
-cooperate with experiment 5, so this is the on-demand version: from an
+**6. Deterministic lock.** Handle expiry timing made experiment 5
+inconsistent to reproduce, so this is the on-demand version: from an
 admin session on the other host, mount labuser1's VHDX directly with
 Mount-DiskImage, then have labuser1 try to sign in. Same 0x20, fully
 reproducible, great for watching the profile log live with

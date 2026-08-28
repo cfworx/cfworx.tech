@@ -20,7 +20,7 @@ DNS converts human-readable names into the IP addresses routing actually needs. 
 
 **Registration**
 
-- Binds a unique name to a resource. Uniqueness is enforced by regulation, not luck.
+- Binds a unique name to a resource; the registration system is what enforces uniqueness.
 - ICANN operates the internet's DNS. Actual registration is decentralized across authorized registries and registrars, each recording names and data into their slice of the distributed database.
 - Registration is what resolution later relies on: the records have to exist before anyone can look them up.
 

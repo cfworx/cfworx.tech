@@ -17,4 +17,4 @@ Two separate controls, one on each layer of gear. Follows [part 1](/notes/storag
 
 - Zoning gets a host to the array, but once there it could still see every LUN. A host connecting to the wrong LUN will happily corrupt it.
 - LUN masking locks each LUN to its authorized host or hosts.
-- The pairing to remember: zoning on the switches plus LUN masking on the array = a secured fabric. One without the other is half a lock.
+- The pairing to remember: zoning on the switches plus LUN masking on the array. Either one alone still leaves hosts or LUNs exposed.
