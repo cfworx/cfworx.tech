@@ -98,11 +98,11 @@ article a:has(> img) { cursor: zoom-in; }
   inset: 0;
   z-index: 100;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: auto;
   padding: 2rem;
   background: rgba(0, 0, 0, 0.93);
   cursor: zoom-out;
+  -webkit-overflow-scrolling: touch;
 }
 
 .lightbox-img {
@@ -111,7 +111,19 @@ article a:has(> img) { cursor: zoom-in; }
   width: auto;
   height: auto;
   border: none;
-  cursor: default;
+  margin: auto;
+  cursor: zoom-in;
+}
+
+/* Second tap/click: actual pixels, pan by scrolling the overlay. */
+.lightbox-img.zoomed {
+  max-width: none;
+  max-height: none;
+  cursor: zoom-out;
+}
+
+@media (max-width: 40rem) {
+  .lightbox { padding: 0.75rem; }
 }
 
 .lightbox-close {

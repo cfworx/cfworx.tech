@@ -1,7 +1,9 @@
 /* Lightbox for article images.
    Markdown wraps each image in a link to its own file; without JS that
    link still works. With JS, the click opens an overlay instead, closed
-   by the X button, a click on the backdrop, or Escape. */
+   by the X button, a click on the backdrop, or Escape. Tapping the
+   image toggles between fit-to-screen and actual size, with panning,
+   so wide screenshots stay readable on phones. */
 (function () {
   "use strict";
 
@@ -42,6 +44,13 @@
     close.addEventListener("click", destroy);
     overlay.addEventListener("click", function (e) {
       if (e.target !== img) destroy();
+    });
+    img.addEventListener("click", function () {
+      img.classList.toggle("zoomed");
+      if (!img.classList.contains("zoomed")) {
+        overlay.scrollTop = 0;
+        overlay.scrollLeft = 0;
+      }
     });
     document.addEventListener("keydown", onKey);
   }
