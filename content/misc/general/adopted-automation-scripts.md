@@ -24,7 +24,7 @@ the system file check. The things people were doing by hand now just
 Handing a .ps1 file to a busy tech is a good way to get it ignored,
 so I ran it through
 [ps2exe](https://github.com/MScholtes/PS2EXE) and made it an
-executable. Double-click, done.
+executable the other techs could just double-click.
 
 It didn't stay mine for long. Other techs picked it up, and eventually
 it was adopted across the organization, which multiplied one machine's

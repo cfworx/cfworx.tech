@@ -60,4 +60,3 @@ reference I can reach from anywhere. It may also double as a
 portfolio, proof of how serious I am about my craft.
 
 If you stumbled onto this site: how? You must be family, or a bot.
-Either way, maybe you'll find something useful here too.
