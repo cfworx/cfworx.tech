@@ -220,7 +220,8 @@ now running, at about 53 cents a day.
 
 One honest caveat: every checkmark in this post is a claim, not a
 result. Nothing has fetched a Kerberos ticket yet, because there is no
-Windows machine to fetch one from. Building those machines is part 3,
+Windows machine to fetch one from. Building those machines is
+[part 3](/homelab/virtual-desktops/avd-fslogix-part-3-session-hosts/),
 and the
 [break/fix experiments](/homelab/virtual-desktops/avd-fslogix-break-fix-lab/)
 that tear these two layers apart on purpose come after that.

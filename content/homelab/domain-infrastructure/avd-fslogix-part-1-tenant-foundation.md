@@ -243,7 +243,9 @@ assigned. On the Azure side labadmin owned the subscription, a budget
 was watching it, and rg-avd-lab held exactly one resource: vnet-lab,
 10.10.0.0/16 with snet-avd at 10.10.1.0/24. (Edit: so I believed. I
 configured that whole vnet and never clicked Create. The host pool
-wizard in part 3 found this resource group with no network in it, and
+wizard in
+[part 3](/homelab/virtual-desktops/avd-fslogix-part-3-session-hosts/)
+found this resource group with no network in it, and
 the private-subnet checkbox got a second shot at me there.) Still $0
 spent.
 

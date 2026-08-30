@@ -2,7 +2,7 @@
 title: "AVD + FSLogix part 3: the airgapped subnet I warned about got me anyway"
 date: 2026-08-30
 description: "Part 3 of the AVD lab: the host pool wizard, two session hosts that failed to register, the private-subnet setting that didn't stick, and the first logon."
-draft: true
+draft: false
 ---
 
 [Part 2](/homelab/domain-infrastructure/avd-fslogix-part-2-storage-kerberos-plumbing/)
