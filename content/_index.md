@@ -1,10 +1,10 @@
 ---
 title: Home
 ---
-Hi, I'm **Cory**. I'm an IT specialist. This site is my working notebook.
-Nothing here is polished for show. It's a searchable repo of my
-knowledge that I can access from anywhere with a network connection.
-It's also a great place to prove what I've learned and what I've built.
-If you found this webpage through my resume, I sincerely hope that you
-see the passion I have for IT and the value I could bring to your team.
-[More&nbsp;about&nbsp;me&nbsp;![a tiny pixel wizard casting a spell](/images/wizard.gif)](/about/)
+I'm Cory. I do IT support for a large federal organization, and this
+site is my working notebook: things I've fixed, built, and learned,
+written down so I can find them again from anywhere.
+
+- [Me](/about/)
+- [My rig](/homelab/desktop-engineering/fedora-i3-rtx-4070/)
+- [My home lab](/homelab/general/homelab-gear/)

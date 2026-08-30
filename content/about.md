@@ -3,73 +3,60 @@ title: About
 description: "About Cory, an IT specialist studying for the CCNA."
 ---
 
-Hi, I'm **Cory**. I do IT support for a large organization, about 3,000
-users spread across three states. Before that I spent six years in the
-Army. The long-term goal is to become an IT wizard.
-![a tiny pixel wizard casting a spell](/images/wizard.gif)
+Hi, I'm **Cory**. I do IT support for a large organization.
 
 ## What I do
 
-Day to day, I take support tickets from the first call all the way to
-fixed. Broken hardware, misbehaving software, network stuff, whatever
-comes in. I'm also the vulnerability management guy and audit liaison
-for my region, which means I track down and patch security holes across
-all our sites.
+IT support, all of it: hardware, software, network, security, and the
+peripherals nobody wants to touch (printers, phones). Tickets from
+first call to fixed. Four years, 5,000+ closed, 4.98/5 average
+ServiceNow customer feedback score.
 
-I came up through web development, and that still pays off. Some
-remediation and automation scripts I wrote ended up getting picked up
-throughout the organization. Things that used to eat hundreds of hours
-of somebody's time by hand now just run.
+Vulnerability management and audit liaison for a tri-state region.
 
-I also teach the IT portion of new employee orientation. Every incoming
-hire gets me for an hour walking them through our systems, ticketing,
-and security practices. It's good practice: standing in front of a room,
-taking questions I didn't prep for, and explaining technical things to
-people who don't care how the sausage is made.
+I write scripts, mostly PowerShell and Python these days. A few of my
+remediation and automation scripts got
+picked up across the organization and replaced hundreds of hours of
+hand work.
 
-Four years in, I've closed over 5,000 tickets with a 4.98/5 satisfaction
-rating.
+I teach the IT hour of new employee orientation: systems, ticketing,
+security. Good practice for explaining technical things to people who
+don't care how the sausage is made.
 
 ## Outside of work
 
-Honestly, IT is the hobby too. A good friend of mine is an actual IT
-wizard, and he's most of the reason I set that goal in the first place.
-My free time mostly goes to my homelab and to AI. I self-host
-autonomous agent frameworks, wire them into my network and messaging
-apps, and put them to work on scheduled jobs, monitoring, and research.
+IT is the hobby too. Most of my free time goes to my homelab and to
+AI: self-hosted agents that run my life and tell me what to do. Stuff
+like that.
 
-Family man first, and a recent homeowner, which means I've found a new
-thing to optimize: the lawn. I will have the best yard in the
-neighborhood. Yes, I'm that guy now.
+Family first. Recent homeowner, so the new thing to optimize is the
+lawn. I will have the best yard on the street. Yes, I'm that guy now.
 
-I'm also a gamer. Fourth Warcraft book in progress, way too many hours
-in MotorTown: Behind The Wheel on a triple-screen racing sim, and a
-growing pile of painted Warhammer minis for a game I still haven't
-learned to play.
+Gamer. Right now it's World of Warcraft: a human warrior on Mankrik,
+and the lore has its hooks in me too. Four books deep so far.
 
-Away from the screens it's coffee and sports: baseball, football,
-basketball, and the UFC.
+The rest is coffee and sports: baseball, football, basketball, UFC.
 
 ## Education
 
-- *Associate in Applied Science, Information Systems*, Spokane Falls
+- Associate in Applied Science, Information Systems, Spokane Falls
   Community College (69/75 credits complete)
 
 ## Certifications
 
-- *CompTIA Security+*
-- *CompTIA A+*
-- *Microsoft Azure Fundamentals (AZ-900)*
-- *Microsoft 365 Certified: Fundamentals (MS-900)*
-- *Microsoft Technology Associate: Networking (98-366)*
-- *Fortinet Network Security Expert (NSE) Level 2*
-- *ITIL v5*
-- *Implementing and Administering Cisco Solutions (CCNA) Course Certificate*
-- *DOD Mandatory Controlled Unclassified Information (CUI) Training*
+- CompTIA Security+
+- CompTIA A+
+- Microsoft Azure Fundamentals (AZ-900)
+- Microsoft 365 Certified: Fundamentals (MS-900)
+- Microsoft Technology Associate: Networking (98-366)
+- Fortinet Network Security Expert (NSE) Level 2
+- ITIL v5
+- Implementing and Administering Cisco Solutions (CCNA) course certificate
+- DoD Mandatory Controlled Unclassified Information (CUI) Training
 
 ## Currently studying
 
-- **CCNA** (Cisco Certified Network Associate). Notes as I go are in [Notes](/notes/networking/ccna/).
+- CCNA. My notes as I go are in [Notes](/notes/networking/ccna/).
 
 ## Elsewhere
 
@@ -77,5 +64,5 @@ basketball, and the UFC.
 
 ## Get in touch
 
-Email me at [p3@cfworx.tech](mailto:p3@cfworx.tech). I read and respond to
-every email.
+Email me at [p3@cfworx.tech](mailto:p3@cfworx.tech). I read and respond
+to every email.

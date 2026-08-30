@@ -19,7 +19,7 @@ disableKinds = ["taxonomy", "term"]
   # Adding a category later = create content/<slug>/_index.md, then add
   # the slug here. Nothing else to touch.
   sectionOrder = ["notes", "homelab", "tools", "misc"]
-  tagline     = "Cory's IT Repo"
+  tagline     = "Cory's IT World"
   description = "A public notebook of networking and IT knowledge: CCNA study notes, homelab experiments, and lessons learned on the job."
   author      = "Cory"
   email       = "p3@cfworx.tech"

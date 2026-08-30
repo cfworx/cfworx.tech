@@ -1,0 +1,28 @@
+{{- /* Fenced code blocks render as console windows. The language picks
+       the window: PowerShell gets the classic blue console, shells get
+       a dark terminal, everything else a neutral console. Highlighting
+       still comes from Chroma via the site config. */ -}}
+{{- $lang := .Type | default "text" -}}
+{{- $kind := "generic" -}}
+{{- $title := "console" -}}
+{{- if in (slice "powershell" "ps1" "pwsh") $lang -}}
+  {{- $kind = "powershell" -}}{{- $title = "Windows PowerShell" -}}
+{{- else if in (slice "bash" "sh" "zsh" "shell" "console") $lang -}}
+  {{- $kind = "bash" -}}{{- $title = $lang -}}
+{{- else if eq $lang "wow" -}}
+  {{- $kind = "wow" -}}{{- $title = "World of Warcraft" -}}
+{{- else if ne $lang "text" -}}
+  {{- $title = $lang -}}
+{{- end -}}
+<figure class="term term-{{ $kind }}">
+  <figcaption class="term-bar">
+    {{- if eq $kind "powershell" -}}
+    <span class="term-title">&gt;_ {{ $title }}</span><button class="term-copy" type="button" hidden>copy</button><span class="term-winbtns" aria-hidden="true">&#8210;&ensp;&#9723;&ensp;&#10005;</span>
+    {{- else if eq $kind "wow" -}}
+    <span class="term-title">&#9876; {{ $title }}</span><button class="term-copy" type="button" hidden>copy</button>
+    {{- else -}}
+    <span class="term-dots" aria-hidden="true"></span><span class="term-title">{{ $title }}</span><button class="term-copy" type="button" hidden>copy</button>
+    {{- end -}}
+  </figcaption>
+  {{ (transform.HighlightCodeBlock .).Wrapped }}
+</figure>

@@ -87,3 +87,77 @@
 /* chroma: GenericTraceback */ .chroma .gt { color: #a40000; font-weight: bold }
 /* chroma: GenericUnderline */ .chroma .gl { color: #000000; text-decoration: underline }
 /* chroma: TextWhitespace */ .chroma .w { color: #f8f8f8; text-decoration: underline }
+
+
+/* ---- dark theme: Monokai --------------------------------------------------
+   Classic Monokai token colors on the dark --box background. Same guard
+   logic as main.css: OS preference by default, data-theme wins. */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .chroma .x, :root:not([data-theme="light"]) .chroma .n, :root:not([data-theme="light"]) .chroma .nc, :root:not([data-theme="light"]) .chroma .no, :root:not([data-theme="light"]) .chroma .nv, :root:not([data-theme="light"]) .chroma .vc, :root:not([data-theme="light"]) .chroma .vg, :root:not([data-theme="light"]) .chroma .vi { color: #f8f8f2 }
+  :root:not([data-theme="light"]) .chroma .k, :root:not([data-theme="light"]) .chroma .kc, :root:not([data-theme="light"]) .chroma .kd, :root:not([data-theme="light"]) .chroma .kn, :root:not([data-theme="light"]) .chroma .kp, :root:not([data-theme="light"]) .chroma .kr, :root:not([data-theme="light"]) .chroma .o, :root:not([data-theme="light"]) .chroma .nt { color: #f92672 }
+  :root:not([data-theme="light"]) .chroma .kt, :root:not([data-theme="light"]) .chroma .nb, :root:not([data-theme="light"]) .chroma .bp { color: #66d9ef }
+  :root:not([data-theme="light"]) .chroma .s, :root:not([data-theme="light"]) .chroma .sa, :root:not([data-theme="light"]) .chroma .sb, :root:not([data-theme="light"]) .chroma .sc, :root:not([data-theme="light"]) .chroma .dl, :root:not([data-theme="light"]) .chroma .sd, :root:not([data-theme="light"]) .chroma .s2, :root:not([data-theme="light"]) .chroma .sh, :root:not([data-theme="light"]) .chroma .s1, :root:not([data-theme="light"]) .chroma .sx, :root:not([data-theme="light"]) .chroma .sr { color: #e6db74 }
+  :root:not([data-theme="light"]) .chroma .m, :root:not([data-theme="light"]) .chroma .mb, :root:not([data-theme="light"]) .chroma .mf, :root:not([data-theme="light"]) .chroma .mh, :root:not([data-theme="light"]) .chroma .mi, :root:not([data-theme="light"]) .chroma .il, :root:not([data-theme="light"]) .chroma .mo, :root:not([data-theme="light"]) .chroma .se, :root:not([data-theme="light"]) .chroma .si { color: #ae81ff }
+  :root:not([data-theme="light"]) .chroma .c, :root:not([data-theme="light"]) .chroma .ch, :root:not([data-theme="light"]) .chroma .cm, :root:not([data-theme="light"]) .chroma .c1, :root:not([data-theme="light"]) .chroma .cs, :root:not([data-theme="light"]) .chroma .cp, :root:not([data-theme="light"]) .chroma .cpf { color: #75715e }
+  :root:not([data-theme="light"]) .chroma .na, :root:not([data-theme="light"]) .chroma .nf, :root:not([data-theme="light"]) .chroma .nd, :root:not([data-theme="light"]) .chroma .ni, :root:not([data-theme="light"]) .chroma .ne, :root:not([data-theme="light"]) .chroma .gi { color: #a6e22e }
+  :root:not([data-theme="light"]) .chroma .err, :root:not([data-theme="light"]) .chroma .gd { color: #f92672 }
+  :root:not([data-theme="light"]) .chroma .hl { background-color: #3e3d32 }
+  :root:not([data-theme="light"]) .chroma .lnt,
+  :root:not([data-theme="light"]) .chroma .ln { color: #75715e }
+}
+
+:root[data-theme="dark"] .chroma .x, :root[data-theme="dark"] .chroma .n, :root[data-theme="dark"] .chroma .nc, :root[data-theme="dark"] .chroma .no, :root[data-theme="dark"] .chroma .nv, :root[data-theme="dark"] .chroma .vc, :root[data-theme="dark"] .chroma .vg, :root[data-theme="dark"] .chroma .vi { color: #f8f8f2 }
+:root[data-theme="dark"] .chroma .k, :root[data-theme="dark"] .chroma .kc, :root[data-theme="dark"] .chroma .kd, :root[data-theme="dark"] .chroma .kn, :root[data-theme="dark"] .chroma .kp, :root[data-theme="dark"] .chroma .kr, :root[data-theme="dark"] .chroma .o, :root[data-theme="dark"] .chroma .nt { color: #f92672 }
+:root[data-theme="dark"] .chroma .kt, :root[data-theme="dark"] .chroma .nb, :root[data-theme="dark"] .chroma .bp { color: #66d9ef }
+:root[data-theme="dark"] .chroma .s, :root[data-theme="dark"] .chroma .sa, :root[data-theme="dark"] .chroma .sb, :root[data-theme="dark"] .chroma .sc, :root[data-theme="dark"] .chroma .dl, :root[data-theme="dark"] .chroma .sd, :root[data-theme="dark"] .chroma .s2, :root[data-theme="dark"] .chroma .sh, :root[data-theme="dark"] .chroma .s1, :root[data-theme="dark"] .chroma .sx, :root[data-theme="dark"] .chroma .sr { color: #e6db74 }
+:root[data-theme="dark"] .chroma .m, :root[data-theme="dark"] .chroma .mb, :root[data-theme="dark"] .chroma .mf, :root[data-theme="dark"] .chroma .mh, :root[data-theme="dark"] .chroma .mi, :root[data-theme="dark"] .chroma .il, :root[data-theme="dark"] .chroma .mo, :root[data-theme="dark"] .chroma .se, :root[data-theme="dark"] .chroma .si { color: #ae81ff }
+:root[data-theme="dark"] .chroma .c, :root[data-theme="dark"] .chroma .ch, :root[data-theme="dark"] .chroma .cm, :root[data-theme="dark"] .chroma .c1, :root[data-theme="dark"] .chroma .cs, :root[data-theme="dark"] .chroma .cp, :root[data-theme="dark"] .chroma .cpf { color: #75715e }
+:root[data-theme="dark"] .chroma .na, :root[data-theme="dark"] .chroma .nf, :root[data-theme="dark"] .chroma .nd, :root[data-theme="dark"] .chroma .ni, :root[data-theme="dark"] .chroma .ne, :root[data-theme="dark"] .chroma .gi { color: #a6e22e }
+:root[data-theme="dark"] .chroma .err, :root[data-theme="dark"] .chroma .gd { color: #f92672 }
+:root[data-theme="dark"] .chroma .hl { background-color: #3e3d32 }
+:root[data-theme="dark"] .chroma .lnt,
+:root[data-theme="dark"] .chroma .ln { color: #75715e }
+
+/* ---- console windows: token colors ----------------------------------------
+   Blocks wrapped by the render-codeblock hook keep these colors in BOTH
+   themes (the console interior is always dark). The :root prefix plus
+   the figure element outweigh the dark-mode Monokai rules above. */
+
+/* bash / shells: Dracula-ish terminal */
+:root figure.term-bash .chroma { color: #e6e6e6 }
+:root figure.term-bash .chroma .k, :root figure.term-bash .chroma .kr,
+:root figure.term-bash .chroma .nb, :root figure.term-bash .chroma .nf,
+:root figure.term-bash .chroma .nt { color: #50fa7b }
+:root figure.term-bash .chroma .s, :root figure.term-bash .chroma .s1,
+:root figure.term-bash .chroma .s2, :root figure.term-bash .chroma .sb,
+:root figure.term-bash .chroma .dl { color: #f1fa8c }
+:root figure.term-bash .chroma .nv, :root figure.term-bash .chroma .si { color: #8be9fd }
+:root figure.term-bash .chroma .m, :root figure.term-bash .chroma .mi { color: #bd93f9 }
+:root figure.term-bash .chroma .c, :root figure.term-bash .chroma .c1,
+:root figure.term-bash .chroma .cm { color: #8a8a8a }
+:root figure.term-bash .chroma .gp { color: #50fa7b }
+
+/* generic console: plain light-on-dark */
+:root figure.term-generic .chroma { color: #e2e0e7 }
+:root figure.term-generic .chroma .err { color: #e2e0e7 }
+
+/* PowerShell: PSReadLine-flavored colors on the blue console */
+:root figure.term-powershell .chroma { color: #eeedf0 }
+:root figure.term-powershell .chroma .nb, :root figure.term-powershell .chroma .nf,
+:root figure.term-powershell .chroma .k, :root figure.term-powershell .chroma .kr { color: #ffe100 }
+:root figure.term-powershell .chroma .nv, :root figure.term-powershell .chroma .vg { color: #6fdb6f }
+:root figure.term-powershell .chroma .s, :root figure.term-powershell .chroma .s1,
+:root figure.term-powershell .chroma .s2, :root figure.term-powershell .chroma .sb,
+:root figure.term-powershell .chroma .dl { color: #59d3e6 }
+:root figure.term-powershell .chroma .n, :root figure.term-powershell .chroma .na,
+:root figure.term-powershell .chroma .o, :root figure.term-powershell .chroma .p { color: #c8c8c8 }
+:root figure.term-powershell .chroma .m, :root figure.term-powershell .chroma .mi { color: #b5cea8 }
+:root figure.term-powershell .chroma .c, :root figure.term-powershell .chroma .c1,
+:root figure.term-powershell .chroma .cm { color: #4fa34f }
+:root figure.term-powershell .chroma .err { color: #eeedf0 }
+
+/* WoW console: everything is system-message gold */
+:root figure.term-wow .chroma, :root figure.term-wow .chroma .err,
+:root figure.term-wow .chroma .k, :root figure.term-wow .chroma .n,
+:root figure.term-wow .chroma .m, :root figure.term-wow .chroma .mi { color: #ffd100 }

@@ -1,38 +1,63 @@
 ---
-title: "My CCNA study plan"
+title: "100 days to pass the CCNA"
 date: 2026-07-30T10:00:00-07:00
-description: "My study plan for the CCNA certification"
+description: "A 6 a.m. phone call put me in a week-long CCNA class. The exam is November 2, and this is the study plan."
 draft: false
 aliases: ["/certs/general/ccna-plan/", "/certs/ccna/general/ccna-plan/", "/notes/ccna/general/ccna-plan/"]
 ---
 
-I didn’t plan on taking the CCNA this soon. I always wanted to take the CCNA, eventually. The original plan was to take the Network+ first so that I have a solid foundation before jumping into a very difficult networking certification like the CCNA. Unfortunately, the universe had other plans for me. So, in the middle of my Network+ studies, my boss’s boss called me at 6 a.m. on a Monday morning to tell me that the CCNA class had a drop and asked if I wanted to take the seat. I agreed; what else was I supposed to say?
+My boss's boss called me at 6 a.m. on a Monday. The CCNA class had a
+drop, and did I want the seat?
 
-Less than 30 minutes later, I was sitting in a week-long CCNA class with about 10 other people from my organization. Up until about day 3, I was doing great because I have studied for the Network+ several times, just never really taken the exam. I also have a couple of other networking certifications. I would say my networking knowledge was somewhere around the Network+ level. Anyway, I was cruising no problem until about day 3… then we went DEEP. The final two days of the class were kind of a blur, understanding some concepts and being pretty lost on others.
+What else was I supposed to say? I said yes, and less than 30 minutes
+later I was sitting in a week-long CCNA class with about 10 other
+people from my organization.
 
-So, I have some studying to do. Here is the plan: my exam is scheduled for November 2nd, around 100 days from when I took the course. The pace will have to be intense. No way around it; there is a set window in which I have to take the exam.
+The CCNA was always the plan, just not *this soon*. The original order
+was Network+ first, so I'd have a solid foundation before jumping into
+a much harder networking cert. The universe had other plans, and it
+called before breakfast.
 
-## Resources I will be using
+## How the class went
+
+For the first two days I was cruising. I've studied for the Network+
+several times without ever sitting the exam, and I have a couple of
+other networking certifications, so call my starting point roughly
+Network+ level.
+
+Around day 3 we went *deep*. The final two days were kind of a blur:
+some concepts landed, others I was pretty lost on.
+
+So, I have some studying to do.
+
+## The plan
+
+The exam is scheduled for November 2, around 100 days out from the
+course. There's a set window I have to test inside, so the pace is
+going to be intense. No way around it.
+
+The resources:
+
 - Network Chuck Summer of CCNA Premium
 - Cisco University
 - Jeremy's IT Lab
-- Neil Anderson's CCNA Udemy Course
+- Neil Anderson's CCNA Udemy course
 - Cisco Official Cert Guide 200-301
 
-## Schedule
+The schedule:
 
-| Weekday | Study Type | Time
-|---------|--------------|--------------|
-| M-F| General  | 0430-0630
-| M-F | General  | 1500-1600
-| M-F | Reading | 2000-2100
-| Saturday | Rest | NA
-| Sunday | General/Lab | 0430-0930
+- **Weekdays**: 0430-0630 study, another hour at 1500, then reading
+  2000-2100
+- **Saturday**: rest
+- **Sunday**: 0430-0930, study and lab time
 
-This is the initial plan; it is subject to change.
+This is the initial plan, and it's subject to change.
 
-As I study, I will be posting the concepts that I learn on this site. The intention is that this site will be a reference for me, notes I can access anywhere. But it may also double as a portfolio: proof of how serious I am about my craft. 
+## What this site is for
 
-If you stumbled upon this site, how? You must be my friend, family, or a bot. Either way, maybe you will find something on this site useful as well.
+As I study, I'll post the concepts I learn here. The intention is a
+reference I can reach from anywhere. It may also double as a
+portfolio, proof of how serious I am about my craft.
 
-Until next time!
+If you stumbled onto this site: how? You must be family, or a bot.
+Either way, maybe you'll find something useful here too.

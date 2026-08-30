@@ -26,9 +26,59 @@
   --ok:           #1e6f33;   /* quiz "correct" green, 5.9:1 on --bg */
   --bad:          #a4262c;   /* quiz "wrong" red, 6.9:1 on --bg */
 
+  --sel:          #cfe0f5;   /* text selection */
+  --mark:         #f5e6a8;   /* search-snippet highlight */
+  --mark-ink:     #22201b;   /* text on the highlight */
+  --field:        #ffffff;   /* input backgrounds */
+
   --serif: Georgia, 'Times New Roman', Times, serif;
-  --sans:  Verdana, Geneva, Tahoma, 'DejaVu Sans', sans-serif;
-  --mono:  Consolas, 'Cascadia Mono', Menlo, 'DejaVu Sans Mono', monospace;
+  --sans:  Helvetica, Arial, sans-serif;
+  --mono:  ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+           'Liberation Mono', 'Courier New', monospace;
+}
+
+/* Dark palette. With no stored choice the OS preference decides
+   (prefers-color-scheme); the toggle stores data-theme on <html>,
+   which wins in both directions. */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+  --bg:           #272822;   /* Monokai editor background */
+  --ink:          #f8f8f2;   /* Monokai foreground */
+  --muted:        #a59f85;   /* Monokai gray */
+  --link:         #66d9ef;   /* Monokai cyan */
+  --link-hover:   #a1e7f5;
+  --link-visited: #ae81ff;   /* Monokai purple */
+  --rule:         #49483e;   /* Monokai selection gray */
+  --box:          #1d1e19;   /* a step darker than the page */
+  --box-border:   #49483e;
+  --enet:         #66d9ef;
+  --ok:           #a6e22e;   /* Monokai green */
+  --bad:          #f92672;   /* Monokai pink */
+  --sel:          #49483e;
+  --mark:         #e6db74;   /* Monokai yellow */
+  --mark-ink:     #272822;
+  --field:        #1d1e19;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg:           #272822;   /* Monokai editor background */
+  --ink:          #f8f8f2;   /* Monokai foreground */
+  --muted:        #a59f85;   /* Monokai gray */
+  --link:         #66d9ef;   /* Monokai cyan */
+  --link-hover:   #a1e7f5;
+  --link-visited: #ae81ff;   /* Monokai purple */
+  --rule:         #49483e;   /* Monokai selection gray */
+  --box:          #1d1e19;   /* a step darker than the page */
+  --box-border:   #49483e;
+  --enet:         #66d9ef;
+  --ok:           #a6e22e;   /* Monokai green */
+  --bad:          #f92672;   /* Monokai pink */
+  --sel:          #49483e;
+  --mark:         #e6db74;   /* Monokai yellow */
+  --mark-ink:     #272822;
+  --field:        #1d1e19;
 }
 
 /* ---- base ------------------------------------------------------------- */
@@ -37,6 +87,9 @@
 
 html {
   background: var(--bg);
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -46,18 +99,35 @@ body {
   padding: 0 1.05rem;
   background: var(--bg);
   color: var(--ink);
-  font-family: var(--serif);
-  font-size: 1.0625rem;
-  line-height: 1.7;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, h5, h6 {
   font-family: var(--sans);
   line-height: 1.35;
   overflow-wrap: break-word;
+  margin-top: 1.3em;
 }
 
-p { margin: 0.95em 0; }
+h1 { font-size: 1.9rem; }   /* ~32px */
+
+h2 {
+  font-size: 1.6rem;        /* ~27px */
+  font-weight: normal;
+}
+
+h3, h4, h5, h6 {
+  font-size: 1.4rem;        /* ~24px */
+  font-weight: normal;
+}
+
+p {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  margin-block: 1em;
+}
+
+figcaption p { font-style: italic; }
 
 a { color: var(--link); text-decoration: underline; text-underline-offset: 2px; }
 a:visited { color: var(--link-visited); }
@@ -69,7 +139,7 @@ a:hover { color: var(--link-hover); }
   border-radius: 1px;
 }
 
-::selection { background: #cfe0f5; }
+::selection { background: var(--sel); }
 
 :target { scroll-margin-top: 1.5rem; }
 
@@ -145,6 +215,7 @@ body.lightbox-open { overflow: hidden; }
 
 ul, ol { padding-left: 1.4em; }
 li { margin: 0.25em 0; }
+article li { margin-bottom: 0.5em; }
 
 hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 
@@ -201,6 +272,40 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
   border-bottom: 2px solid var(--enet);
 }
 
+.theme-toggle {
+  vertical-align: middle;
+  margin-left: 0.9rem;
+  padding: 0.3em 0.45em;
+  line-height: 0;
+  color: var(--ink);
+  background: var(--box);
+  border: 1px solid var(--box-border);
+  border-radius: 4px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+}
+.theme-toggle:hover { color: var(--enet); border-color: var(--enet); }
+.theme-toggle:active { box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.25); }
+.theme-toggle .icon-sun { display: none; }
+
+/* Dark mode: the button sits pressed in, moon swaps to sun. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle {
+    background: #1d1e19;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.65);
+  }
+  :root:not([data-theme="light"]) .theme-toggle svg { transform: translateY(1px); }
+  :root:not([data-theme="light"]) .theme-toggle .icon-moon { display: none; }
+  :root:not([data-theme="light"]) .theme-toggle .icon-sun { display: inline; }
+}
+:root[data-theme="dark"] .theme-toggle {
+  background: #1d1e19;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.65);
+}
+:root[data-theme="dark"] .theme-toggle svg { transform: translateY(1px); }
+:root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+:root[data-theme="dark"] .theme-toggle .icon-sun { display: inline; }
+
 .tagline {
   grid-column: 1;
   grid-row: 2;
@@ -244,6 +349,34 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 
 .intro { margin-top: 1.6rem; }
 .intro p { margin: 0.6em 0; }
+
+/* Quick links under the intro: each one gets a short patch cord plugged
+   into it, reusing the RJ45 from the post headings. */
+.intro ul {
+  list-style: none;
+  padding: 0;
+  margin: 1.1rem 0 0;
+  font: 0.95rem var(--sans);
+}
+.intro ul li {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.3em 0;
+  margin: 0;
+}
+.intro ul li::before {
+  content: "";
+  flex: none;
+  width: 44px;
+  height: 14px;
+  background-image:
+    url('/images/rj45-plug.svg'),
+    linear-gradient(#0057b8, #0057b8);
+  background-repeat: no-repeat;
+  background-size: 28px 14px, 18px 4px;
+  background-position: right center, left center;
+}
 
 .post-block h2,
 .search-section,
@@ -360,7 +493,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
   max-width: 24rem;
   font: 0.9rem var(--sans);
   color: var(--ink);
-  background: #fff;
+  background: var(--field);
   border: 1px solid var(--box-border);
   border-radius: 3px;
   padding: 0.5em 0.7em;
@@ -385,8 +518,8 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
   color: var(--muted);
 }
 .search-snippets .snippet mark {
-  background: #f5e6a8;
-  color: var(--ink);
+  background: var(--mark);
+  color: var(--mark-ink);
   padding: 0 0.08em;
 }
 
@@ -419,7 +552,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 /* ---- articles ------------------------------------------------------------ */
 
 .post-header h1 {
-  font-size: 1.45rem;
+  font-size: 1.9rem;
   margin: 1.9rem 0 0.35rem;
 }
 
@@ -432,14 +565,49 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 .post-meta a:visited { color: var(--muted); }
 .post-meta a:hover { color: var(--link-hover); }
 
-article h2 { font-size: 1.02rem; margin: 2rem 0 0.5rem; }
-article h3 { font-size: 0.92rem; margin: 1.7rem 0 0.4rem; }
+article h2 { margin: 1.3em 0 0.5rem; }
+article h3 { margin: 1.3em 0 0.4rem; }
+
+/* A short blue patch cable under each post heading, ending in an RJ45
+   plug (a real SVG: clear body, gold pins, latch tab, and the blue
+   cable showing through the plastic). Standard patch-cable blue
+   (#0057b8) in both themes, because cables don't change color in the
+   dark. */
+article h2,
+article h3 {
+  width: fit-content;   /* so the cable below runs the length of the text */
+}
+
+article h2::after,
+article h3::after {
+  content: "";
+  display: block;
+  width: 100%;
+  min-width: 4.5rem;    /* room for the plug even under a short heading */
+  height: 14px;
+  margin-top: 0.35rem;
+  background-image:
+    url('/images/rj45-plug.svg'),
+    linear-gradient(#0057b8, #0057b8);
+  background-repeat: no-repeat;
+  background-size: 28px 14px, calc(100% - 20px) 4px;
+  background-position: right center, left center;
+}
+
+article h3::after {
+  height: 12px;
+  background-size: 24px 12px, calc(100% - 17px) 3px;
+}
+
+@media print {
+  article h2::after, article h3::after { display: none; }
+}
 
 blockquote {
   margin: 1.1em 0;
-  padding: 0.1em 0 0.1em 1rem;
-  border-left: 3px solid var(--enet);
-  color: #4a463c;
+  padding-left: 1em;
+  border-left: 4px solid #ccc;
+  font-style: italic;
 }
 blockquote p { margin: 0.5em 0; }
 
@@ -451,12 +619,12 @@ pre {
   border-radius: 3px;
   padding: 0.8rem 1rem;
   overflow-x: auto;
-  font: 0.82rem/1.55 var(--mono);
+  font: 0.9rem/1.55 var(--mono);
   margin: 1.1em 0;
 }
 code {
   font-family: var(--mono);
-  font-size: 0.85em;
+  font-size: 0.9rem;
   background: var(--box);
   border: 1px solid var(--box-border);
   border-radius: 2px;
@@ -470,6 +638,96 @@ pre code {
 }
 .highlight { margin: 1.1em 0; }
 .highlight pre { margin: 0; }
+
+/* ---- console windows (render-codeblock hook) ---------------------------
+   Fenced code blocks render inside a window frame whose look follows
+   the language. The console interiors stay dark in BOTH site themes
+   (a terminal is dark either way); only the frame adapts. */
+
+.term {
+  margin: 1.1em 0;
+  border: 1px solid var(--box-border);
+  border-radius: 7px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+}
+.term .highlight { margin: 0; }
+.term pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+.term-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.45em 0.85em;
+  font: 700 0.72rem var(--sans);
+  -webkit-user-select: none;
+  user-select: none;
+}
+.term-title { letter-spacing: 0.04em; }
+
+/* macOS-style traffic lights for shell / generic consoles */
+.term-dots {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff5f57;
+  box-shadow: 17px 0 0 #febc2e, 34px 0 0 #28c840;
+  margin-right: 38px;   /* the shadows extend 34px past the span */
+}
+
+/* Text selection inside the dark consoles: translucent white, so the
+   token colors stay readable while selected. */
+.term pre ::selection,
+.term pre::selection { background: rgba(255, 255, 255, 0.25); }
+
+.term-copy {
+  margin-left: auto;
+  font: 700 0.68rem var(--sans);
+  letter-spacing: 0.05em;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 3px;
+  padding: 0.15em 0.6em;
+  cursor: pointer;
+  opacity: 0.85;
+}
+.term-copy:hover { opacity: 1; background: rgba(255, 255, 255, 0.16); }
+.term-copy:disabled { cursor: default; }
+.term-powershell .term-copy { margin-right: 0.9em; }
+
+/* bash / shells: dark terminal */
+.term-bash .term-bar { background: #2e2e2e; color: #c9c9c9; }
+.term-bash pre { background: #1b1b1b; color: #e6e6e6; }
+
+/* generic console (plain text output, registry dumps, error text) */
+.term-generic .term-bar { background: #34333c; color: #c9c9c9; }
+.term-generic pre { background: #211f26; color: #e2e0e7; }
+
+/* World of Warcraft: gold-trimmed console, system-message gold text */
+.term-wow {
+  border: 2px solid #a17d2a;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2), inset 0 0 0 1px #5c4415;
+}
+.term-wow .term-bar {
+  background: linear-gradient(#4a3413, #241a08);
+  color: #ffd100;
+}
+.term-wow pre { background: #120d08; color: #ffd100; }
+
+/* PowerShell: the classic blue console */
+.term-powershell .term-bar { background: #0a3069; color: #ffffff; }
+.term-powershell .term-winbtns {
+  margin-left: auto;
+  font-weight: 400;
+  opacity: 0.85;
+}
+.term-powershell pre { background: #012456; color: #eeedf0; }
 
 /* tables */
 
@@ -543,7 +801,7 @@ td {
   max-width: 24rem;
   font: 0.95rem var(--mono);
   color: var(--ink);
-  background: #fff;
+  background: var(--field);
   border: 1px solid var(--box-border);
   border-radius: 3px;
   padding: 0.5em 0.7em;

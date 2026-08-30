@@ -9,7 +9,7 @@ draft: false
 My running plan for the homelab, in the order I'm working them. Each lab
 gets a writeup when it's done.
 
-## Phase 1: Domain Infrastructure
+## Phase 1: domain infrastructure
 
 - Windows Server VM: build the AD domain with DC, DNS, DHCP
 - Second DC: replication and FSMO roles
@@ -17,28 +17,28 @@ gets a writeup when it's done.
 - Group Policy: drive mappings, password policy, USB restrictions, folder redirection, kiosk lockdown GPO
 - Certificate Services (internal PKI), join a Linux box to the domain
 
-## Phase 2: Desktop Engineering
+## Phase 2: desktop engineering
 
 - Windows 11 imaging: reference image, deploy with MDT, then Autopilot with Intune
 - Intune: enrollment, Win32 app packaging and deployment, compliance policies, BitLocker
 - Package an app as .intunewin or MSI transform and deploy it silently
 - PowerShell remediation scripts through Intune Proactive Remediations
 
-## Phase 3: Virtual Desktops & Applications
+## Phase 3: virtual desktops and applications
 
 - Hypervisor: Proxmox or Hyper-V
 - Azure Virtual Desktop: host pool, FSLogix profile containers, RemoteApp publishing, session host scaling
 - On-prem RDS: Connection Broker, Session Host, RemoteApp publishing
 - Full desktop vs. published app writeup
 
-## Phase 4: Storage
+## Phase 4: storage
 
 - TrueNAS or Storage Spaces: build the pools, pull a disk, rebuild
 - iSCSI LUNs to the hypervisor, run VMs from network storage
 - SMB shares with AD permissions, quotas, shadow copies
 - Veeam backups and a restore test
 
-## Phase 5: Networking
+## Phase 5: networking
 
 - VLANs: management, servers, clients, IoT, guest. Inter-VLAN routing with an L3 switch or router-on-a-stick
 - Firewall rules between VLANs with pfSense or OPNsense, plus a site-to-site or client VPN

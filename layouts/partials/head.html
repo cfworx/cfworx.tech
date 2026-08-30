@@ -35,6 +35,12 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 {{- /* Guarded with `with`/`if` so a build never dies if an asset file is
        momentarily missing (e.g. mid-sync in OneDrive). */ -}}
+{{- /* Theme picker runs before the stylesheet so the dark/light
+       attribute is set before first paint. */ -}}
+{{- with resources.Get "js/theme.js" }}
+{{- $js := . | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
+{{- end }}
 {{- $main := resources.Get "css/main.css" }}
 {{- $chroma := resources.Get "css/chroma.css" }}
 {{- if and $main $chroma }}
@@ -49,6 +55,10 @@
 {{- end }}
 {{- if .IsPage }}
 {{- with resources.Get "js/lightbox.js" }}
+{{- $js := . | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- end }}
+{{- with resources.Get "js/codecopy.js" }}
 {{- $js := . | fingerprint }}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
 {{- end }}

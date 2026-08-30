@@ -6,58 +6,75 @@ draft: false
 aliases: ["/certs/ccna/osi-tcpip-encapsulation/", "/certs/ccna/cisco-u/osi-tcpip-encapsulation/", "/notes/ccna/cisco-u/osi-tcpip-encapsulation/"]
 ---
 
-## Background
+## Where the models came from
 
-- ISO created the OSI model as a vendor-neutral framework
-- TCP/IP was already deployed, became the de facto standard: OSI survives as the reference/teaching model
-- Why layered models: manage complexity, specify requirements, modular engineering, contain changes, encourage development, easier to teach/learn
+ISO created the OSI model as a vendor-neutral framework. TCP/IP was
+already deployed and became the de facto standard, so OSI survives as
+the reference and teaching model.
+
+Why layered models at all: they manage complexity, specify
+requirements, keep engineering modular, contain changes, encourage
+development, and make the whole thing easier to teach and learn.
 
 ## Host-to-host basics
 
-Source → transmission media → destination. Every message carries SRC and DST addresses (envelope analogy).
+Source, transmission media, destination. Every message carries source
+and destination addresses (the envelope analogy).
 
 ## OSI layers
 
-Lower layers (1-4) move the data. Upper layers (5-7) deal with the content and its presentation.
+Lower layers (1-4) move the data. Upper layers (5-7) deal with the
+content and its presentation.
 
-| # | Layer | Job | Remember |
-|---|-------|-----|----------|
-| 7 | Application | Network services to apps | Closest to user. Browser *uses* L7 protocols, doesn't live there. Only layer that serves no other layer. |
-| 6 | Presentation | Data representation | Common format both ends can read. Compression + encryption (can also happen lower). |
-| 5 | Session | Interhost communication | Opens/manages/ends sessions (dialogs). Direction, checkpoints, recovery. Explicit in RPC apps. |
-| 4 | Transport | End-to-end connections | Segmentation/reassembly, flow control, reliable or unreliable. **Logical ports**: local to the host. |
-| 3 | Network | Data delivery | Path selection source → final destination. Logical addressing = **IP addresses**. |
-| 2 | Data Link | Access to media | Framing, media access, error detection. NIC-to-NIC on same subnet. **MAC addresses**. |
-| 1 | Physical | Binary transmission | Encoding, voltages, timing, rates, distances, connectors. Only hardware-only layer. |
+- **7 Application**, network services to apps: closest to the user.
+  The browser *uses* L7 protocols, it doesn't live there. The only
+  layer that serves no other layer.
+- **6 Presentation**, data representation: a common format both ends
+  can read. Compression and encryption (which can also happen lower).
+- **5 Session**, interhost communication: opens, manages, and ends
+  sessions (dialogs). Direction, checkpoints, recovery. Explicit in
+  RPC apps.
+- **4 Transport**, end-to-end connections: segmentation and
+  reassembly, flow control, reliable or unreliable delivery. Logical
+  *ports*, local to the host.
+- **3 Network**, data delivery: path selection from source to final
+  destination. Logical addressing, meaning *IP addresses*.
+- **2 Data Link**, access to media: framing, media access, error
+  detection. NIC-to-NIC on the same subnet. *MAC addresses*.
+- **1 Physical**, binary transmission: encoding, voltages, timing,
+  rates, distances, connectors. The only hardware-only layer.
 
-Reliable vs. unreliable (L4): file transfer needs reliable; video stream can drop a pixel unnoticed.
+Reliable vs. unreliable at L4: a file transfer needs reliable; a
+video stream can drop a pixel unnoticed.
 
 ## TCP/IP stack
 
-| Layer | Job | OSI |
-|-------|-----|-----|
-| Application | Represents data to users, encoding, dialog control | 5-7 |
-| Transport | End-device to end-device communication | 4 |
-| Internet | Logical addressing, best path | 3 |
-| Link | Hardware and media | 1-2 |
+- **Application** (OSI 5-7): represents data to users, encoding,
+  dialog control.
+- **Transport** (OSI 4): end-device to end-device communication.
+- **Internet** (OSI 3): logical addressing, best path.
+- **Link** (OSI 1-2): hardware and media.
 
-## Encapsulation + PDUs
+## Encapsulation and PDUs
 
-- Down the stack (sender) = **encapsulation**: each layer adds its header; link layer adds trailer (FCS)
-- Up the stack (receiver) = **de-encapsulation**: strip header, hand payload up
-- Each layer talks logically to its peer layer on the other host
-- L5-7 content = the payload
+Down the stack on the sender is *encapsulation*: each layer adds its
+header, and the link layer adds a trailer (FCS). Up the stack on the
+receiver is *de-encapsulation*: strip the header, hand the payload
+up.
 
-| Layer | PDU |
-|-------|-----|
-| Application | Data |
-| Transport | Segment |
-| Internet / Network | Packet |
-| Link / Data Link | Frame |
-| Physical | Bits |
+Each layer talks logically to its peer layer on the other host. The
+L5-7 content is the payload.
+
+The PDU names by layer:
+
+- Application: data
+- Transport: segment
+- Internet / Network: packet
+- Link / Data Link: frame
+- Physical: bits
 
 ## Quick recall
 
-- L2 = MAC, L3 = IP, L4 = ports
-- Down = encapsulate, up = de-encapsulate
-- Data → segment → packet → frame → bits
+- L2 = MAC, L3 = IP, L4 = ports.
+- Down = encapsulate, up = de-encapsulate.
+- Data → segment → packet → frame → bits.
