@@ -89,8 +89,6 @@ I still read it twice before I was sure I could ignore it.
 
 ## Enabling Entra Kerberos, and the two fields that stay empty
 
-[![Identity-based access on the classic file share: on-prem AD DS, Entra Domain Services, and Entra Kerberos, all before setup](/homelab/images/part2-identity-access.png)](/homelab/images/part2-identity-access.png)
-
 Identity-based access on the share offers three identity sources:
 on-prem AD DS, Microsoft Entra Domain Services, and Microsoft Entra
 Kerberos. Setup under the third one is a single checkbox, and below it
@@ -114,8 +112,6 @@ Errand one was admin consent. The app requests three Microsoft Graph
 delegated permissions (openid, profile, and User.Read), and an admin has
 to approve them once for the tenant. One button, Grant admin consent
 for Default Directory, three green checkmarks.
-
-[![The storage app's API permissions after admin consent: openid, profile, and User.Read all granted for Default Directory](/homelab/images/part2-api-permissions.png)](/homelab/images/part2-api-permissions.png)
 
 Errand two is the one the whole cloud-only scenario depends on, and
 it's a single string in a JSON file. The app's manifest has a tags
@@ -175,20 +171,62 @@ coexist with Entra Kerberos has to live in a policy *you own*, because
 the managed ones can't be exclusion-edited. Part 1 now has a
 correction pointing here.
 
+The policy list after the switch, with both managed MFA policies Off
+and MFA-labadmin doing the work:
+
+[![Conditional Access policies: the managed admins and all-users MFA policies both Off, MFA-labadmin On](/homelab/images/part2-ca-admins-off.png)](/homelab/images/part2-ca-admins-off.png)
+
+## Layer 1: share-level RBAC
+
+With the identity plumbing settled, the two permission layers from the
+plan went down the same day.
+
+Layer 1 is Azure RBAC on the profiles share itself. The Add role
+assignment blade offers four SMB data roles:
+
+[![The four Storage File Data SMB roles in the Add role assignment blade, with Elevated Contributor highlighted](/homelab/images/part2-smb-share-roles.png)](/homelab/images/part2-smb-share-roles.png)
+
+The difference that matters is in the descriptions. Contributor gets
+read, write, and delete over SMB. Elevated Contributor adds the right
+to *modify NTFS permissions*, which is exactly what an admin laying
+down ACL baselines needs and exactly what ordinary users shouldn't
+have.
+
+So: Storage File Data SMB Share Contributor for AVD-Users, Elevated
+Contributor for labadmin, both scoped to this share only. The result:
+
+[![Role assignments on the profiles share: AVD-Users as SMB Share Contributor, labadmin as Elevated Contributor, both scoped to this resource](/homelab/images/part2-share-rbac-assignments.png)](/homelab/images/part2-share-rbac-assignments.png)
+
+## Layer 2: the ACL baseline
+
+Layer 2 is the Windows ACL baseline on the share root, set through the
+share's Manage access blade. Three entries:
+
+[![The FSLogix ACL baseline on the share root: CREATOR OWNER on subfolders and files only, AVD-Users on this folder only, labadmin with full control everywhere](/homelab/images/part2-acl-baseline.png)](/homelab/images/part2-acl-baseline.png)
+
+- **CREATOR OWNER**, Modify, subfolders and files only: whoever creates
+  a profile folder owns what's inside it.
+- **AVD-Users**, Modify, this folder only: users can create their
+  profile folder at the root but can't reach into anyone else's.
+- **labadmin**, Full control, everywhere: someone has to clean up.
+
+That combination is the whole FSLogix trick: every user can make their
+own container, and nobody can touch a container that isn't theirs.
+
 ## Conclusion
 
 Done: the storage account, the profiles share, Entra Kerberos enabled,
-admin consent granted, the cloud-group-SIDs tag in the manifest, and
-the storage app excluded from MFA-labadmin. The first resource in the
-lab that actually costs money is now running, at about 53 cents a day.
+admin consent granted, the cloud-group-SIDs tag in the manifest, the
+storage app excluded from MFA-labadmin, and both permission layers on
+the share. The first resource in the lab that actually costs money is
+now running, at about 53 cents a day.
 
-Still open, in order: switch the managed admins MFA policy Off, assign
-the share-level RBAC that forms permission layer 1 (Storage File Data
-SMB Share Contributor for AVD-Users, Elevated Contributor for
-labadmin), and then mount the share and lay down the Windows ACL
-baseline that forms layer 2. The two-layer model gets its own write-up
-once both layers exist, because every break/fix experiment in this
-series comes down to telling those two layers apart.
+Next up: session hosts, so a profile container can actually land on
+this share, and then the
+[break/fix experiments](/homelab/virtual-desktops/avd-fslogix-break-fix-lab/)
+that tear these two layers apart on purpose. Every one of those
+experiments comes down to knowing which layer is failing.
 
 For now, the most expensive thing in the lab is an empty 100 GiB
-share. 53 cents a day buys a lot of future debugging.
+share that exactly three identities are allowed to touch. 53 cents a
+day buys a lot of future debugging.

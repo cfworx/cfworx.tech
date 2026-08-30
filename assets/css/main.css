@@ -74,7 +74,7 @@ html {
 
 body {
   margin: 0 auto;
-  max-width: 44rem;
+  max-width: 52rem;
   padding: 0 1.05rem;
   background: var(--bg);
   color: var(--ink);
@@ -142,6 +142,7 @@ img { max-width: 100%; height: auto; border: 1px solid var(--rule); }
 
 article a:has(> img) { cursor: zoom-in; }
 
+
 .lightbox {
   position: fixed;
   inset: 0;
@@ -194,7 +195,23 @@ body.lightbox-open { overflow: hidden; }
 
 ul, ol { padding-left: 1.4em; }
 li { margin: 0.25em 0; }
-article li { margin-bottom: 0.5em; }
+article li { margin: 0.45em 0; }
+
+/* In post bodies the markers hang in the left margin, so list text
+   lines up flush with the paragraphs instead of indenting. */
+article ul {
+  padding-left: 1.2em;
+  margin-left: -1.2em;
+}
+article ol {
+  padding-left: 1.6em;
+  margin-left: -1.6em;
+}
+
+@media (max-width: 40rem) {
+  /* narrow screens have no spare margin to hang markers in */
+  article ul, article ol { margin-left: 0; }
+}
 
 hr { border: 0; border-top: 1px solid var(--rule); margin: 2rem 0; }
 
