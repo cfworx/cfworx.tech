@@ -64,5 +64,5 @@ The rest is coffee and sports: baseball, football, basketball, UFC.
 
 ## Get in touch
 
-Email me at [p3@cfworx.tech](mailto:p3@cfworx.tech). I read and respond
-to every email.
+- Email me at [p3@cfworx.tech](mailto:p3@cfworx.tech). I read and
+  respond to every email.
