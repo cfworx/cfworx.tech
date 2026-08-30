@@ -2,7 +2,7 @@
 title: "Fedora i3 on an RTX 4070 just works (with some papercuts)"
 date: 2026-08-30
 description: "Wiped Windows off the gaming PC and put Fedora 44 i3 Spin on it: Nvidia open modules with Secure Boot, three 180 Hz monitors, WoW Classic at the FPS cap, and nine papercuts."
-draft: true
+draft: false
 tags: ["linux", "fedora", "i3", "nvidia", "gaming", "homelab"]
 ---
 

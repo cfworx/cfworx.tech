@@ -90,22 +90,8 @@
 
 
 /* ---- dark theme: Monokai --------------------------------------------------
-   Classic Monokai token colors on the dark --box background. Same guard
-   logic as main.css: OS preference by default, data-theme wins. */
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .chroma .x, :root:not([data-theme="light"]) .chroma .n, :root:not([data-theme="light"]) .chroma .nc, :root:not([data-theme="light"]) .chroma .no, :root:not([data-theme="light"]) .chroma .nv, :root:not([data-theme="light"]) .chroma .vc, :root:not([data-theme="light"]) .chroma .vg, :root:not([data-theme="light"]) .chroma .vi { color: #f8f8f2 }
-  :root:not([data-theme="light"]) .chroma .k, :root:not([data-theme="light"]) .chroma .kc, :root:not([data-theme="light"]) .chroma .kd, :root:not([data-theme="light"]) .chroma .kn, :root:not([data-theme="light"]) .chroma .kp, :root:not([data-theme="light"]) .chroma .kr, :root:not([data-theme="light"]) .chroma .o, :root:not([data-theme="light"]) .chroma .nt { color: #f92672 }
-  :root:not([data-theme="light"]) .chroma .kt, :root:not([data-theme="light"]) .chroma .nb, :root:not([data-theme="light"]) .chroma .bp { color: #66d9ef }
-  :root:not([data-theme="light"]) .chroma .s, :root:not([data-theme="light"]) .chroma .sa, :root:not([data-theme="light"]) .chroma .sb, :root:not([data-theme="light"]) .chroma .sc, :root:not([data-theme="light"]) .chroma .dl, :root:not([data-theme="light"]) .chroma .sd, :root:not([data-theme="light"]) .chroma .s2, :root:not([data-theme="light"]) .chroma .sh, :root:not([data-theme="light"]) .chroma .s1, :root:not([data-theme="light"]) .chroma .sx, :root:not([data-theme="light"]) .chroma .sr { color: #e6db74 }
-  :root:not([data-theme="light"]) .chroma .m, :root:not([data-theme="light"]) .chroma .mb, :root:not([data-theme="light"]) .chroma .mf, :root:not([data-theme="light"]) .chroma .mh, :root:not([data-theme="light"]) .chroma .mi, :root:not([data-theme="light"]) .chroma .il, :root:not([data-theme="light"]) .chroma .mo, :root:not([data-theme="light"]) .chroma .se, :root:not([data-theme="light"]) .chroma .si { color: #ae81ff }
-  :root:not([data-theme="light"]) .chroma .c, :root:not([data-theme="light"]) .chroma .ch, :root:not([data-theme="light"]) .chroma .cm, :root:not([data-theme="light"]) .chroma .c1, :root:not([data-theme="light"]) .chroma .cs, :root:not([data-theme="light"]) .chroma .cp, :root:not([data-theme="light"]) .chroma .cpf { color: #75715e }
-  :root:not([data-theme="light"]) .chroma .na, :root:not([data-theme="light"]) .chroma .nf, :root:not([data-theme="light"]) .chroma .nd, :root:not([data-theme="light"]) .chroma .ni, :root:not([data-theme="light"]) .chroma .ne, :root:not([data-theme="light"]) .chroma .gi { color: #a6e22e }
-  :root:not([data-theme="light"]) .chroma .err, :root:not([data-theme="light"]) .chroma .gd { color: #f92672 }
-  :root:not([data-theme="light"]) .chroma .hl { background-color: #3e3d32 }
-  :root:not([data-theme="light"]) .chroma .lnt,
-  :root:not([data-theme="light"]) .chroma .ln { color: #75715e }
-}
+   Classic Monokai token colors on the dark --box background. Applies
+   only when the visitor has toggled dark mode. */
 
 :root[data-theme="dark"] .chroma .x, :root[data-theme="dark"] .chroma .n, :root[data-theme="dark"] .chroma .nc, :root[data-theme="dark"] .chroma .no, :root[data-theme="dark"] .chroma .nv, :root[data-theme="dark"] .chroma .vc, :root[data-theme="dark"] .chroma .vg, :root[data-theme="dark"] .chroma .vi { color: #f8f8f2 }
 :root[data-theme="dark"] .chroma .k, :root[data-theme="dark"] .chroma .kc, :root[data-theme="dark"] .chroma .kd, :root[data-theme="dark"] .chroma .kn, :root[data-theme="dark"] .chroma .kp, :root[data-theme="dark"] .chroma .kr, :root[data-theme="dark"] .chroma .o, :root[data-theme="dark"] .chroma .nt { color: #f92672 }

@@ -1,7 +1,7 @@
-/* Dark-mode toggle. The stored choice ("light" / "dark") overrides the
-   OS preference; with nothing stored, the CSS prefers-color-scheme
-   rules decide. Loaded without `defer`, before the stylesheet, so the
-   attribute is set before first paint (no flash of the wrong theme). */
+/* Dark-mode toggle. The site is light by default; the toggle stores
+   the visitor's choice in localStorage and it sticks. Loaded without
+   `defer`, before the stylesheet, so a returning dark-mode visitor
+   never sees a flash of light theme. */
 (function () {
   var root = document.documentElement;
   var stored = null;
@@ -9,9 +9,7 @@
   if (stored === 'light' || stored === 'dark') root.dataset.theme = stored;
 
   function effective() {
-    if (root.dataset.theme) return root.dataset.theme;
-    return window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return root.dataset.theme === 'dark' ? 'dark' : 'light';
   }
 
   function setLabel(btn) {
