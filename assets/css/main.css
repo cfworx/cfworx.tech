@@ -739,6 +739,66 @@ td {
    the first <button>s on the site: sans labels, box backgrounds, with the
    patch-cable blue reserved for the primary action. */
 
+.toolgroup {
+  font: 700 0.8rem var(--sans);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--ink);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 0.3rem;
+  margin: 2rem 0 0.75rem;
+}
+
+.toolcards {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: 0.7rem;
+}
+.toolcards a {
+  display: flex;
+  gap: 0.85em;
+  align-items: flex-start;
+  height: 100%;
+  border: 1px solid var(--rule);
+  background: var(--box);
+  border-radius: 6px;
+  padding: 0.85em 0.95em;
+  text-decoration: none;
+  color: var(--ink);
+}
+.toolcards a:visited { color: var(--ink); }
+.toolcards a:hover { border-color: var(--enet); }
+.toolcards a:hover .toolcard-title {
+  color: var(--enet);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.toolcard-icon {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: var(--enet);
+  border-radius: 8px;
+}
+.toolcard-icon svg { width: 24px; height: 24px; }
+.toolcard-title {
+  display: block;
+  font: 700 0.95rem var(--sans);
+  margin-bottom: 0.25em;
+}
+.toolcard-desc {
+  display: block;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
 .toollist {
   list-style: none;
   padding: 0;

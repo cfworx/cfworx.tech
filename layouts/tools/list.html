@@ -1,5 +1,5 @@
-{{- /* The tools section: a plain list of the tools themselves, no
-       dates or year groupings (tools are destinations, not posts). */}}
+{{- /* The tools section: grouped cards (icon, name, what it drills),
+       no dates or year groupings (tools are destinations, not posts). */}}
 {{ define "main" }}
 <article class="section-page">
   <header class="post-header">
@@ -10,10 +10,47 @@
   </header>
   {{ .Content }}
 
-  <ul class="toollist">
-    {{- range .RegularPages.ByTitle }}
-    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+  {{- $groups := slice
+        (dict "key" "addressing" "name" "IP addressing")
+        (dict "key" "protocols"  "name" "Ports & protocols")
+        (dict "key" "ios"        "name" "Cisco IOS") }}
+  {{- $pages := .RegularPages }}
+  {{- range $g := $groups }}
+  {{- $in := where $pages "Params.group" $g.key }}
+  {{- with $in }}
+  <h2 class="toolgroup">{{ $g.name }}</h2>
+  <ul class="toolcards">
+    {{- range .ByTitle }}
+    <li>
+      <a href="{{ .RelPermalink }}">
+        <span class="toolcard-icon">{{ partial "tool-icon.html" (.Params.icon | default "quiz") }}</span>
+        <span class="toolcard-body">
+          <span class="toolcard-title">{{ .Title }}</span>
+          <span class="toolcard-desc">{{ .Description }}</span>
+        </span>
+      </a>
+    </li>
     {{- end }}
   </ul>
+  {{- end }}
+  {{- end }}
+
+  {{- /* Safety net: a tool without a group still shows up. */}}
+  {{- $orphans := where $pages "Params.group" "==" nil }}
+  {{- with $orphans }}
+  <ul class="toolcards">
+    {{- range .ByTitle }}
+    <li>
+      <a href="{{ .RelPermalink }}">
+        <span class="toolcard-icon">{{ partial "tool-icon.html" (.Params.icon | default "quiz") }}</span>
+        <span class="toolcard-body">
+          <span class="toolcard-title">{{ .Title }}</span>
+          <span class="toolcard-desc">{{ .Description }}</span>
+        </span>
+      </a>
+    </li>
+    {{- end }}
+  </ul>
+  {{- end }}
 </article>
 {{ end }}

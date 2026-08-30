@@ -1,0 +1,17 @@
+{{- /* Inline SVG icons for the tool cards. Input: the icon name from
+       the tool's front matter. All stroke currentColor so they follow
+       the card's icon-tile color. */ -}}
+{{- $i := . -}}
+{{- if eq $i "subnet" -}}
+<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18M3 12h18"/></g></svg>
+{{- else if eq $i "binary" -}}
+<svg viewBox="0 0 24 24" aria-hidden="true"><text x="12" y="11" text-anchor="middle" font-family="Consolas,monospace" font-size="9" font-weight="bold" fill="currentColor">101</text><text x="12" y="20" text-anchor="middle" font-family="Consolas,monospace" font-size="9" font-weight="bold" fill="currentColor">010</text></svg>
+{{- else if eq $i "ipv6" -}}
+<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M12 2.5 20.2 7.25v9.5L12 21.5 3.8 16.75v-9.5z"/><text x="12" y="15.5" text-anchor="middle" font-family="Consolas,monospace" font-size="9" font-weight="bold" fill="currentColor">v6</text></svg>
+{{- else if eq $i "port" -}}
+<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v11h-4v4H8v-4H4z"/><path d="M8.5 4v4M11.3 4v4M14.1 4v4M16.9 4v4" stroke-width="1.4"/></g></svg>
+{{- else if eq $i "cli" -}}
+<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9.5 10 12l-3 2.5M12.5 15H17"/></g></svg>
+{{- else -}}
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><text x="12" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="currentColor">?</text></svg>
+{{- end -}}
