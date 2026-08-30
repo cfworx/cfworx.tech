@@ -3,6 +3,7 @@ title: "AVD + FSLogix break/fix lab: it's always one of two error codes"
 date: 2026-08-27
 description: "Built a pooled Azure Virtual Desktop host pool with FSLogix profiles on Azure Files, then broke the permissions on purpose and fixed every failure mode."
 draft: false
+weight: 4
 ---
 
 <!-- screenshot: architecture overview or portal resource group view -->
@@ -17,7 +18,7 @@ misconfigured the permissions at each layer to watch how it fails
 (access denied, temp profiles, locked VHDX files), and practiced
 fixing each one the way I'd have to on a real ticket. The tenant,
 users, and MFA groundwork under all of this is
-[part 1](/homelab/domain-infrastructure/avd-fslogix-part-1-tenant-foundation/).
+[part 1](/homelab/virtual-desktops/avd-fslogix-part-1-tenant-foundation/).
 
 ## Architecture
 
@@ -78,7 +79,7 @@ can't see.
 Storage account: FileStorage kind, Premium LRS (the documented tier
 for the Entra-only FSLogix scenario), with a `profiles` file share.
 The full storage build, blade for blade, is in
-[part 2](/homelab/domain-infrastructure/avd-fslogix-part-2-storage-kerberos-plumbing/).
+[part 2](/homelab/virtual-desktops/avd-fslogix-part-2-storage-kerberos-plumbing/).
 Enabling Microsoft Entra Kerberos under identity-based access
 registers an Entra app for the storage account, and then there are two
 follow-ups that are easy to miss:

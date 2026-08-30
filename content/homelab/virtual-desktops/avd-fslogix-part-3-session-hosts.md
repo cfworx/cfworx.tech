@@ -3,9 +3,10 @@ title: "AVD + FSLogix part 3: the airgapped subnet I warned about got me anyway"
 date: 2026-08-30
 description: "Part 3 of the AVD lab: the host pool wizard, two session hosts that failed to register, the private-subnet setting that didn't stick, and the first logon."
 draft: false
+weight: 3
 ---
 
-[Part 2](/homelab/domain-infrastructure/avd-fslogix-part-2-storage-kerberos-plumbing/)
+[Part 2](/homelab/virtual-desktops/avd-fslogix-part-2-storage-kerberos-plumbing/)
 ended with a confession: every green checkmark on the storage side was
 a claim, not a result, because testing a silent Kerberos ticket takes
 a Windows machine signed in as a lab user. So this part builds the
@@ -15,7 +16,7 @@ one logon to prove the whole identity stack holds.
 
 It took two deployments. The first one died on the exact network trap
 I wrote a whole section about in
-[part 1](/homelab/domain-infrastructure/avd-fslogix-part-1-tenant-foundation/).
+[part 1](/homelab/virtual-desktops/avd-fslogix-part-1-tenant-foundation/).
 
 ## The host pool wizard, three years newer than the guides
 
