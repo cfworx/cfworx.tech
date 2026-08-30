@@ -13,9 +13,9 @@ a pooled Azure Virtual Desktop host pool delivering both a full desktop
 and RemoteApps, with FSLogix profile containers on an Azure Files
 share, built from scratch.
 
-Building it was half the point. The other half: I deliberately
-misconfigured the permissions at each layer to watch how it fails
-(access denied, temp profiles, locked VHDX files), and practiced
+Building it was only half the point. The other half was deliberately
+misconfiguring the permissions at each layer to watch how it fails
+(access denied, temp profiles, locked VHDX files), and practicing
 fixing each one the way I'd have to on a real ticket. The tenant,
 users, and MFA groundwork under all of this is
 [part 1](/homelab/virtual-desktops/avd-fslogix-part-1-tenant-foundation/).
@@ -229,10 +229,9 @@ creation fails: same 0x00000005, different failing operation in the log
 ### 3. The single-user ACL break
 
 Disabled inheritance on just labuser1's profile folder and removed
-their entry. Attach of an existing VHDX fails at logon, temp profile.
-
-This is the classic "one user broken, everyone else fine" ticket
-shape.
+their entry. Attach of an existing VHDX fails at logon and the user
+gets a temp profile, which is the classic one-user-broken,
+everyone-else-fine ticket shape.
 
 ### 4. Failing closed instead of failing to temp
 
@@ -282,22 +281,21 @@ Dismount-DiskImage to revert.
 
 ### 7. The anti-experiment
 
-What happens if the same user connects from a second device? Nothing
-dramatic. The broker just reconnects you to the existing session.
-
-So pooled AVD prevents the same user double-attaching a profile, which
-is why real locked-VHDX incidents are almost always stale handles, not
-true concurrency.
+I also wanted to see what happens when the same user connects from a
+second device, and the answer is nothing dramatic: the broker just
+reconnects you to the existing session. Pooled AVD prevents the same
+user double-attaching a profile, which is why real locked-VHDX
+incidents are almost always stale handles, not true concurrency.
 
 ## The two error codes that matter
+
+Nearly every FSLogix ticket I can imagine getting starts with telling
+these two apart in the profile log:
 
 | Code | Meaning | Layer |
 |---|---|---|
 | 0x00000005 | ERROR_ACCESS_DENIED | permissions (RBAC or NTFS) |
 | 0x00000020 | ERROR_SHARING_VIOLATION | locked VHDX (a handle holds it) |
-
-**Nearly every FSLogix ticket starts by telling these two apart in the
-profile log.**
 
 ## Troubleshooting toolbox
 
@@ -327,6 +325,6 @@ through the Intune settings catalog instead of raw registry, an
 autoscaling plan, and redeploying the hosts from a custom image with
 FSLogix pre-configured.
 
-The whole lab tears down with the trials on September 27 either way.
-Until then, this is the one environment I own where power-yanking a
-server counts as a feature.
+All of it is bounded by the trial clock either way: the whole lab
+tears down with the trials on September 27, and whatever isn't done by
+then didn't make the cut.

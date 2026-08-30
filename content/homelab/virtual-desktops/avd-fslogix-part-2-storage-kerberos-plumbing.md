@@ -43,16 +43,12 @@ and I picked SSD (premium).
 
 Then a choice that didn't exist when most of the guides were written:
 File share billing, Provisioned v1 or Provisioned v2, with v2
-pre-selected.
-
-Would v2 have worked? Probably. Microsoft's June
-announcement says Entra Kerberos now works across all the billing
-models.
-
-But I didn't want *probably* in a lab that's already about
-debugging auth failures, and v1 is what creates the classic FileStorage
-account every doc I was following describes blade for blade. So v1 it
-was.
+pre-selected. Microsoft's June announcement says Entra Kerberos now
+works across all the billing models, so v2 probably would have worked.
+But I didn't want *probably* in a lab that's already about debugging
+auth failures, and v1 is what creates the classic FileStorage account
+every doc I was following describes blade for blade, so I switched it
+to v1.
 
 After deployment the Overview page showed Account kind FileStorage,
 SSD (premium), LRS, westcentralus. One more line there worth noticing:

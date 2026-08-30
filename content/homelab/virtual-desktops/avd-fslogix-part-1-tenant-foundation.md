@@ -1,5 +1,5 @@
 ---
-title: "AVD + FSLogix part 1: the MFA policy that turned itself back on"
+title: "AVD + FSLogix part 1: security defaults off, MFA back on anyway"
 date: 2026-08-27
 description: "Part 1 of the AVD lab: a free tenant with Azure and M365 trials, three users, one group, the 2026 Entra MFA traps, and a vnet with no outbound by default."
 draft: false
@@ -203,9 +203,9 @@ The Address space tab now has *two* tables that both accept CIDR
 ranges, and I typed mine into the wrong one. Advertised address
 prefixes governs what a VPN gateway advertises to on-prem
 networks, which this lab will never have, and the blade kept insisting I
-hadn't added an address space.
-
-It was right. I hadn't.
+hadn't added an address space. It took me longer than I'd like to admit
+to accept that the blade was correct and my /16 was sitting in a field
+meant for a VPN gateway.
 
 The real table is up top, and the Add a subnet link floats above the
 address space box rather than inside it, so I hunted for it everywhere
@@ -215,7 +215,7 @@ and diagram I wrote afterward. I caught it on the Review + create tab.
 
 [![vnet-lab validation passed: West Central US, 10.10.0.0/16 with snet-avd at 10.10.1.0/24, Bastion and firewall disabled](/homelab/images/part1-vnet-review.png)](/homelab/images/part1-vnet-review.png)
 
-Those were annoyances. The checkbox was the real problem.
+Those were annoyances compared to the checkbox.
 
 Enable private subnet (no default outbound access) arrived *checked*,
 because private subnets became the default for new vnets after March
@@ -226,11 +226,10 @@ connection to the profile share fails for the same reason. None of it
 errors at deploy time.
 
 Microsoft's answer is a NAT gateway at roughly $32 a month plus data
-charges. For a sandbox that gets torn down in 30 days?
-
-I unchecked the
-box and took classic default outbound instead. It's the wrong answer for
-production, but this vnet has 30 days to live.
+charges, which I wasn't going to pay for a sandbox that gets torn down
+in 30 days, so I unchecked the box and took classic default outbound
+instead. It's the wrong answer for production, but this vnet has 30
+days to live.
 
 This went on the checklist too: a new 2026 vnet has no outbound access
 until you either uncheck that box or pay for a NAT gateway.

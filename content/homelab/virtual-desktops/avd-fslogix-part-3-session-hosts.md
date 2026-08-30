@@ -32,7 +32,7 @@ Create Session Host Configuration, Yes or No. Yes hands the VM
 lifecycle to AVD, which updates hosts from a template you define. No
 is the classic mode where you own the machines and AVD just brokers to
 them. For a lab whose entire point is power-yanking a host
-mid-session, No.
+mid-session, I want to own the machines, so No it was.
 
 [![The host pool Basics tab: hp-lab in West Central US, pooled, breadth-first, max session limit 2, Session Host Configuration set to No](/homelab/images/part3-hostpool-basics.png)](/homelab/images/part3-hostpool-basics.png)
 
@@ -55,16 +55,16 @@ three of them before Review + create:
    2 vCPU / 8 GiB shape, newer AMD generation, cheaper per hour. Also
    kept.
 
-The fourth default, the one I didn't catch, wasn't on this tab at all.
+The fourth default wasn't on this tab at all, and I didn't find it
+until the deployment failed.
 
 ## None available
 
-The Virtual network dropdown said "None available."
-
-Was it a region mismatch? A stale blade? I toggled the VM location
-away and back, refreshed, restarted the wizard. Still nothing. Then I
-opened rg-avd-lab in another tab and it contained exactly one
-resource: the storage account.
+The Virtual network dropdown said "None available." My first guesses
+were a region mismatch or a stale blade, so I toggled the VM location
+away and back, refreshed, and restarted the wizard, none of which
+changed anything. Then I opened rg-avd-lab in another tab and it
+contained exactly one resource: the storage account.
 
 There was no vnet. Three days earlier I'd been on the Add a subnet
 panel, unchecked the private-subnet box, and then switched to writing
@@ -76,8 +76,9 @@ So I built it, for real this time, and deleted the `default` subnet
 the blade auto-creates alongside your own. On the Add a subnet panel I
 unchecked Enable private subnet (no default outbound access), because
 after March 31, 2026 that box arrives checked, and a checked box means
-no outbound Internet for anything in the subnet. I know this. I wrote
-about it. I have the screenshot showing it unchecked.
+no outbound Internet for anything in the subnet. This is the exact trap
+I'd written a section about in part 1, I knew to look for it, and I
+have the screenshot showing it unchecked before I clicked Create.
 
 ## 17 attempts
 
@@ -104,9 +105,9 @@ private-subnet box was checked.
 
 Whether the create panel dropped my setting or the blade re-applied
 the new default at creation time, I don't know. What I do know is that
-the panel before creation showed it unchecked and the subnet after
-creation had it enabled, and the only setting that matters is the
-second one. The panel lies, or at least it did once.
+the panel before creation showed it unchecked, the subnet after
+creation had it enabled, and the only setting that matters is the one
+on the deployed subnet.
 
 The fix was unremarkable: uncheck it on the live subnet, save, delete
 both VMs, and add two new ones from the host pool's Session hosts
@@ -118,7 +119,7 @@ expiry date.)
 Then the resource group showed four OS disks for two VMs. When I
 deleted the first pair of hosts I didn't tick the boxes to delete
 their disks with them, and unattached Standard SSD disks bill about
-$10 a month each just for existing. Those had to go.
+$10 a month each just for existing, so I deleted those by hand too.
 
 ## Session hosts, Available
 
@@ -176,9 +177,9 @@ work. What it does not prove is anything in part 2. FSLogix isn't
 configured yet, so that first logon built a local profile and never
 touched the share. The Kerberos ticket is still untested.
 
-Check the subnet's private-subnet property after the VNet exists, not
-on the panel that creates it. That one line would have saved the first
-deployment and about 40 minutes.
+Next time I'll check the subnet's private-subnet property on the
+deployed subnet instead of trusting the create panel, which would have
+saved the first deployment and about 40 minutes of my evening.
 
 Next: labuser2's RemoteApp view, then part 4, where FSLogix gets its
 registry settings on both hosts. The
@@ -186,5 +187,5 @@ registry settings on both hosts. The
 already spoils how that ends, but the first VHDX landing on the share
 deserves its own write-up.
 
-The VMs are deallocated tonight. At $4.60 a day for the pair, they
-don't get to idle while I write.
+The VMs are deallocated tonight, since at $4.60 a day for the pair I'm
+not paying for them to sit idle while I write.
