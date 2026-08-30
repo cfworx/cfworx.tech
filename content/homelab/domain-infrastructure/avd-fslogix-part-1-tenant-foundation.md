@@ -241,7 +241,11 @@ The tenant ended the day with three users, one group, Entra ID P1, one
 custom Conditional Access policy, and 3 of the trial's 25 seats
 assigned. On the Azure side labadmin owned the subscription, a budget
 was watching it, and rg-avd-lab held exactly one resource: vnet-lab,
-10.10.0.0/16 with snet-avd at 10.10.1.0/24. Still $0 spent.
+10.10.0.0/16 with snet-avd at 10.10.1.0/24. (Edit: so I believed. I
+configured that whole vnet and never clicked Create. The host pool
+wizard in part 3 found this resource group with no network in it, and
+the private-subnet checkbox got a second shot at me there.) Still $0
+spent.
 
 [![Active users: the three lab accounts licensed with Business Premium](/homelab/images/part1-active-users.png)](/homelab/images/part1-active-users.png)
 
@@ -254,5 +258,4 @@ and the experiments themselves are in
 [the break/fix post](/homelab/virtual-desktops/avd-fslogix-break-fix-lab/).
 
 Everything expires with the trials, so the whole lab has a hard
-deadline of September 27. Nothing keeps a project moving like a tenant
-with an expiry date.
+deadline of September 27.

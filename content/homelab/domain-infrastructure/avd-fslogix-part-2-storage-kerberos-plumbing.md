@@ -1,5 +1,5 @@
 ---
-title: "AVD + FSLogix part 2: the manifest tag everything hangs on"
+title: "AVD + FSLogix part 2: an Azure Files share with no domain controller"
 date: 2026-08-28
 description: "Part 2 of the AVD lab: a premium file share for FSLogix profiles, Entra Kerberos with cloud-only identities, the manifest tag, and MFA round two."
 draft: false
@@ -210,9 +210,6 @@ share's Manage access blade. Three entries:
   profile folder at the root but can't reach into anyone else's.
 - **labadmin**, Full control, everywhere: someone has to clean up.
 
-That combination is the whole FSLogix trick: every user can make their
-own container, and nobody can touch a container that isn't theirs.
-
 ## Conclusion
 
 Done: the storage account, the profiles share, Entra Kerberos enabled,
@@ -221,12 +218,12 @@ storage app excluded from MFA-labadmin, and both permission layers on
 the share. The first resource in the lab that actually costs money is
 now running, at about 53 cents a day.
 
-Next up: session hosts, so a profile container can actually land on
-this share, and then the
+One honest caveat: every checkmark in this post is a claim, not a
+result. Nothing has fetched a Kerberos ticket yet, because there is no
+Windows machine to fetch one from. Building those machines is part 3,
+and the
 [break/fix experiments](/homelab/virtual-desktops/avd-fslogix-break-fix-lab/)
-that tear these two layers apart on purpose. Every one of those
-experiments comes down to knowing which layer is failing.
+that tear these two layers apart on purpose come after that.
 
 For now, the most expensive thing in the lab is an empty 100 GiB
-share that exactly three identities are allowed to touch. 53 cents a
-day buys a lot of future debugging.
+share that exactly three identities are allowed to touch.

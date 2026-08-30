@@ -69,13 +69,16 @@ prompt. Security defaults can't do exclusions, so I disabled them and
 rebuilt protection with Conditional Access instead: MFA required for
 labadmin, lab users left out.
 
-Miss this and the failure mode is brutal to diagnose. Nothing errors.
-Users just silently land on temp profiles.
+Miss this and there's no error anywhere to find, just users landing on
+temp profiles while the cause sits in a Conditional Access policy they
+can't see.
 
 ## Storage and the two-layer permission model
 
 Storage account: FileStorage kind, Premium LRS (the documented tier
 for the Entra-only FSLogix scenario), with a `profiles` file share.
+The full storage build, blade for blade, is in
+[part 2](/homelab/domain-infrastructure/avd-fslogix-part-2-storage-kerberos-plumbing/).
 Enabling Microsoft Entra Kerberos under identity-based access
 registers an Entra app for the storage account, and then there are two
 follow-ups that are easy to miss:
