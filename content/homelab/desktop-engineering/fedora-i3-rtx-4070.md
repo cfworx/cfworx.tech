@@ -10,8 +10,8 @@ Windows broke on me again this week, and I was already tired of
 everything it installs that I didn't ask for. The machine needed a
 refresh anyway. So instead of reinstalling Windows, I wiped it and put
 [Fedora 44 i3 Spin](https://fedoraproject.org/spins/i3) on my gaming
-PC. No desktop environment, just a tiling window manager, an Nvidia
-card, and three monitors.
+PC. No desktop environment, just a tiling window manager on a machine
+with an Nvidia card and three monitors.
 
 Is that a sensible thing to do to the machine I play WoW on and study
 for the CCNA on? There's only one way to find out.
@@ -27,16 +27,17 @@ sponsored or loaned; it's the same PC I already had, minus Windows.
 
 ## Why Fedora, and why X11
 
-Before anyone says it: yes, I know Hyprland is the new hotness. I
-looked at [Omarchy](https://omarchy.org/) and
-[CachyOS](https://cachyos.org/) first.
+Before anyone says it: yes, I know about
+[Hyprland](https://github.com/hyprwm/Hyprland). I looked at
+[Omarchy](https://omarchy.org/) and [CachyOS](https://cachyos.org/)
+first.
 
 The deciding factor was the 4070. Every Wayland-on-Nvidia horror story
-I read (cursor lag across monitors, lock screens crashing on wake,
-layouts flipping) came from Hyprland or Sway users, and I wanted a
-machine that doesn't need babysitting. The proprietary driver on X11
-is the boring, mature option, and [i3](https://i3wm.org/) has been the
-same window manager for 20 years.
+I read (cursor lag across monitors, lock screens crashing on wake...)
+came from Hyprland or [Sway](https://github.com/swaywm/sway) users,
+and I wanted a machine that doesn't need babysitting. The proprietary
+driver on X11 is the boring, mature option, and
+[i3](https://i3wm.org/) has been the same window manager since 2009.
 
 The other reason is refresh rates. X11's real weakness is mixed
 refresh across displays, and all three of my panels are identical, so
@@ -52,8 +53,8 @@ kernel 7.1.10 as of this writing.
 This was the part I expected to fight with. It went off without a
 hitch.
 
-I added [RPM Fusion](https://rpmfusion.org/), forced the open kernel
-modules (the right choice for a 40-series card), and installed
+After adding [RPM Fusion](https://rpmfusion.org/), I forced the open
+kernel modules (the right choice for a 40-series card) and installed
 `akmod-nvidia`:
 
 ```bash
@@ -66,10 +67,10 @@ the proprietary kernel module, which also works, but the open one is
 what Nvidia now recommends for Ada.
 
 I kept Secure Boot on and enrolled the akmods signing key through MOK
-instead of turning it off in the BIOS. One reboot, one blue screen,
-one password. Driver 610.57.04 came up with CUDA 13.3 available, and
-`modinfo -F license nvidia` reports `Dual MIT/GPL`, so it's the open
-module.
+(Machine Owner Key) instead of turning Secure Boot off in the BIOS.
+One reboot and one password at the blue MOK screen. Driver 610.57.04
+came up with CUDA 13.3 available, and `modinfo -F license nvidia`
+reports `Dual MIT/GPL`, so it's the open module.
 
 Three monitors at 2560x1440 took one trip through `nvidia-settings`,
 saved to `/etc/X11/xorg.conf`. `xrandr` reports 179.96 Hz on all
@@ -103,14 +104,17 @@ every window I have open. That's a better taskbar than the one I left.
 
 [Lutris](https://lutris.net/) installed
 [Battle.net](https://www.blizzard.com/apps/battle.net/desktop) in
-about five minutes, and WoW Classic installed from there like it would
-on Windows. Wine 11.0 with DXVK, DirectX 11 in the game settings,
-V-Sync off, foreground FPS capped at 175 so frametimes stay under the
-180 Hz refresh.
+about five minutes, and
+[WoW Classic](https://worldofwarcraft.blizzard.com/en-us/classic)
+installed from there like it would on Windows.
+[Wine](https://www.winehq.org/) 11.0 with
+[DXVK](https://github.com/doitsujin/dxvk), DirectX 11 in the game
+settings, V-Sync off, foreground FPS capped at 175 so frametimes stay
+under the 180 Hz refresh.
 
 Does it run? It sits at the 175 FPS cap everywhere I've been so far,
-cities included. The 4070 is barely awake for Classic; the GPU block
-on my bar stays green.
+cities included! Classic barely loads the 4070; the GPU block on my
+bar stays green.
 
 Mouse was jittery for the first ten minutes until I turned on raw
 input from the chat box:
@@ -121,13 +125,14 @@ input from the chat box:
 
 I also installed [Questie](https://github.com/Questie/Questie)
 v11.37.1 by unzipping it into the Wine prefix's `Interface/AddOns`
-folder. Same as Windows, just a longer path.
+folder.
 
 ## The lab side
 
 This is also my CCNA machine, so it needs to be a real workstation. So
 far: [Neovim](https://neovim.io/) 0.12.5 with
-[LazyVim](https://www.lazyvim.org/), git and the GitHub CLI over SSH,
+[LazyVim](https://www.lazyvim.org/), git and the
+[GitHub CLI](https://github.com/cli/cli) over SSH,
 [KeePassXC](https://keepassxc.org/), and [Hugo](https://gohugo.io/)
 for this site.
 
@@ -137,10 +142,11 @@ only `dhcpv6-client` allowed, no listening ports except the local
 resolver, LUKS on the root volume, zram swap at 8 GB. The NVMe reports
 1% wear at 35°C.
 
-Two hardening changes came out of that audit. I turned off LLMNR and
-mDNS in `systemd-resolved` (if you've read about Responder attacks,
-you know why), and I set `dnf5-automatic` to apply security updates on
-its own while I do the rest weekly by hand.
+Two hardening changes came out of that audit. I turned off LLMNR
+(Link-Local Multicast Name Resolution) and mDNS in `systemd-resolved`
+(if you've read about Responder attacks, you know why), and I set
+`dnf5-automatic` to apply security updates on its own while I do the
+rest weekly by hand.
 
 I also set the CPU energy preference to `performance` through
 [tuned](https://tuned-project.org/)'s `throughput-performance`
@@ -156,9 +162,9 @@ In order, with the boring parts:
    a mode that alters the ISO. Rewriting it with
    [Fedora Media Writer](https://fedoraproject.org/workstation/download)
    was the fix, and the check passed.
-2. Flameshot refused to take screenshots, insisting on a Wayland
-   portal that doesn't exist on a bare X11 session. Replaced it with
-   `maim`.
+2. [Flameshot](https://github.com/flameshot-org/flameshot) wouldn't
+   take screenshots. It wanted a Wayland portal that doesn't exist on
+   a bare X11 session. Replaced it with `maim`.
 3. i3 rejected my config twice for duplicate keybindings. The spin's
    default config already had the volume keys and `Super+E` bound.
    Moved Thunar to `Super+N`.
@@ -178,9 +184,9 @@ In order, with the boring parts:
 8. Fedora 44's stock wallpapers are two JPEG-XL files, which nitrogen
    can't read, and the 'extras' packages for F38-F40 turned out to be
    24 KB of metadata each. I downloaded my own.
-9. A crash report for `bwrap` showed up on the next boot. It was Steam
-   probing its sandbox on first run. Two reports, same second, never
-   again.
+9. A crash report for `bwrap` showed up on the next boot. It was
+   [Steam](https://store.steampowered.com/) probing its sandbox on
+   first run. Two reports in the same second, and none since.
 
 None of these took more than 15 minutes. Number 4 took the longest,
 because the command worked perfectly in a terminal and only failed
@@ -201,9 +207,11 @@ Still on the bench: the
 [Logitech G29](https://www.logitechg.com/en-us/products/driving/driving-force-racing-wheel.html)
 with [new-lg4ff](https://github.com/berarma/new-lg4ff) for force
 feedback, [Ollama](https://ollama.com/) on the 4070, and the
-virtualization stack (libvirt, GNS3, and Packet Tracer) for the CCNA
-labs. Triple-screen racing will also need a second Xorg config with
-Xinerama on, and I'll write that up once I've made it work.
+virtualization stack ([libvirt](https://libvirt.org/),
+[GNS3](https://www.gns3.com/), and
+[Packet Tracer](https://www.netacad.com/cisco-packet-tracer)) for the
+CCNA labs. Triple-screen racing will also need a second Xorg config
+with Xinerama on, and I'll write that up once I've made it work.
 
 Or I could just play WoW on the center monitor and call it done ;)
 
@@ -212,6 +220,6 @@ Or I could just play WoW on the center monitor and call it done ;)
 - [Fedora 44 i3 Spin](https://fedoraproject.org/spins/i3)
 - [RPM Fusion](https://rpmfusion.org/) (Nvidia driver 610.57.04, open kernel modules)
 - [picom](https://github.com/yshui/picom), [i3blocks](https://github.com/vivien/i3blocks), [rofi](https://github.com/davatorium/rofi), [nitrogen](https://github.com/l3ib/nitrogen), [maim](https://github.com/naelstrof/maim)
-- [Lutris](https://lutris.net/) 0.5.22, Wine 11.0, [DXVK](https://github.com/doitsujin/dxvk)
+- [Lutris](https://lutris.net/) 0.5.22, [Wine](https://www.winehq.org/) 11.0, [DXVK](https://github.com/doitsujin/dxvk)
 - [Questie](https://github.com/Questie/Questie) v11.37.1
 - [tuned](https://tuned-project.org/), [KeePassXC](https://keepassxc.org/), [Neovim](https://neovim.io/) 0.12.5 with [LazyVim](https://www.lazyvim.org/)
