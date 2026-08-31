@@ -1,7 +1,7 @@
 ---
 title: "AVD + FSLogix lab"
 date: 2026-08-31
-description: "Three sessions into the AVD lab: tenant, storage, and two session hosts are up. FSLogix isn't configured yet, so nothing has touched the share."
+description: "Four sessions into the AVD lab: tenant, storage, two session hosts, the first FSLogix profile on the share, and the first permission break on purpose."
 draft: false
 aliases:
   - "/homelab/domain-infrastructure/avd-fslogix-part-1-tenant-foundation/"
@@ -13,18 +13,20 @@ aliases:
   - "/homelab/virtual-desktops/avd-fslogix-part-1-plumbing/"
 ---
 
-Three sessions into the AVD lab: the tenant, the storage, and two
-Entra-joined session hosts are up, and a cloud-only user can sign into
-a full Windows 11 desktop on the pool. FSLogix isn't configured yet,
-so nothing has touched the share and the Kerberos ticket to it is
-still untested.
+Four sessions into the AVD lab: the tenant, the storage, two
+Entra-joined session hosts, and now the first FSLogix profile
+container sitting on the share, created through a Kerberos ticket that
+no domain controller issued. The fourth session also started the part
+I built all of this for, breaking the permission layers on purpose,
+and stopped one experiment in with labuser1's profile folder
+deliberately broken.
 
 The AVD line in [my lab plan](/homelab/general/lab-plan/) reads "host
 pool, FSLogix profile containers, RemoteApp publishing, session host
-scaling," and this post is none of the interesting bits of that. It's
-the plumbing everything else sits on: cloud-only identities on
-Microsoft Entra Kerberos, no domain controller, no directory sync, no
-Windows file server. It's built entirely on an Azure free account and
+scaling," and most of this post is the plumbing under that: cloud-only
+identities on Microsoft Entra Kerberos, no domain controller, no
+directory sync, no Windows file server. The profile containers only
+show up near the end. It's built entirely on an Azure free account and
 an M365 Business Premium trial, everything expires with the trials on
 September 27, and it includes the vnet I configured and never actually
 created.
@@ -568,9 +570,11 @@ The property string after the edit:
 App groups next. The wizard had already created hp-lab-DAG and
 registered it to the ws-lab workspace, so labuser1 just needed adding
 under Assignments. The RemoteApp group I built by hand: hp-lab-rag,
-publishing Notepad, Calculator, Microsoft Edge, and Word. The wizard
-enumerates those from a running host's Start menu, which is why it
-couldn't be done until the hosts were Available.
+publishing Word, Excel, Sticky Notes, and Microsoft Edge. My plan said
+Notepad and Calculator, and neither was in the list. The wizard
+enumerates apps from a running host's Start menu, which is why it
+couldn't be done until the hosts were Available, and on 25H2 those two
+apparently don't register there as publishable apps.
 
 I went straight from the Applications tab to Create and skipped the
 Assignments tab entirely, so labuser2 had to be added from the group's
@@ -589,27 +593,215 @@ And a full Windows 11 desktop on the other side of it:
 
 [![labuser1's first session: a Windows 11 desktop on avd-sh-0 with the Start menu open](/homelab/images/part3-first-logon.png)](/homelab/images/part3-first-logon.png)
 
+## labuser2 and the RemoteApps
+
+The fourth session opened with the leftover from the third: labuser2
+had never signed in. Password reset first (same M365 admin center
+route, same unchecked box), then windows.cloud.microsoft showed ws-lab
+with four app tiles and no desktop tile:
+
+[![labuser2's Apps view in the Windows App: the ws-lab workspace with four RemoteApp tiles, Excel, Microsoft Edge, Sticky Notes, and Word, and no desktop](/homelab/images/part4-remoteapps.png)](/homelab/images/part4-remoteapps.png)
+
+Word opened as a floating window on my own PC. Nothing went wrong in
+this part.
+
+## FSLogix, without ever logging into a host
+
+I never RDP'd into either session host and never gave labadmin a
+desktop on the pool. Everything administrative on the VMs went through
+the portal's Run command, which runs a PowerShell script inside the VM
+as SYSTEM over the Azure agent channel: no public IP, no Bastion, no
+break-glass account, and no Conditional Access policy in the path.
+
+[![The Run command blade on avd-sh-1 with the RunPowerShellScript panel holding the FSLogix setup script](/homelab/images/part4-run-command.png)](/homelab/images/part4-run-command.png)
+
+The script checked the OS build, made sure the WinHTTP autoproxy and
+IP Helper services were running (the docs list both as prerequisites
+for cloud Kerberos), wrote the two Kerberos registry values
+(`CloudKerberosTicketRetrievalEnabled` and `LoadCredKeyFromProfile`,
+both 1), wrote the FSLogix Profiles keys, and read everything back.
+The output from avd-sh-1:
+
+```text
+OS: 25H2 build 26200.9168
+SVC WinHttpAutoProxySvc : Running
+SVC iphlpsvc : Running
+FSLogix: 3.26.126.19110
+Profiles: Enabled=1 VHD=\\stavdlab0001.file.core.windows.net\profiles Type=VHDX Size=5120 FlipFlop=1 Retry=3/5
+CloudKerb: 1  CredKey: 1
+SMB 445 to share: True
+```
+
+avd-sh-0 printed the same seven lines. Two things in there I didn't
+have to do: the build already carried the March 2026 cumulative update
+the doc requires (UBR 9168 against a floor of 8116), and the gallery
+image shipped a 2026 FSLogix, so the in-place upgrade my plan called
+for was skipped. The FSLogix settings are the ones from my plan: a
+5 GB dynamic VHDX per user, folders named `username_SID`, delete any
+stale local profile, three lock retries five seconds apart, and both
+PreventLogin values at 0 so a failure lands on a temp profile instead
+of blocking the logon.
+
+Then a portal restart of both VMs, because the Kerberos parameter and
+the FSLogix service both read their values at start.
+
+## The first profile on the share
+
+labuser1's logon was noticeably slower than the day before, which was
+the VHDX being created. Once in, I went to launch frxtray to see the
+green icon my plan promised, typed
+`C:\Program Fles\FSLogix\Apps\frxtray.exe` into the Run box, and got
+"not found." Fixed the missing letter. Still not found. Then I opened
+the Apps folder in Explorer, and between `frxsvc.exe` and
+`harfbuzz.dll`, where frxtray would sort, there was nothing. FSLogix
+3.26 doesn't ship the tray app, and my troubleshooting toolbox had a
+row for a program that no longer exists.
+
+So, Event Viewer instead, Applications and Services Logs, Microsoft,
+FSLogix, Apps, Operational. Event 25 at 12:42:35 PM:
+
+```text
+Profile load: Status: 100 Reason: 0 Error: 0 Username: labuser1 SID: S-1-12-1-3071943890-...
+```
+
+Above it sat two red Event 26 errors from 12:29, "Querying computer's
+fully qualified distinguished name failed" and "Failed to get
+computer's group SIDs." 12:29 was the reboot. The same pair shows up
+at 9:34 PM on 8/30 (first boot after deployment) and at 7:13 AM on
+8/11, which is when Microsoft built the gallery image. The FSLogix
+service asks a domain controller for the computer's details every time
+it starts, and on an Entra-joined host with no domain controller it
+logs two errors and carries on. They look alarming, they're at every
+boot, and they have nothing to do with any logon.
+
+On the share, browsing as labadmin (the portal browses with the
+storage key, so ACLs don't apply to what it can see), a folder named
+`labuser1_S-1-12-1-3071943890-1114014340-718742414-2015041209`, and
+inside it `Profile_labuser1.VHDX` at 196 MiB, next to a 272-byte
+`.VHDX.metadata` sidecar I hadn't seen before and assume is new in the
+3.x builds. The SID prefix is the tell for anyone reading this from a
+hybrid environment: cloud-only identities start `S-1-12-1`, on-prem
+ones start `S-1-5-21`.
+
+And from the host side, the same Run command channel read the tail of
+`C:\ProgramData\FSLogix\Logs\Profile\Profile-20260831.log` and listed
+the virtual disks:
+
+[![Run command output on avd-sh-1: the tail of the FSLogix profile log with mirror and redirection entries, and one 5 GB Msft Virtual Disk online](/homelab/images/part4-profile-log.png)](/homelab/images/part4-profile-log.png)
+
+196 MiB on the share, a 5 GB disk online in the VM. That folder
+existing at all means the ticket carried the AVD-Users group SID (the
+manifest tag worked), share-level RBAC let the connection in, the
+"this folder only" ACL allowed the create, and CREATOR OWNER handed
+labuser1 the rights to what they made. Every checkmark from the
+storage session is a result now.
+
+## What a lock looks like
+
+With labuser1 still signed in, Cloud Shell from the portal (ephemeral
+mode; it printed a yellow warning that the subscription isn't
+registered to the Microsoft.CloudShell namespace and then worked
+anyway):
+
+```powershell
+$key = (Get-AzStorageAccountKey -ResourceGroupName rg-avd-lab -Name stavdlab0001)[0].Value
+$ctx = New-AzStorageContext -StorageAccountName stavdlab0001 -StorageAccountKey $key
+Get-AzStorageFileHandle -Context $ctx -ShareName profiles -Recursive |
+    Where-Object Path -like "*labuser1*" |
+    Format-Table Path, HandleId, ClientIp, OpenTime -AutoSize
+```
+
+```text
+Path                                                                               HandleId  ClientIp  OpenTime
+----                                                                               --------  --------  --------
+labuser1_S-1-12-1-3071943890-1114014340-718742414-2015041209/Profile_labuser1.VHDX 424804380 10.10.1.5 8/31/2026 12:42:34 PM +00:00
+labuser1_S-1-12-1-3071943890-1114014340-718742414-2015041209/Profile_labuser1.VHDX 424804382 10.10.1.5 8/31/2026 12:42:35 PM +00:00
+```
+
+Two handles on `Profile_labuser1.VHDX`, both from 10.10.1.5
+(avd-sh-1), opened at 12:42:34 and 12:42:35, the two seconds FSLogix
+spent attaching the container. That's the lock. labuser1 signed out, I
+waited about 30 seconds and ran it again, and got nothing back: a
+clean detach.
+
+Then I pasted the profile-log script into the same Cloud Shell window
+and got:
+
+```text
+Get-ChildItem: Cannot find drive. A drive with the name 'C' does not exist.
+```
+
+Cloud Shell is a Linux container in Azure. It has no `C:` drive
+because it isn't the VM. I'd spent the previous hour switching between
+two shells and had stopped noticing which one I was in. Cloud Shell
+talks to Azure (handles, RBAC, storage); Run command talks to the
+inside of a VM (logs, registry, disks).
+
+## Breaking the root ACL first
+
+My plan had the RBAC break as experiment 1, but I reordered before
+starting. With AVD-Users dropped to Reader on the share, every logon
+fails at layer 1, and nothing happening at layer 2 is observable
+underneath it. So the ACL experiments have to run while RBAC is
+healthy, and the RBAC break goes last, where its 15-30 minute
+propagation waits can land on a lunch break.
+
+The break: on the share root's Manage access blade, AVD-Users edited
+from Modify down to Read, and the CREATOR OWNER row deleted:
+
+[![The broken ACL baseline on the profiles share root: AVD-Users down to Read and execute on this folder only, CREATOR OWNER gone, labadmin untouched](/homelab/images/part4-acl-broken.png)](/homelab/images/part4-acl-broken.png)
+
+labuser2 had no container yet (the RemoteApp session earlier in the
+day was before FSLogix was configured), so they were the new user this
+test needed. They signed in and launched Word. The Session hosts blade
+showed the session on avd-sh-1, and Run command on that host pulled
+the two lines that mattered from the profile log:
+
+```text
+[13:02:13.139][tid:00000dcc.00001d8c][ERROR:00000005]   No Create access: \\stavdlab0001.file.core.windows.net\profiles\labuser2_S-1-12-1-3359297402-1284255322-2300726944-354249152-test (Access is denied.)
+[13:02:13.155][tid:00000dcc.00001d8c][ERROR:00000005]   LoadProfile failed. Version: 3.26.126.19110 User: labuser2. SID: S-1-12-1-3359297402-1284255322-2300726944-354249152. SessionId: 3. FrxStatus: 31 (Access is denied.)
+```
+
+ERROR 00000005, the access-denied code my plan predicted, on a create.
+The detail I didn't know: FSLogix doesn't try the real profile folder
+first. It probes with a throwaway directory named `<user>_<SID>-test`,
+and when that create is refused it gives up with FrxStatus 31 before
+ever attempting the real one. No labuser2 folder appeared on the
+share.
+
+Reverting was the same blade in reverse: AVD-Users back to Modify,
+CREATOR OWNER re-added by SID (`S-1-3-0`, Modify, subfolders and files
+only), labuser2 signed out.
+
+Then I started the next one, the single-user break: on labuser1's own
+folder, Manage inheritance, disable it, and delete the labuser1 entry
+that CREATOR OWNER had generated when the folder was created. That's
+where the session ended. I deallocated the VMs with labuser1's profile
+folder in that state on purpose, because the next thing that folder
+needs to see is labuser1 trying to open it.
+
 ## Conclusion
 
-Bottom line: two session hosts are up and a cloud-only user can sign
-into one of them, which proves the Entra join, the Virtual Machine
-User Login role, the RDP property, and the broker all work.
+Bottom line: the cloud-only Kerberos path works end to end. A user
+with an `S-1-12-1` SID signed into a host with no domain controller,
+the host got a ticket that carried a cloud group, the ticket opened a
+premium file share through two permission layers, and a 5 GB container
+came up online with 196 MiB written to it. Then the first deliberate
+break produced exactly the access-denied code the plan said it would,
+on exactly the operation (create, not open) the plan said it would.
 
-What it does not prove is anything on the storage side. FSLogix isn't
-configured yet, so that first logon built a local profile and never
-touched the share. The share, the RBAC, the ACL baseline, the manifest
-tag, the MFA exclusion: all of it is still untested until a session
-host actually fetches a Kerberos ticket.
+The honest count: one experiment of seven done, a second one started
+and parked. The two lock experiments, the fail-closed toggle, and the
+RBAC break with its propagation waits are all still ahead, and the
+RBAC one is the only one where I don't already know what the log will
+say.
 
-Next on this lab: the FSLogix registry settings on both hosts, the
-first VHDX landing on the share, and labuser2's RemoteApp view. After
-that I want to start breaking the permission layers on purpose and
-practicing the fixes, which is what the two-layer design and the low
-session limit were for all along. That gets written up when it has
-actually happened.
+Next session starts with labuser1 signing into a folder they no longer
+have rights to. I expect a temp profile and a 0x5 on the open this
+time, and then the PreventLoginWithTempProfile flip to see the same
+failure block the logon outright instead.
 
-The troubleshooting checklist I kept adding lines to along the way,
-in full:
+The troubleshooting checklist, updated:
 
 1. After disabling security defaults, check the managed Conditional
    Access policies Microsoft deploys in their place. One of them
@@ -622,6 +814,16 @@ in full:
 4. On a cloud-only tenant, the `kdc_enable_cloud_group_sids` manifest
    tag is mandatory. Without it, ACLs granted to cloud groups fail
    with no error logged anywhere.
+5. FSLogix 3.26 has no frxtray.exe. Profile status is the Operational
+   event log (Event 25, Error 0 is success) and the profile log under
+   `C:\ProgramData\FSLogix\Logs\Profile`.
+6. Two Event 26 errors about the domain controller at every FSLogix
+   service start are normal on an Entra-joined host. The errors that
+   matter have a logon timestamp.
+7. Cloud Shell has no `C:` drive. Handles and RBAC from Cloud Shell,
+   logs and registry from Run command.
+8. Break RBAC last. With the group at Reader, every logon fails at the
+   share level and hides whatever the ACLs are doing.
 
-The VMs are deallocated tonight, since at $4.60 a day for the pair I'm
-not paying for them to sit idle while I write.
+labuser1's profile folder is still broken. The VMs are deallocated, so
+they can't find out until I turn them back on.
