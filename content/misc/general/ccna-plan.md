@@ -15,8 +15,7 @@ people from my organization.
 
 The CCNA was always the plan, just not *this soon*. The original order
 was Network+ first, so I'd have a solid foundation before jumping into
-a much harder networking cert. The universe had other plans, and it
-called before breakfast.
+a much harder networking cert.
 
 ## How the class went
 
@@ -57,6 +56,6 @@ This is the initial plan, and it's subject to change.
 
 As I study, I'll post the concepts I learn here. The intention is a
 reference I can reach from anywhere. It may also double as a
-portfolio, proof of how serious I am about my craft.
+portfolio.
 
 If you stumbled onto this site: how? You must be family, or a bot.

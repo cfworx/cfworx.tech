@@ -30,8 +30,6 @@ It didn't stay mine for long. Other techs picked it up, and eventually
 it was adopted across the organization, which multiplied one machine's
 twenty minutes into hundreds of hours the organization got back.
 
-The good thing about the script is that it never forgets a step.
-
 Imaging was only the start. Most of what I write now is remediation
 scripts: the vulnerability scanner hands me the list of affected
 machines, and when a fix exists, I turn it into a script.
@@ -43,4 +41,4 @@ is done. Each ring has to come back clean before the next one runs,
 and that first machine is the canary.
 
 If the canary falls over, I lost a few minutes on one machine instead
-of a bad afternoon on the whole fleet. Cheap insurance.
+of a bad afternoon on the whole fleet.

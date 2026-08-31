@@ -35,7 +35,7 @@ optimization, autonomous vehicle path planning.
 
 Reinforcement Learning from Human Feedback puts human judgment inside
 the reward function so the model aligns with what people actually
-want. It's used across GenAI, notably LLM training, and it's the
+want. It's used across GenAI, LLM training especially, and it's the
 difference between "technically correct" and "sounds human."
 
 The pipeline for, say, an internal knowledge chatbot:

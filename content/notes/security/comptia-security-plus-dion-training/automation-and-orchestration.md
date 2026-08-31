@@ -57,8 +57,8 @@ workforce multiplier.
 - **Continuous Deployment**: fully automated deploy to production, no
   human step.
 
-CI/CD improves code quality, speeds releases, reduces deployment
-risk, and enables rollback.
+The exam's CI/CD benefits list: code quality, faster releases, lower
+deployment risk, rollback.
 
 ## Integrations and APIs
 

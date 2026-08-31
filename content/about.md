@@ -3,7 +3,7 @@ title: About
 description: "About Cory, an IT specialist studying for the CCNA."
 ---
 
-Hi, I'm **Cory**. I do IT support for a large organization.
+Hi, I'm Cory. I do IT support for a large organization.
 
 ## What I do
 
@@ -15,9 +15,9 @@ ServiceNow customer feedback score.
 Vulnerability management and audit liaison for a tri-state region.
 
 I write scripts, mostly PowerShell and Python these days. A few of my
-remediation and automation scripts got
-picked up across the organization and replaced hundreds of hours of
-hand work.
+remediation and automation scripts
+[got picked up across the organization](/misc/general/adopted-automation-scripts/)
+and replaced hundreds of hours of hand work.
 
 I teach the IT hour of new employee orientation: systems, ticketing,
 security. Good practice for explaining technical things to people who

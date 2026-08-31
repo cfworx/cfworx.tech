@@ -30,10 +30,10 @@ Couldn't Packet Tracer cover most of this for free? Yes, and I still use it dail
 
 But typing `enable` on a console session to a switch that's actually forwarding my traffic is a different experience. Bad cables and misbehaving console adapters are part of the job too, and a simulator hides all of that.
 
-(And before anyone says it: yes, I know CML exists. The used market was cheaper.)
+(Yes, I know CML exists. The used market was cheaper.)
 
 ## Conclusion
 
-Bottom line: this is more lab than one certification needs, and I'm happy with it. For around $400 total, I get to run every topology in the study plan on the same kind of gear I'd touch at work, and the PA-220 keeps earning its spot after exam day, since Palo Alto is where work is headed anyway.
+This is more lab than one certification needs, and I'm happy with it. For around $400 total, I get to run every topology in the study plan on the same kind of gear I'd touch at work, and the PA-220 keeps earning its spot after exam day.
 
 Next up is working through the labs themselves. The [first CLI session](/homelab/networking/getting-started-with-cisco-cli/) is already written up, and the VLAN work from [the lab plan](/homelab/general/lab-plan/) is next on the bench.

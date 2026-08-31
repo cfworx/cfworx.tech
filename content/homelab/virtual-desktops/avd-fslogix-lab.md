@@ -18,7 +18,7 @@ Entra-joined session hosts, and now the first FSLogix profile
 container sitting on the share, created through a Kerberos ticket that
 no domain controller issued. The fourth session also started the part
 I built all of this for, breaking the permission layers on purpose,
-and stopped one experiment in with labuser1's profile folder
+and stopped one experiment in, with labuser1's profile folder
 deliberately broken.
 
 The AVD line in [my lab plan](/homelab/general/lab-plan/) reads "host
@@ -50,8 +50,7 @@ again, but this worked fine.
 The first real account was labadmin, created in Entra and handed the
 Global Administrator role. I did its first sign-in in a separate
 browser profile so it wouldn't pick up my personal account's cookies,
-and I registered an MFA method for it the same day, which turned out
-to matter.
+and I registered an MFA method for it the same day.
 
 ## Four small problems checking out a free trial
 
@@ -285,11 +284,11 @@ every doc I was following describes blade for blade, so I switched it
 to v1.
 
 After deployment the Overview page showed Account kind FileStorage,
-SSD (premium), LRS, westcentralus. One more line there worth noticing:
-Default share-level permissions, Disabled. I left it that way.
-Assigning RBAC to a specific group instead of falling back to a
-default-for-everyone permission is the whole reason the region got
-picked so carefully in the first place.
+SSD (premium), LRS, westcentralus. One more line there: Default
+share-level permissions, Disabled. I left it that way. Assigning RBAC
+to a specific group instead of falling back to a default-for-everyone
+permission is the whole reason the region got picked in the first
+place.
 
 ## The profiles share
 
@@ -395,9 +394,7 @@ ticket to the share: the admin version of the silent temp-profile
 failure.
 
 So that policy went Off too, and MFA-labadmin, which carries the
-exclusion, took over as labadmin's protection. Any MFA that has to
-coexist with Entra Kerberos has to live in a policy *you own*, because
-the managed ones can't be exclusion-edited.
+exclusion, took over as labadmin's protection.
 
 The policy list after the switch, with both managed MFA policies Off
 and MFA-labadmin doing the work:
@@ -733,9 +730,7 @@ Get-ChildItem: Cannot find drive. A drive with the name 'C' does not exist.
 
 Cloud Shell is a Linux container in Azure. It has no `C:` drive
 because it isn't the VM. I'd spent the previous hour switching between
-two shells and had stopped noticing which one I was in. Cloud Shell
-talks to Azure (handles, RBAC, storage); Run command talks to the
-inside of a VM (logs, registry, disks).
+two shells and had stopped noticing which one I was in.
 
 ## Breaking the root ACL first
 

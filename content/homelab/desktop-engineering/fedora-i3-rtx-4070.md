@@ -194,9 +194,9 @@ inside i3blocks.
 
 ## Conclusion
 
-Bottom line: X11 plus i3 is the low-drama way to run an Nvidia card on
-Linux in 2026, and Fedora gets you a current kernel without living on
-a rolling release. I'm not missing Windows on this machine.
+X11 plus i3 is the low-drama way to run an Nvidia card on Linux in
+2026, and Fedora gets you a current kernel without living on a
+rolling release. I'm not missing Windows on this machine.
 
 The caveat is that 'minimal' means you assemble the desktop yourself.
 I spent more time on the status bar than on the graphics driver, which

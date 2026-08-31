@@ -37,8 +37,8 @@ There are no direct physical connections between spoke devices; all
 traffic passes through the central device.
 
 An *extended star* replaces one or more spoke devices with a device
-that has its own spokes. In other words, multiple star topologies
-whose central devices are connected to each other.
+that has its own spokes: multiple star topologies whose central
+devices are connected to each other.
 
 ### Mesh
 
