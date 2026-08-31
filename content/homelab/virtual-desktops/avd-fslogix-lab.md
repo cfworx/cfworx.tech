@@ -1,7 +1,7 @@
 ---
-title: "A pooled AVD host pool with FSLogix profiles on Azure Files"
+title: "The plumbing for an AVD + FSLogix lab"
 date: 2026-08-31
-description: "The whole AVD lab build in one post: a free tenant, the 2026 Entra MFA traps, an Azure Files share on Entra Kerberos with no domain controller, and two session hosts that failed to deploy the first time."
+description: "Three sessions into the AVD lab: tenant, storage, and two session hosts are up. FSLogix isn't configured yet, so nothing has touched the share."
 draft: false
 aliases:
   - "/homelab/domain-infrastructure/avd-fslogix-part-1-tenant-foundation/"
@@ -10,27 +10,26 @@ aliases:
   - "/homelab/virtual-desktops/avd-fslogix-part-2-storage-kerberos-plumbing/"
   - "/homelab/virtual-desktops/avd-fslogix-part-3-session-hosts/"
   - "/homelab/virtual-desktops/avd-fslogix-break-fix-lab/"
+  - "/homelab/virtual-desktops/avd-fslogix-part-1-plumbing/"
 ---
 
-This checks off the AVD line in [my lab plan](/homelab/general/lab-plan/):
-a pooled Azure Virtual Desktop host pool, two Entra-joined session
-hosts, and an Azure Files share for FSLogix profile containers,
-authenticated with Microsoft Entra Kerberos and no domain controller
-anywhere in the picture. Fully cloud-native: no directory sync, no
-Windows file server.
+Three sessions into the AVD lab: the tenant, the storage, and two
+Entra-joined session hosts are up, and a cloud-only user can sign into
+a full Windows 11 desktop on the pool. FSLogix isn't configured yet,
+so nothing has touched the share and the Kerberos ticket to it is
+still untested.
 
-It took three days across a week, it's built entirely on an Azure free
-account and an M365 Business Premium trial, and everything expires
-with the trials on September 27, so the whole lab has a hard teardown
-deadline. This post is the build, all of it, including the vnet I
-configured and never actually created.
+The AVD line in [my lab plan](/homelab/general/lab-plan/) reads "host
+pool, FSLogix profile containers, RemoteApp publishing, session host
+scaling," and this post is none of the interesting bits of that. It's
+the plumbing everything else sits on: cloud-only identities on
+Microsoft Entra Kerberos, no domain controller, no directory sync, no
+Windows file server. It's built entirely on an Azure free account and
+an M365 Business Premium trial, everything expires with the trials on
+September 27, and it includes the vnet I configured and never actually
+created.
 
-Where it stands as of this writing: a cloud-only user can sign into a
-full Windows 11 desktop on the pool. FSLogix itself isn't configured
-yet, so profiles are still local and the Kerberos ticket to the share
-is still untested. That part is next.
-
-## Which comes first: the M365 tenant or the Azure account
+## The tenant
 
 I signed up for the Azure free account first, with a personal Microsoft
 account. Azure created a tenant on the spot, named it Default
@@ -49,8 +48,8 @@ again, but this worked fine.
 The first real account was labadmin, created in Entra and handed the
 Global Administrator role. I did its first sign-in in a separate
 browser profile so it wouldn't pick up my personal account's cookies,
-and I registered an MFA method for it the same day. That same-day
-registration turned out to matter. More on that below.
+and I registered an MFA method for it the same day, which turned out
+to matter.
 
 ## Four small problems checking out a free trial
 
@@ -73,15 +72,20 @@ what was actually wrong:
 
 [![Your products showing the Change billing account control and the trial expiring 9/27/2026](/homelab/images/part1-billing-account.png)](/homelab/images/part1-billing-account.png)
 
-## Users, licenses, and the group
+## Users and licenses
 
-The first license assignment failed with an error that never mentions
-location. Users created in Entra are born without a usage location, and
-Microsoft won't license a user it doesn't have a country for. I set
-the usage location on the user, assigned the license again, and it went
-through. The other way around this: create users in the M365 admin
-center instead, where the wizard collects the location as part of the
-flow.
+The first license assignment failed with:
+
+```text
+License cannot be assigned to a user without a usage location specified.
+```
+
+Users created in Entra are born without a usage location, and nothing
+in the user-creation flow asks for one, so this error is waiting for
+anyone who makes users there first. I set the usage location on the
+user, assigned the license again, and it went through. The other way
+around this: create users in the M365 admin center instead, where the
+wizard collects the location as part of the flow.
 
 The lab users are labuser1 and labuser2, both with the forced password
 change at first sign-in turned *off*. They're throwaway test identities
@@ -116,8 +120,7 @@ replacement policy first:
 
 [![Failed to create MFA-labadmin: security defaults is enabled in the tenant](/homelab/images/part1-securitydefaults-block.png)](/homelab/images/part1-securitydefaults-block.png)
 
-Fair enough. I turned security defaults off and went back to build the
-policy.
+I turned security defaults off and went back to build the policy.
 
 In the same minute the switch flipped, Microsoft auto-deployed four
 managed Conditional Access policies into the tenant, every creation
@@ -192,11 +195,16 @@ subscription is the only place a charge could still show up.
 [![Budget alert conditions: an actual cost alert at 25 percent of the 200 dollar monthly budget](/homelab/images/part1-budget-alerts.png)](/homelab/images/part1-budget-alerts.png)
 
 One decision from this first day shapes everything after it: the
-region is West Central US, because it's currently the only US region
-that supports per-group RBAC for cloud-only Entra Kerberos, and only
-on premium file shares.
+region is West Central US, because when I planned this in mid-August
+it was the only US region Microsoft's doc listed as supporting
+per-group RBAC for cloud-only Entra Kerberos, and only on premium
+file shares. (Microsoft removed that regional restriction from
+[the doc](https://learn.microsoft.com/en-us/azure/storage/files/storage-files-identity-auth-hybrid-identities-enable)
+in an August 24 update, after this tenant was already built, so if
+you're following along you can apparently do this anywhere now. I
+haven't personally tested another region.)
 
-## The vnet create blade, and the private subnet checkbox
+## The vnet
 
 vnet-lab should have been the easiest resource of the day: one address
 space, 10.10.0.0/16, one subnet, snet-avd at 10.10.1.0/24, no Bastion,
@@ -240,21 +248,21 @@ until you either uncheck that box or pay for a NAT gateway.
 
 [![Add a subnet panel: snet-avd at 10.10.1.0/24, the private subnet checkbox now unchecked, above the note that private subnets became the default after March 31, 2026](/homelab/images/part1-subnet-panel.png)](/homelab/images/part1-subnet-panel.png)
 
-And then, as I only discovered three days later, I never clicked
-Create. All that panel work was real, the validation screenshot is
-real, and the resource never existed. I switched tabs to write up my
-notes and walked away believing rg-avd-lab held a network. That
-surfaces again at the host pool step below.
+And then, as I only discovered three days later, I closed the tab to
+go write up my notes without ever clicking Create, and walked away
+believing rg-avd-lab held a network. That surfaces again at the host
+pool step below.
 
-## The storage account, and the ways the blade steers you wrong
+## Storage account
 
 The next session was storage: the share the FSLogix profile containers
 will live on.
 
 The requirements were strict: FileStorage kind, premium performance,
-LRS, in West Central US, because that combination is what supports
-per-group RBAC with cloud-only identities. The 2026 create blade offers
-several ways to end up with something else.
+LRS, in West Central US, because that combination was what the doc
+required for per-group RBAC with cloud-only identities when I planned
+the lab. The 2026 create blade offers several ways to end up with
+something else.
 
 I reached the blade through a Blob Storage breadcrumb, which mattered
 more than it should. Primary service arrived unset, and with
@@ -280,10 +288,10 @@ After deployment the Overview page showed Account kind FileStorage,
 SSD (premium), LRS, westcentralus. One more line there worth noticing:
 Default share-level permissions, Disabled. I left it that way.
 Assigning RBAC to a specific group instead of falling back to a
-default-for-everyone permission is the whole reason this lab is in
-West Central US.
+default-for-everyone permission is the whole reason the region got
+picked so carefully in the first place.
 
-## The profiles share, and an RC4 warning that doesn't apply here
+## The profiles share
 
 The file shares blade is called Classic file shares now, which is the
 portal's way of telling v1 users their account type has a successor. I
@@ -303,14 +311,13 @@ pain to delete at teardown time.
 
 Across the top of the blade sat an orange warning: Windows Kerberos
 RC4 hardening may affect your Azure Files access, action required,
-July 2026 update. It reads urgent. It applies to storage accounts
-using on-prem AD DS authentication configured before 2023, whose
-tickets can still be RC4, and Entra Kerberos tickets are always
-AES-256, so it has nothing to say about this account.
+July 2026 update. It applies to storage accounts using on-prem AD DS
+authentication configured before 2023, whose tickets can still be RC4,
+and Entra Kerberos tickets are always AES-256, so it has nothing to
+say about this account. I still read it twice before I was sure I
+could ignore it.
 
-I still read it twice before I was sure I could ignore it.
-
-## Enabling Entra Kerberos, and the two fields that stay empty
+## Entra Kerberos
 
 Identity-based access on the share offers three identity sources:
 on-prem AD DS, Microsoft Entra Domain Services, and Microsoft Entra
@@ -348,7 +355,8 @@ granted to AVD-Users then evaluates against a ticket that never
 mentions AVD-Users, so access fails, nothing errors, nothing is
 logged, and none of it can be seen from inside a session host.
 
-That went straight onto the silent-auth-failure checklist.
+That went straight onto the checklist as the silent-auth-failure
+entry.
 
 [![The app manifest with kdc_enable_cloud_group_sids in the tags array](/homelab/images/part2-manifest-tag.png)](/homelab/images/part2-manifest-tag.png)
 
@@ -356,7 +364,7 @@ Microsoft's docs warn against editing anything else in this
 auto-generated app, and I took the warning seriously: I added the tag
 and touched nothing else.
 
-## Excluding the storage app from MFA, and a correction to the MFA plan
+## Excluding the storage app from MFA
 
 The first day arranged MFA so labadmin is protected everywhere and the
 lab users nowhere, because the Kerberos ticket for the file share is
@@ -430,11 +438,11 @@ share's Manage access blade. Three entries:
 - **labadmin**, Full control, everywhere: someone has to clean up.
 
 That closed out the storage day: the first resource in the lab that
-actually costs money, at about 53 cents a day, and every checkmark on
-it still a claim rather than a result, because nothing had fetched a
-Kerberos ticket yet. There was no Windows machine to fetch one from.
+actually costs money, at about 53 cents a day, with every checkmark on
+it still a claim rather than a result, because with no Windows machine
+in the lab yet, nothing had fetched a Kerberos ticket.
 
-## The host pool wizard, three years newer than the guides
+## Host pool
 
 So the third session built the machines: a pooled host pool, two
 Entra-joined session hosts, a desktop app group for labuser1, a
@@ -479,18 +487,15 @@ three of them before Review + create:
 The fourth default wasn't on this tab at all, and I didn't find it
 until the deployment failed.
 
-## None available
+## The missing vnet
 
 The Virtual network dropdown said "None available." My first guesses
 were a region mismatch or a stale blade, so I toggled the VM location
 away and back, refreshed, and restarted the wizard, none of which
 changed anything. Then I opened rg-avd-lab in another tab and it
-contained exactly one resource: the storage account.
-
-There was no vnet. This is where the walked-away-without-clicking-
-Create mistake from the first day finally showed itself: I had
-described a network, validated a network, and screenshotted a network
-that was never deployed.
+contained exactly one resource: the storage account. There was no
+vnet. On day one I'd validated it and taken the screenshot, then
+closed the tab without clicking Create.
 
 So I built it, for real this time, and deleted the `default` subnet
 the blade auto-creates alongside your own. On the Add a subnet panel I
@@ -500,7 +505,7 @@ no outbound Internet for anything in the subnet. This is the exact trap
 I'd written a section about above, I knew to look for it, and I have
 the screenshot showing it unchecked before I clicked Create.
 
-## 17 attempts
+## First deployment: failed
 
 The wizard saw vnet-lab, validation passed, and the deployment ran for
 20 minutes before both hosts failed on the same extension with the
@@ -514,20 +519,17 @@ after 17 attempts: Unable to connect to the remote server.
 
 [![The failed deployment: both hosts' DSC extensions in Conflict, every VM, NIC, and attestation resource green](/homelab/images/part3-dsc-failed.png)](/homelab/images/part3-dsc-failed.png)
 
-The VMs themselves were fine. Allocated, attested, running. West
+The VMs themselves were fine: allocated, attested, running. West
 Central US had the capacity and my trial's 4 vCPU quota fit two
 D2as_v5s exactly. The AVD agent installer just couldn't reach
 Microsoft's own blob storage to download its configuration, which is
-the signature of a machine with no route to the Internet.
-
-I opened snet-avd in the portal's Edit subnet panel. The
-private-subnet box was checked.
-
-Whether the create panel dropped my setting or the blade re-applied
-the new default at creation time, I don't know. What I do know is that
-the panel before creation showed it unchecked, the subnet after
-creation had it enabled, and the only setting that matters is the one
-on the deployed subnet.
+the signature of a machine with no route to the Internet. So I opened
+snet-avd in the portal's Edit subnet panel, and the private-subnet box
+was checked. Whether the create panel dropped my setting or the blade
+re-applied the new default at creation time, I don't know. What I do
+know is that the panel before creation showed it unchecked, the subnet
+after creation had it enabled, and the only setting that matters is
+the one on the deployed subnet.
 
 The fix was unremarkable: uncheck it on the live subnet, save, delete
 both VMs, and add two new ones from the host pool's Session hosts
@@ -600,15 +602,27 @@ touched the share. The share, the RBAC, the ACL baseline, the manifest
 tag, the MFA exclusion: all of it is still untested until a session
 host actually fetches a Kerberos ticket.
 
-That's the next session on this lab: FSLogix registry settings on both
-hosts, the first VHDX landing on the share, and labuser2's RemoteApp
-view. After that I want to start breaking the permission layers on
-purpose and practicing the fixes, which is what the two-layer design
-and the low session limit were for all along.
+Next on this lab: the FSLogix registry settings on both hosts, the
+first VHDX landing on the share, and labuser2's RemoteApp view. After
+that I want to start breaking the permission layers on purpose and
+practicing the fixes, which is what the two-layer design and the low
+session limit were for all along. That gets written up when it has
+actually happened.
 
-Next time I'll also check the subnet's private-subnet property on the
-deployed subnet instead of trusting the create panel, which would have
-saved the first deployment and about 40 minutes of my evening.
+The troubleshooting checklist I kept adding lines to along the way,
+in full:
+
+1. After disabling security defaults, check the managed Conditional
+   Access policies Microsoft deploys in their place. One of them
+   re-enables MFA for all users.
+2. A vnet created after March 31, 2026 has no outbound access until
+   you uncheck the private-subnet box or pay for a NAT gateway.
+3. Verify the private-subnet property on the *deployed* subnet, not on
+   the create panel. Mine showed unchecked at creation and enabled
+   afterward, and that cost the first deployment and about 40 minutes.
+4. On a cloud-only tenant, the `kdc_enable_cloud_group_sids` manifest
+   tag is mandatory. Without it, ACLs granted to cloud groups fail
+   with no error logged anywhere.
 
 The VMs are deallocated tonight, since at $4.60 a day for the pair I'm
 not paying for them to sit idle while I write.
