@@ -125,8 +125,8 @@ I turned security defaults off and went back to build the policy.
 In the same minute the switch flipped, Microsoft auto-deployed four
 managed Conditional Access policies into the tenant, every creation
 timestamp reading 6:42. One of them is called Multifactor
-authentication for all users, and it turns MFA back on for every user.
-Which is exactly what I had just turned off.
+authentication for all users, and it re-enabled the MFA enforcement I
+had turned off less than a minute earlier.
 
 If I hadn't gone looking, every labuser sign-in would have gotten an
 MFA prompt during the silent ticket request, the request would have
@@ -182,8 +182,7 @@ The assignment flow has grown some friction since the guides I learned
 from were written. Owner now lives on a separate Privileged
 administrator roles tab behind a warning that asks whether a lesser
 role would do, and a Conditions step makes you say out loud that the
-new owner may assign all roles. Seems reasonable for a role that can
-hand out every other role.
+new owner may assign all roles.
 
 [![Add role assignment Conditions tab: allow user to assign all roles, flagged as highly privileged, with a least privilege warning](/homelab/images/part1-owner-conditions.png)](/homelab/images/part1-owner-conditions.png)
 
@@ -250,8 +249,7 @@ until you either uncheck that box or pay for a NAT gateway.
 
 And then, as I only discovered three days later, I closed the tab to
 go write up my notes without ever clicking Create, and walked away
-believing rg-avd-lab held a network. That surfaces again at the host
-pool step below.
+believing rg-avd-lab held a network.
 
 ## Storage account
 
@@ -325,16 +323,17 @@ Kerberos. Setup under the third one is a single checkbox, and below it
 two fields for domain name and domain GUID.
 
 I left both empty. Those exist for *hybrid* identities, where Windows
-ACL management needs to know about the on-prem domain, and filling
-them in on a cloud-only setup just imports confusion.
+ACL management needs to know about the on-prem domain. On a cloud-only
+setup there is no domain to name, so they stay blank.
 
 Saving does more than flip a setting. It creates an app registration
 in Entra named [Storage Account] stavdlab0001.file.core.windows.net,
 that app represents the storage account for everything
 identity-related, and the next two errands happened on it.
 
-The app hides on the All applications tab of App registrations rather
-than Owned applications, because no human created it.
+The app shows up on the All applications tab of App registrations
+rather than Owned applications, since it was created by the service
+and has no owner set.
 
 Errand one was admin consent. The app requests three Microsoft Graph
 delegated permissions (openid, profile, and User.Read), and an admin has
@@ -435,7 +434,8 @@ share's Manage access blade. Three entries:
   a profile folder owns what's inside it.
 - **AVD-Users**, Modify, this folder only: users can create their
   profile folder at the root but can't reach into anyone else's.
-- **labadmin**, Full control, everywhere: someone has to clean up.
+- **labadmin**, Full control, everywhere: for deleting orphaned
+  profile folders and repairing broken ACLs later.
 
 That closed out the storage day: the first resource in the lab that
 actually costs money, at about 53 cents a day, with every checkmark on
@@ -546,8 +546,7 @@ $10 a month each just for existing, so I deleted those by hand too.
 ## Session hosts, Available
 
 Both hosts, power state Running, health state Available, agent version
-1.0.15008.300, zero sessions. Three days of identity, storage, and
-network work, and the lab finally had a pulse.
+1.0.15008.300, zero sessions.
 
 Two things an Entra-joined host needs before any user can connect, and
 neither is in the wizard:
