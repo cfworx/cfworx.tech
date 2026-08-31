@@ -1,5 +1,5 @@
 ---
-title: "The plumbing for an AVD + FSLogix lab"
+title: "AVD + FSLogix lab"
 date: 2026-08-31
 description: "Three sessions into the AVD lab: tenant, storage, and two session hosts are up. FSLogix isn't configured yet, so nothing has touched the share."
 draft: false
