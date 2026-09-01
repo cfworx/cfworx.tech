@@ -1,5 +1,5 @@
 ---
-title: "My $400 eBay CCNA lab is overkill, and that's fine"
+title: "My $400 eBay CCNA lab is overkill"
 date: 2026-08-30
 description: "The gear behind the CCNA study plan: two Catalyst switches, two 1941 routers, a PA-220 firewall, a WiFi 6 access point, and a desk phone, all used, for around $400."
 draft: false

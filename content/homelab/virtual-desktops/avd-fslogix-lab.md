@@ -1,7 +1,7 @@
 ---
 title: "AVD + FSLogix lab"
-date: 2026-08-31
-description: "Four sessions into the AVD lab: tenant, storage, two session hosts, the first FSLogix profile on the share, and the first permission break on purpose."
+date: 2026-09-01
+description: "Five sessions into the AVD lab: tenant, storage, two session hosts, the first FSLogix profile on the share, and the first three permission breaks on purpose."
 draft: false
 aliases:
   - "/homelab/domain-infrastructure/avd-fslogix-part-1-tenant-foundation/"
@@ -13,23 +13,20 @@ aliases:
   - "/homelab/virtual-desktops/avd-fslogix-part-1-plumbing/"
 ---
 
-Four sessions into the AVD lab: the tenant, the storage, two
-Entra-joined session hosts, and now the first FSLogix profile
-container sitting on the share, created through a Kerberos ticket that
-no domain controller issued. The fourth session also started the part
-I built all of this for, breaking the permission layers on purpose,
-and stopped one experiment in, with labuser1's profile folder
-deliberately broken.
+This is the AVD lab from [my lab plan](/homelab/general/lab-plan/):
+host pool, FSLogix profile containers, RemoteApp publishing, session
+host scaling. In practice that means two session hosts, a desktop for
+one test user, published apps for another, and profiles on an Azure
+file share. The part I built all of this for comes last: seven
+experiments where I break profile access on purpose and practice
+finding the failure in the logs.
 
-The AVD line in [my lab plan](/homelab/general/lab-plan/) reads "host
-pool, FSLogix profile containers, RemoteApp publishing, session host
-scaling," and most of this post is the plumbing under that: cloud-only
-identities on Microsoft Entra Kerberos, no domain controller, no
-directory sync, no Windows file server. The profile containers only
-show up near the end. It's built entirely on an Azure free account and
-an M365 Business Premium trial, everything expires with the trials on
-September 27, and it includes the vnet I configured and never actually
-created.
+Everything runs on cloud-only Entra accounts with Microsoft Entra
+Kerberos: no domain controller, no directory sync, no Windows file
+server.
+
+It's built on an Azure free account and an M365 Business Premium
+trial.
 
 ## The tenant
 
@@ -50,7 +47,8 @@ again, but this worked fine.
 The first real account was labadmin, created in Entra and handed the
 Global Administrator role. I did its first sign-in in a separate
 browser profile so it wouldn't pick up my personal account's cookies,
-and I registered an MFA method for it the same day.
+and I registered an MFA method for it the same day, which turned out
+to matter.
 
 ## Four small problems checking out a free trial
 
@@ -771,30 +769,118 @@ only), labuser2 signed out.
 Then I started the next one, the single-user break: on labuser1's own
 folder, Manage inheritance, disable it, and delete the labuser1 entry
 that CREATOR OWNER had generated when the folder was created. That's
-where the session ended. I deallocated the VMs with labuser1's profile
-folder in that state on purpose, because the next thing that folder
-needs to see is labuser1 trying to open it.
+where the fourth session ended, with labuser1's folder left in that
+state on purpose.
+
+## The single-user break that didn't break anything
+
+Fifth session. labuser1 signed in, and I ran the log script expecting
+a 0x5 on the open. What came back was the same two
+`local_labuser1\Temp` redirection lines a healthy attach writes:
+
+[![Run command output on avd-sh-1 after the folder ACL break: only the two normal temp-directory INFO lines, no errors](/homelab/images/part5-clean-log.png)](/homelab/images/part5-clean-log.png)
+
+No error at all. The Cloud Shell handle query showed two fresh handles
+from 10.10.1.5, opened at 12:03. labuser1 had a perfectly good
+profile, on a folder they had no entry on.
+
+So I opened Manage access on the VHDX file instead of the folder:
+
+[![Manage access on Profile_labuser1.VHDX: owner labuser1, with explicit labuser1 Modify and Lab Admin Full control entries](/homelab/images/part5-vhdx-acl.png)](/homelab/images/part5-vhdx-acl.png)
+
+When the folder was created, CREATOR OWNER's inheritable entry got
+written onto every child as labuser1's own explicit entry. Removing
+labuser1 from the folder a day later never touched the file, and the
+file is the only thing FSLogix opens. Windows lets an ordinary user
+open a file by full path without any rights on the folders above it
+(the "bypass traverse checking" privilege, granted to everyone by
+default), so deleting labuser1 from the folder blocked nothing; the
+open lands on the file's own ACL.
+
+The portal even documents this, in a pane I'd never opened. The
+folder's Manage inheritance button doesn't toggle anything; it shows a
+PowerShell script (`Restore-AzFileAclInheritance -Recursive`, from a
+module called RestSetAcls) and says to re-run it any time you add,
+delete, or edit an entry, because portal ACL edits apply to new
+children only. That's the citation for the whole mystery.
+
+It also printed my storage account key in plain text inside the
+script, and I'd already screenshotted the pane, so I rotated the key.
+
+So, the real single-user break: labuser1 signed out (handles gone),
+labuser1's row deleted from `Profile_labuser1.VHDX` itself:
+
+[![Manage access on Profile_labuser1.VHDX after the break: only the Lab Admin entry remains](/homelab/images/part5-vhdx-acl-broken.png)](/homelab/images/part5-vhdx-acl-broken.png)
+
+labuser1 signed back in. Session number 5, active on avd-sh-1, and
+this time:
+
+```text
+[ERROR:0000003b]   Failed to open virtual disk: \\stavdlab0001.file.core.windows.net\profiles\labuser1_S-1-12-1-...\Profile_labuser1.VHDX (An unexpected network error occurred.)
+[ERROR:0000003b]   LoadProfile failed. Version: 3.26.126.19110 User: labuser1. ... FrxStatus: 31 (An unexpected network error occurred.)
+```
+
+Not 0x5. 0x3B, ERROR_UNEXP_NET_ERR, "an unexpected network error."
+The plan had two error codes, 0x5 for permissions and 0x20 for locks.
+This is a third: when the ACL denial lands on the VHDX file itself,
+FSLogix opens it through the virtual disk layer, and that layer
+reports the refusal as a network error. The log points at the network.
+The cause is one missing row on one file. No handle on the share, temp
+profile on the host.
+
+## The wrong switch
+
+Experiment four was supposed to be easy: set
+`PreventLoginWithTempProfile` to 1 on both hosts, break the same file
+again, and watch the logon get refused instead of degraded.
+
+labuser1 signed in fine. Session number 5 on avd-sh-1, Active, no
+handle on the VHDX. FSLogix had failed to attach, and Windows let them
+in anyway, with the setting confirmed at 1 on that exact host.
+
+The FSLogix docs have two prevent-login switches and I'd picked the
+wrong one. `PreventLoginWithTempProfile` covers the case where the
+container attached but the profile inside it couldn't load.
+`PreventLoginWithFailure` covers the case where the container couldn't
+be attached at all, which is every permission break in this post. My
+plan named the first one for a scenario that belongs to the second.
+
+`PreventLoginWithFailure` set to 1 on both hosts, labuser1 signed out
+and back in:
+
+[![The FSLogix Logon Failure dialog: status 0xB cannot open virtual disk, reason 0x5, error code 0x3B an unexpected network error occurred, computer name avd-sh-1](/homelab/images/part5-logon-failure.png)](/homelab/images/part5-logon-failure.png)
+
+Refused. And the dialog is better than I expected: status code,
+reason, the underlying 0x3B, and the computer name, which is the one
+thing a help desk can never get out of a user on the phone. The
+temp-profile path hides all of that and deletes their work at
+sign-out. Both switches went back to 0 afterward, labuser1 restored on
+the file, two handles back at 12:25.
+
+One more thing from this session, small but it will generate a ticket
+somewhere: labuser2 opened windows.cloud.microsoft and got "It looks
+like your system administrator hasn't set up any resources for
+labuser2 yet." Their four RemoteApps were fine. The Windows App lands
+on the Devices view, which lists desktops, and a RemoteApp-only user
+has none; the apps are under Apps in the left rail. A fully entitled
+user, told they have nothing.
 
 ## Conclusion
 
-Bottom line: the cloud-only Kerberos path works end to end. A user
-with an `S-1-12-1` SID signed into a host with no domain controller,
-the host got a ticket that carried a cloud group, the ticket opened a
-premium file share through two permission layers, and a 5 GB container
-came up online with 196 MiB written to it. Then the first deliberate
-break produced exactly the access-denied code the plan said it would,
-on exactly the operation (create, not open) the plan said it would.
+Bottom line: the cloud-only Kerberos path works end to end, and
+breaking it on purpose taught me three things the plan didn't have. A
+folder ACL edit in the portal doesn't reach existing files, so the
+single-user break has to be done on the VHDX itself. Denial on the
+file logs as 0x3B, a network error, not 0x5. And the switch that
+refuses a logon on attach failure is `PreventLoginWithFailure`, not
+the one I'd written down.
 
-The honest count: one experiment of seven done, a second one started
-and parked. The two lock experiments, the fail-closed toggle, and the
-RBAC break with its propagation waits are all still ahead, and the
-RBAC one is the only one where I don't already know what the log will
-say.
-
-Next session starts with labuser1 signing into a folder they no longer
-have rights to. I expect a temp profile and a 0x5 on the open this
-time, and then the PreventLoginWithTempProfile flip to see the same
-failure block the logon outright instead.
+Three of seven experiments done. Still ahead: the double-connect
+check, the stale lock from a power-yanked host with
+`Close-AzStorageFileHandle` as the fix, and the share-level RBAC
+break, which is the only one left where the log is a foregone
+conclusion. Then the resource group gets deleted before the trials
+expire on September 27.
 
 The troubleshooting checklist, updated:
 
@@ -819,6 +905,17 @@ The troubleshooting checklist, updated:
    logs and registry from Run command.
 8. Break RBAC last. With the group at Reader, every logon fails at the
    share level and hides whatever the ACLs are doing.
+9. Portal ACL edits on a folder don't propagate to existing files. To
+   change what an existing profile can do, edit the VHDX, or run the
+   RestSetAcls script the Manage inheritance pane hands you.
+10. 0x3B in the FSLogix log is not a network problem when it's on a
+    VHDX open. Check the file's ACL before the network.
+11. `PreventLoginWithFailure` is the fail-closed switch for attach
+    failures. `PreventLoginWithTempProfile` is for a different failure
+    and will let the user straight through.
+12. The Manage inheritance pane prints the storage account key in the
+    script it shows you. Don't screenshot it, or rotate the key after.
 
-labuser1's profile folder is still broken. The VMs are deallocated, so
-they can't find out until I turn them back on.
+The `.VHDX.metadata` file, by the way, only exists while the container
+is attached. It was there at 12:42 the day before and gone by the time
+labuser1 signed out. I still don't know what's in it.

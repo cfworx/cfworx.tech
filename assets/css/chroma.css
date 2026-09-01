@@ -119,7 +119,8 @@
 :root figure.term-bash .chroma .s2, :root figure.term-bash .chroma .sb,
 :root figure.term-bash .chroma .dl { color: #f1fa8c }
 :root figure.term-bash .chroma .nv, :root figure.term-bash .chroma .si { color: #8be9fd }
-:root figure.term-bash .chroma .m, :root figure.term-bash .chroma .mi { color: #bd93f9 }
+:root figure.term-bash .chroma .m, :root figure.term-bash .chroma .mi,
+:root figure.term-bash .chroma .mf { color: #bd93f9 }
 :root figure.term-bash .chroma .c, :root figure.term-bash .chroma .c1,
 :root figure.term-bash .chroma .cm { color: #8a8a8a }
 :root figure.term-bash .chroma .gp { color: #50fa7b }
@@ -137,8 +138,10 @@
 :root figure.term-powershell .chroma .s2, :root figure.term-powershell .chroma .sb,
 :root figure.term-powershell .chroma .dl { color: #59d3e6 }
 :root figure.term-powershell .chroma .n, :root figure.term-powershell .chroma .na,
+:root figure.term-powershell .chroma .py,
 :root figure.term-powershell .chroma .o, :root figure.term-powershell .chroma .p { color: #c8c8c8 }
-:root figure.term-powershell .chroma .m, :root figure.term-powershell .chroma .mi { color: #b5cea8 }
+:root figure.term-powershell .chroma .m, :root figure.term-powershell .chroma .mi,
+:root figure.term-powershell .chroma .mf { color: #b5cea8 }
 :root figure.term-powershell .chroma .c, :root figure.term-powershell .chroma .c1,
 :root figure.term-powershell .chroma .cm { color: #4fa34f }
 :root figure.term-powershell .chroma .err { color: #eeedf0 }
@@ -146,4 +149,5 @@
 /* WoW console: everything is system-message gold */
 :root figure.term-wow .chroma, :root figure.term-wow .chroma .err,
 :root figure.term-wow .chroma .k, :root figure.term-wow .chroma .n,
-:root figure.term-wow .chroma .m, :root figure.term-wow .chroma .mi { color: #ffd100 }
+:root figure.term-wow .chroma .m, :root figure.term-wow .chroma .mi,
+:root figure.term-wow .chroma .mf { color: #ffd100 }
