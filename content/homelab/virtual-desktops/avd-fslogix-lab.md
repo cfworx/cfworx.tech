@@ -1,5 +1,5 @@
 ---
-title: "Building and breaking a cloud-only AVD + FSLogix lab"
+title: "I built a cloud-only AVD lab to break FSLogix on purpose"
 date: 2026-09-02
 description: "Six sessions into the AVD lab: tenant, storage, two session hosts, FSLogix profiles on the share, and the permission breaks and locked VHDX done on purpose."
 draft: false
@@ -12,19 +12,25 @@ aliases:
   - "/homelab/virtual-desktops/avd-fslogix-break-fix-lab/"
 ---
 
-This lab builds an Azure Virtual Desktop host pool with FSLogix
-profile containers, RemoteApp publishing, and session host scaling. In
-practice that means two session hosts, a desktop for one test user,
-published apps for another, and profiles on an Azure file share. The
-part I built all of this for comes last: seven experiments where I
-break profile access on purpose and practice finding the failure in
-the logs.
+The [lab plan](/homelab/general/lab-plan/) calls Phase 3 virtual
+desktops, and this is it: an
+[Azure Virtual Desktop](https://learn.microsoft.com/en-us/azure/virtual-desktop/overview)
+host pool with
+[FSLogix](https://learn.microsoft.com/en-us/fslogix/overview-what-is-fslogix)
+profile containers and RemoteApp publishing. In practice that means
+two session hosts, a desktop for one test user, published apps for
+another, and profiles on an Azure file share. The part I built all of
+this for comes last: seven experiments where I break profile access on
+purpose and practice finding the failure in the logs.
 
 Everything runs on cloud-only Entra accounts with Microsoft Entra
 Kerberos: no domain controller, no directory sync, no Windows file
 server.
 
-It's built on an Azure free account and an M365 Business Premium
+It's built on an
+[Azure free account](https://azure.microsoft.com/en-us/pricing/free-services)
+and an
+[M365 Business Premium](https://www.microsoft.com/en-us/microsoft-365/business/microsoft-365-business-premium)
 trial.
 
 ## The tenant
@@ -34,8 +40,8 @@ account. Azure created a tenant on the spot, named it Default
 Directory, and dropped the new subscription into it.
 
 The cleaner order is the reverse: create the M365 trial tenant first,
-then sign up for Azure from inside it, and the subscription is born
-where your users will live. Rather than build a second tenant and
+then sign up for Azure from inside it, so the subscription starts out
+in the same tenant as your users. Rather than build a second tenant and
 transfer the subscription across, I attached the Business Premium trial
 to the tenant Azure had already made.
 
@@ -77,7 +83,7 @@ The first license assignment failed with:
 License cannot be assigned to a user without a usage location specified.
 ```
 
-Users created in Entra are born without a usage location, and nothing
+Users created in Entra start with no usage location, and nothing
 in the user-creation flow asks for one, so this error is waiting for
 anyone who makes users there first. I set the usage location on the
 user, assigned the license again, and it went through. The other way
@@ -190,8 +196,8 @@ subscription is the only place a charge could still show up.
 
 [![Budget alert conditions: an actual cost alert at 25 percent of the 200 dollar monthly budget](/homelab/images/part1-budget-alerts.png)](/homelab/images/part1-budget-alerts.png)
 
-One decision from this first day shapes everything after it: the
-region is West Central US, because when I planned this in mid-August
+One more decision from this first day: the region is West Central US,
+because when I planned this in mid-August
 it was the only US region Microsoft's doc listed as supporting
 per-group RBAC for cloud-only Entra Kerberos, and only on premium
 file shares. (Microsoft removed that regional restriction from
@@ -203,8 +209,8 @@ haven't personally tested another region.)
 ## The vnet
 
 vnet-lab should have been the easiest resource of the day: one address
-space, 10.10.0.0/16, one subnet, snet-avd at 10.10.1.0/24, no Bastion,
-no firewall, nothing extra. It ended up being the part I fumbled the
+space, 10.10.0.0/16, one subnet, snet-avd at 10.10.1.0/24, no Bastion
+or firewall, nothing extra. It ended up being the part I fumbled the
 most, twice over.
 
 The Address space tab now has *two* tables that both accept CIDR
@@ -288,9 +294,9 @@ place.
 
 ## The profiles share
 
-The file shares blade is called Classic file shares now, which is the
-portal's way of telling v1 users their account type has a successor. I
-created the share: profiles, SMB, 100 GiB provisioned.
+The file shares blade is called Classic file shares now that
+Provisioned v2 exists. I created the share: profiles, SMB, 100 GiB
+provisioned.
 
 Premium bills on the provisioned size whether you use it or not, and
 100 GiB is the minimum, so that's roughly $16 a month at full price.
@@ -602,7 +608,9 @@ this part.
 
 I never RDP'd into either session host and never gave labadmin a
 desktop on the pool. Everything administrative on the VMs went through
-the portal's Run command, which runs a PowerShell script inside the VM
+the portal's
+[Run command](https://learn.microsoft.com/en-us/azure/virtual-machines/run-command-overview),
+which runs a PowerShell script inside the VM
 as SYSTEM over the Azure agent channel, with no public IP or Bastion
 involved, no break-glass local account, and nothing for a Conditional
 Access policy to intercept.
@@ -692,7 +700,9 @@ storage session is a result now.
 
 ## The handles
 
-With labuser1 still signed in, Cloud Shell from the portal (ephemeral
+With labuser1 still signed in,
+[Cloud Shell](https://learn.microsoft.com/en-us/azure/cloud-shell/overview)
+from the portal (ephemeral
 mode; it printed a yellow warning that the subscription isn't
 registered to the Microsoft.CloudShell namespace and then worked
 anyway):
@@ -774,7 +784,7 @@ state on purpose.
 ## Breaking labuser1's folder
 
 Fifth session. labuser1 signed in, and I ran the log script expecting
-a 0x5 on the open. What came back was the same two
+a 0x5 on the open. What came back? The same two
 `local_labuser1\Temp` redirection lines a healthy attach writes:
 
 [![Run command output on avd-sh-1 after the folder ACL break: only the two normal temp-directory INFO lines, no errors](/homelab/images/part5-clean-log.png)](/homelab/images/part5-clean-log.png)
@@ -801,7 +811,7 @@ folder's Manage inheritance button doesn't toggle anything; it shows a
 PowerShell script (`Restore-AzFileAclInheritance -Recursive`, from a
 module called RestSetAcls) and says to re-run it any time you add,
 delete, or edit an entry, because portal ACL edits apply to new
-children only. That's the citation for the whole mystery.
+children only.
 
 It also printed my storage account key in plain text inside the
 script, and I'd already screenshotted the pane, so I rotated the key.
@@ -823,9 +833,9 @@ Not 0x5. 0x3B, ERROR_UNEXP_NET_ERR, "an unexpected network error."
 The plan had two error codes, 0x5 for permissions and 0x20 for locks.
 This is a third: when the ACL denial lands on the VHDX file itself,
 FSLogix opens it through the virtual disk layer, and that layer
-reports the refusal as a network error. The log points at the network.
-The cause is one missing row on one file. No handle on the share, temp
-profile on the host.
+reports the refusal as a network error. So the log points at the
+network when the cause is one missing row on one file. No handle on
+the share, temp profile on the host.
 
 Reverting this one meant putting labuser1 back on the file where the
 break had actually landed, and a verification sign-in put two handles

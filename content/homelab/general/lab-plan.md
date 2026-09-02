@@ -27,7 +27,7 @@ gets a writeup when it's done.
 ## Phase 3: virtual desktops and applications
 
 - Hypervisor: Proxmox or Hyper-V
-- Azure Virtual Desktop: host pool, FSLogix profile containers, RemoteApp publishing, session host scaling
+- Azure Virtual Desktop: host pool, FSLogix profile containers, RemoteApp publishing, session host scaling ([the writeup](/homelab/virtual-desktops/avd-fslogix-lab/))
 - On-prem RDS: Connection Broker, Session Host, RemoteApp publishing
 - Full desktop vs. published app writeup
 

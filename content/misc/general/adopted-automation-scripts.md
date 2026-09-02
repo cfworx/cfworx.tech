@@ -1,6 +1,6 @@
 ---
 title: "I scripted away our 20-minute imaging checklist"
-date: 2026-08-30
+date: 2026-08-20
 description: "The PowerShell script that replaced our by-hand post-imaging setup, and the remediation-script habit that grew out of it."
 draft: false
 ---

@@ -1,9 +1,8 @@
 ---
 title: Home
 ---
-I'm Cory. IT is the job and the hobby, and this site is the repo for
-my labs and notes, kept where I can get to them from anywhere with a
-network connection.
+I'm Cory. IT is the job and the hobby. This site is my public
+notebook: homelab write-ups and study notes, written down as I go.
 
 - [Me](/about/)
 - [The workstation](/homelab/endpoint-engineering/fedora-i3-rtx-4070/)

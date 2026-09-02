@@ -26,11 +26,11 @@ Nothing here is current-generation. That's the point: the CCNA doesn't care how 
 
 ## Why real hardware?
 
-Couldn't Packet Tracer cover most of this for free? Yes, and I still use it daily.
+Couldn't [Packet Tracer](https://www.netacad.com/cisco-packet-tracer) cover most of this for free? Yes, and I still use it daily.
 
 But typing `enable` on a console session to a switch that's actually forwarding my traffic is a different experience. Bad cables and misbehaving console adapters are part of the job too, and a simulator hides all of that.
 
-(Yes, I know CML exists. The used market was cheaper.)
+(Yes, I know [CML](https://developer.cisco.com/modeling-labs/) exists. The used market was cheaper.)
 
 ## Conclusion
 
