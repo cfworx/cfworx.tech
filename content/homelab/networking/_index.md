@@ -1,7 +1,7 @@
 ---
 title: Networking
-description: "Networking lab notes"
+description: "Networking labs"
 blurb: "Switching, routing, and network services"
-weight: 6
+weight: 60
 countword: lab
 ---

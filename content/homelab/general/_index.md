@@ -1,6 +1,6 @@
 ---
 title: General
 description: "General posts"
-weight: 1
+weight: 10
 countword: post
 ---
