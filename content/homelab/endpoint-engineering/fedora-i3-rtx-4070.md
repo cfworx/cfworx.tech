@@ -1,9 +1,11 @@
 ---
-title: "Fedora i3 on an RTX 4070 just works"
+title: "Fedora i3 on an RTX 4070 just works (with some papercuts)"
 date: 2026-08-30
 description: "Wiped Windows off the gaming PC and put Fedora 44 i3 Spin on it: Nvidia open modules with Secure Boot, three 180 Hz monitors, WoW Classic at the FPS cap, and nine papercuts."
 draft: false
 tags: ["linux", "fedora", "i3", "nvidia", "gaming", "homelab"]
+aliases:
+  - "/homelab/desktop-engineering/fedora-i3-rtx-4070/"
 ---
 
 Windows broke on me again this week, and I was already tired of
@@ -194,9 +196,9 @@ inside i3blocks.
 
 ## Conclusion
 
-X11 plus i3 is the low-drama way to run an Nvidia card on Linux in
-2026, and Fedora gets you a current kernel without living on a
-rolling release. I'm not missing Windows on this machine.
+Bottom line: X11 plus i3 is the low-drama way to run an Nvidia card on
+Linux in 2026, and Fedora gets you a current kernel without living on
+a rolling release. I'm not missing Windows on this machine.
 
 The caveat is that 'minimal' means you assemble the desktop yourself.
 I spent more time on the status bar than on the graphics driver, which
