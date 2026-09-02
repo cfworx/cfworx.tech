@@ -46,8 +46,7 @@ again, but this worked fine.
 The first real account was labadmin, created in Entra and handed the
 Global Administrator role. I did its first sign-in in a separate
 browser profile so it wouldn't pick up my personal account's cookies,
-and I registered an MFA method for it the same day, which turned out
-to matter.
+and I registered an MFA method for it the same day.
 
 ## Four small problems checking out a free trial
 
@@ -57,7 +56,7 @@ what was actually wrong:
 1. The billing menu item the documentation points at, Purchase
    services, no longer exists. It became Marketplace in a December 2025
    rename, and most guides haven't caught up.
-2. The trial checked out into a *second* billing account, so the Your
+2. The trial checked out into a second billing account, so the Your
    products page looked empty after purchase. The licenses weren't
    missing. The page was filtered to the wrong billing account, and the
    small Change billing account control was the entire fix.
@@ -86,7 +85,7 @@ around this: create users in the M365 admin center instead, where the
 wizard collects the location as part of the flow.
 
 The lab users are labuser1 and labuser2, both with the forced password
-change at first sign-in turned *off*. They're throwaway test identities
+change at first sign-in turned off. They're throwaway test identities
 that will get typed into session hosts over and over, and I didn't want
 a password reset landing in the middle of that.
 
@@ -128,7 +127,7 @@ had turned off less than a minute earlier.
 
 If I hadn't gone looking, every labuser sign-in would have gotten an
 MFA prompt during the silent ticket request, the request would have
-failed, and *nothing* would have been logged anywhere. I set that
+failed, and nothing would have been logged anywhere. I set that
 policy to Off.
 
 [![Conditional Access policy list: four Microsoft-managed policies, one user policy, and the all-users MFA policy set to Off](/homelab/images/part1-ca-policies.png)](/homelab/images/part1-ca-policies.png)
@@ -166,7 +165,7 @@ labadmin ran the whole tenant and couldn't create a resource group.
 
 Entra roles and Azure RBAC are two separate permission systems that
 happen to share a sign-in page. Global Admin sits at the top of the
-first and means *nothing* in the second, where the only name on the
+first and means nothing in the second, where the only name on the
 subscription was the personal account that created it. Entra does have
 an elevate access switch for exactly this situation, but the personal
 account was right there, so I just used it.
@@ -224,9 +223,9 @@ and diagram I wrote afterward. I caught it on the Review + create tab.
 
 [![vnet-lab validation passed: West Central US, 10.10.0.0/16 with snet-avd at 10.10.1.0/24, Bastion and firewall disabled](/homelab/images/part1-vnet-review.png)](/homelab/images/part1-vnet-review.png)
 
-Those were annoyances compared to the checkbox.
+The checkbox was the bigger problem.
 
-Enable private subnet (no default outbound access) arrived *checked*,
+Enable private subnet (no default outbound access) arrived checked,
 because private subnets became the default for new vnets after March
 31, 2026. Leave it checked and the session hosts deploy with no
 outbound internet at all: Windows can't activate or update, the AVD
@@ -260,13 +259,13 @@ required for per-group RBAC with cloud-only identities when I planned
 the lab. The 2026 create blade offers several ways to end up with
 something else.
 
-I reached the blade through a Blob Storage breadcrumb, which mattered
-more than it should. Primary service arrived unset, and with
+I reached the blade through a Blob Storage breadcrumb. Primary
+service arrived unset, and with
 Performance set to Premium the blade uses that field to pick between
 three premium account types: block blobs, file shares, page blobs.
 Come in on a blob-flavored entry path and it can steer you into a
-premium block blob account, which can't host a file share *at
-all*, and nothing tells you until the file shares blade comes up empty.
+premium block blob account, which can't host a file share at all, and
+nothing tells you until the file shares blade comes up empty.
 
 I set Primary service to Azure Files, a Media tier selector appeared,
 and I picked SSD (premium).
@@ -320,7 +319,7 @@ on-prem AD DS, Microsoft Entra Domain Services, and Microsoft Entra
 Kerberos. Setup under the third one is a single checkbox, and below it
 two fields for domain name and domain GUID.
 
-I left both empty. Those exist for *hybrid* identities, where Windows
+I left both empty. Those exist for hybrid identities, where Windows
 ACL management needs to know about the on-prem domain. On a cloud-only
 setup there is no domain to name, so they stay blank.
 
@@ -349,8 +348,8 @@ array, and it needs this in it:
 Without the tag, the Kerberos tickets this app issues carry only
 on-prem group SIDs, and a cloud-only tenant has *none*. Every ACL
 granted to AVD-Users then evaluates against a ticket that never
-mentions AVD-Users, so access fails, nothing errors, nothing is
-logged, and none of it can be seen from inside a session host.
+mentions AVD-Users, so access fails with nothing logged anywhere and
+no way to see the cause from inside a session host.
 
 That went straight onto the checklist as the silent-auth-failure
 entry.
@@ -604,8 +603,9 @@ this part.
 I never RDP'd into either session host and never gave labadmin a
 desktop on the pool. Everything administrative on the VMs went through
 the portal's Run command, which runs a PowerShell script inside the VM
-as SYSTEM over the Azure agent channel: no public IP, no Bastion, no
-break-glass account, and no Conditional Access policy in the path.
+as SYSTEM over the Azure agent channel, with no public IP or Bastion
+involved, no break-glass local account, and nothing for a Conditional
+Access policy to intercept.
 
 [![The Run command blade on avd-sh-1 with the RunPowerShellScript panel holding the FSLogix setup script](/homelab/images/part4-run-command.png)](/homelab/images/part4-run-command.png)
 
@@ -835,7 +835,7 @@ back on the VHDX at 12:25.
 
 Experiment four was supposed to be easy: set
 `PreventLoginWithTempProfile` to 1 on both hosts, break the same file
-again, and watch the logon get refused instead of degraded.
+again, and watch the logon get blocked outright.
 
 labuser1 signed in fine. Session number 5 on avd-sh-1, Active, no
 handle on the VHDX. FSLogix had failed to attach, and Windows let them
@@ -869,8 +869,8 @@ somewhere: labuser2 opened windows.cloud.microsoft and got "It looks
 like your system administrator hasn't set up any resources for
 labuser2 yet." Their four RemoteApps were fine. The Windows App lands
 on the Devices view, which lists desktops, and a RemoteApp-only user
-has none; the apps are under Apps in the left rail. A fully entitled
-user, told they have nothing.
+has none; the apps are under Apps in the left rail, so a fully
+entitled user gets told they have nothing.
 
 ## The lock
 
@@ -889,9 +889,9 @@ labuser1 in a second browser window while the first was still
 connected, and instead of a second session, the new connection took
 over the existing one and the first window got kicked to the sign-in
 page. One user, one session, on a pooled host pool. There is no
-two-live-sessions case fighting over a VHDX, which is why every real
-locked-profile incident is a stale handle from a host that died, not
-concurrency.
+two-live-sessions case fighting over a VHDX, which is why real
+locked-profile incidents come from stale handles left by dead hosts;
+true concurrency can't happen.
 
 So, the stale handle. The setup is to hard-kill the host mid-session,
 so FSLogix never gets to detach. The portal's Stop button is a
