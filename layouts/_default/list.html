@@ -11,7 +11,8 @@
   {{- if .Sections }}
   <ul class="subsections">
     {{- range .Sections }}
-    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a> ({{ len .RegularPagesRecursive }} {{ if eq (len .RegularPagesRecursive) 1 }}note{{ else }}notes{{ end }})</li>
+    {{- $n := len .RegularPagesRecursive }}{{ $w := .Params.countword | default "note" }}
+    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a> ({{ $n }} {{ $w }}{{ if ne $n 1 }}s{{ end }})</li>
     {{- end }}
   </ul>
   {{- end }}

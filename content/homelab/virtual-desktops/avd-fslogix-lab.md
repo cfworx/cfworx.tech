@@ -1,7 +1,7 @@
 ---
-title: "AVD + FSLogix lab"
-date: 2026-09-01
-description: "Five sessions into the AVD lab: tenant, storage, two session hosts, the first FSLogix profile on the share, and the first three permission breaks on purpose."
+title: "Building and breaking a cloud-only AVD + FSLogix lab"
+date: 2026-09-02
+description: "Six sessions into the AVD lab: tenant, storage, two session hosts, FSLogix profiles on the share, and the permission breaks and locked VHDX done on purpose."
 draft: false
 aliases:
   - "/homelab/domain-infrastructure/avd-fslogix-part-1-tenant-foundation/"
@@ -10,16 +10,15 @@ aliases:
   - "/homelab/virtual-desktops/avd-fslogix-part-2-storage-kerberos-plumbing/"
   - "/homelab/virtual-desktops/avd-fslogix-part-3-session-hosts/"
   - "/homelab/virtual-desktops/avd-fslogix-break-fix-lab/"
-  - "/homelab/virtual-desktops/avd-fslogix-part-1-plumbing/"
 ---
 
-This is the AVD lab from [my lab plan](/homelab/general/lab-plan/):
-host pool, FSLogix profile containers, RemoteApp publishing, session
-host scaling. In practice that means two session hosts, a desktop for
-one test user, published apps for another, and profiles on an Azure
-file share. The part I built all of this for comes last: seven
-experiments where I break profile access on purpose and practice
-finding the failure in the logs.
+This lab builds an Azure Virtual Desktop host pool with FSLogix
+profile containers, RemoteApp publishing, and session host scaling. In
+practice that means two session hosts, a desktop for one test user,
+published apps for another, and profiles on an Azure file share. The
+part I built all of this for comes last: seven experiments where I
+break profile access on purpose and practice finding the failure in
+the logs.
 
 Everything runs on cloud-only Entra accounts with Microsoft Entra
 Kerberos: no domain controller, no directory sync, no Windows file
@@ -600,7 +599,7 @@ with four app tiles and no desktop tile:
 Word opened as a floating window on my own PC. Nothing went wrong in
 this part.
 
-## FSLogix, without ever logging into a host
+## FSLogix by Run command
 
 I never RDP'd into either session host and never gave labadmin a
 desktop on the pool. Everything administrative on the VMs went through
@@ -691,7 +690,7 @@ manifest tag worked), share-level RBAC let the connection in, the
 labuser1 the rights to what they made. Every checkmark from the
 storage session is a result now.
 
-## What a lock looks like
+## The handles
 
 With labuser1 still signed in, Cloud Shell from the portal (ephemeral
 mode; it printed a yellow warning that the subscription isn't
@@ -772,7 +771,7 @@ that CREATOR OWNER had generated when the folder was created. That's
 where the fourth session ended, with labuser1's folder left in that
 state on purpose.
 
-## The single-user break that didn't break anything
+## Breaking labuser1's folder
 
 Fifth session. labuser1 signed in, and I ran the log script expecting
 a 0x5 on the open. What came back was the same two
@@ -828,6 +827,10 @@ reports the refusal as a network error. The log points at the network.
 The cause is one missing row on one file. No handle on the share, temp
 profile on the host.
 
+Reverting this one meant putting labuser1 back on the file where the
+break had actually landed, and a verification sign-in put two handles
+back on the VHDX at 12:25.
+
 ## The wrong switch
 
 Experiment four was supposed to be easy: set
@@ -854,8 +857,12 @@ Refused. And the dialog is better than I expected: status code,
 reason, the underlying 0x3B, and the computer name, which is the one
 thing a help desk can never get out of a user on the phone. The
 temp-profile path hides all of that and deletes their work at
-sign-out. Both switches went back to 0 afterward, labuser1 restored on
-the file, two handles back at 12:25.
+sign-out.
+
+The revert had two halves. I ran the switches back to 0 on both hosts
+and moved on. The other half, putting labuser1 back on the file and
+verifying with a sign-in, I never did, because at exactly that point I
+stopped for the day to write.
 
 One more thing from this session, small but it will generate a ticket
 somewhere: labuser2 opened windows.cloud.microsoft and got "It looks
@@ -865,57 +872,110 @@ on the Devices view, which lists desktops, and a RemoteApp-only user
 has none; the apps are under Apps in the left rail. A fully entitled
 user, told they have nothing.
 
+## The lock
+
+The sixth session opened with the FSLogix logon failure dialog before
+I'd broken anything. labuser1 was still missing from the VHDX, the
+revert step I'd skipped the night before, and getting the dialog
+rather than a silent temp profile meant the fail-closed switch was
+still live on that host too, whatever I thought I'd reverted. Both
+survived the VMs being deallocated overnight, because of course they
+did: an ACL and a registry value don't care about power state.
+Breaking things on purpose needs a written revert list, and I'd been
+keeping it in my head.
+
+While sorting that out I got experiment seven for free. I signed in as
+labuser1 in a second browser window while the first was still
+connected, and instead of a second session, the new connection took
+over the existing one and the first window got kicked to the sign-in
+page. One user, one session, on a pooled host pool. There is no
+two-live-sessions case fighting over a VHDX, which is why every real
+locked-profile incident is a stale handle from a host that died, not
+concurrency.
+
+So, the stale handle. The setup is to hard-kill the host mid-session,
+so FSLogix never gets to detach. The portal's Stop button is a
+graceful shutdown, which defeats the point; the yank is:
+
+```bash
+az vm stop --resource-group rg-avd-lab --name avd-sh-1 --skip-shutdown
+```
+
+My first attempt at running it went into the Run command box on
+avd-sh-1 itself, where it failed because Windows has no az command.
+Cloud Shell has no `C:` drive, and the VM has no az; I have now made
+this mistake in both directions.
+
+From Cloud Shell it worked, and the handle query straight after showed
+the goods: two handles on `Profile_labuser1.VHDX` from 10.10.1.5, a
+machine that was now powered off. A dead host, still holding the file.
+
+[![Cloud Shell: az vm stop with skip-shutdown, the handle query showing two handles held by the powered-off host, and the Close-AzStorageFileHandle that ran too soon](/homelab/images/part6-stale-handles.png)](/homelab/images/part6-stale-handles.png)
+
+Then I fumbled the second half. The fix for a stale lock is
+`Close-AzStorageFileHandle -CloseAll` on the VHDX path, and I ran it
+immediately, while admiring the stale handles, before labuser1 had
+tried to reconnect. Which means the fix worked and the evidence never
+happened: by the time labuser1 signed back in, there was nothing to
+collide with.
+
+Rather than re-stage the race, I made the lock deterministic. avd-sh-1
+went into drain mode on the Session hosts blade, so the broker
+couldn't place labuser1 there. Then Run command on avd-sh-1 mapped the
+share with the storage key and mounted labuser1's VHDX directly with
+Mount-DiskImage: an on-demand version of the handle a hung host
+leaves. The handle query showed two handles from 10.10.1.5 again, held
+by a healthy machine this time.
+
+[![Run command on avd-sh-1 showing the VHDX mounted from the share, over the Cloud Shell handle query showing the two handles it holds](/homelab/images/part6-mounted-lock.png)](/homelab/images/part6-mounted-lock.png)
+
+labuser1 signed in, landed on avd-sh-0, waited out a visibly slow
+logon, and got a temp profile. The log on avd-sh-0:
+
+```text
+[11:55:54.670][INFO]   Configuration Read (DWORD): SOFTWARE\FSLogix\Profiles\LockedRetryCount.  Data: 3
+[11:55:54.670][INFO]   Configuration Read (DWORD): SOFTWARE\FSLogix\Profiles\LockedRetryInterval.  Data: 5
+[11:55:55.971][ERROR:00000020]   Operation 'OpenVirtualDisk' failed.  Retrying 3 time(s) at 5 second intervals (The process cannot access the file because it is being used by another process.)
+[11:56:00.983][INFO]   Retrying operation 'OpenVirtualDisk' 1/3
+[11:56:07.294][INFO]   Retrying operation 'OpenVirtualDisk' 2/3
+[11:56:13.587][INFO]   Retrying operation 'OpenVirtualDisk' 3/3
+[11:56:14.906][ERROR:00000020]   This machine 'avd-sh-1' is using labuser1's (SID=S-1-12-1-...) disk. Vhd(x): '\\stavdlab0001.file.core.windows.net\profiles\labuser1_S-1-12-1-...\Profile_labuser1.VHDX' (The process cannot access the file because it is being used by another process.)
+[11:56:14.918][INFO]   ErrorCode set to 32 - Message: The process cannot access the file because it is being used by another process.
+```
+
+0x00000020, ERROR_SHARING_VIOLATION, and every piece of it is
+readable: the retry count and interval are my registry values, the
+three retries land five seconds apart on the clock, and then FSLogix
+prints the one line that matters: this machine 'avd-sh-1' is using
+labuser1's disk. The log names the host holding the lock, which on a
+real ticket is the difference between a five-minute fix and an
+afternoon.
+
+Cleanup in the right order this time: Dismount-DiskImage on avd-sh-1,
+the mapped drive deleted, drain mode off, labuser1 signed out and back
+in for a clean attach on the first try. And the storage key had by now
+been pasted into enough places that it got rotated again.
+
 ## Conclusion
 
-Bottom line: the cloud-only Kerberos path works end to end, and
-breaking it on purpose taught me three things the plan didn't have. A
-folder ACL edit in the portal doesn't reach existing files, so the
+The cloud-only Kerberos path works end to end, and
+breaking it on purpose taught me more than building it did. A folder
+ACL edit in the portal doesn't reach existing files, so the
 single-user break has to be done on the VHDX itself. Denial on the
-file logs as 0x3B, a network error, not 0x5. And the switch that
-refuses a logon on attach failure is `PreventLoginWithFailure`, not
-the one I'd written down.
+file logs as 0x3B, a network error, not 0x5. The switch that refuses a
+logon on attach failure is `PreventLoginWithFailure`, not the one I'd
+written down. And when a VHDX is locked, the FSLogix log names the
+machine holding it.
 
-Three of seven experiments done. Still ahead: the double-connect
-check, the stale lock from a power-yanked host with
-`Close-AzStorageFileHandle` as the fix, and the share-level RBAC
-break, which is the only one left where the log is a foregone
-conclusion. Then the resource group gets deleted before the trials
-expire on September 27.
+Six of the seven experiments happened, though not the way the plan
+drew them: the double-connect check happened by accident, the
+power-yank produced a stale lock that I fixed before capturing, and
+the deterministic mount had to stand in for it. The one I skipped is
+the share-level RBAC break, on purpose. Dropping AVD-Users to Reader
+fails every logon at the share layer with a 0x5, the log is a foregone
+conclusion, and it carries two 15-to-30-minute propagation waits I
+didn't want to spend on the least surprising experiment of the set.
 
-The troubleshooting checklist, updated:
-
-1. After disabling security defaults, check the managed Conditional
-   Access policies Microsoft deploys in their place. One of them
-   re-enables MFA for all users.
-2. A vnet created after March 31, 2026 has no outbound access until
-   you uncheck the private-subnet box or pay for a NAT gateway.
-3. Verify the private-subnet property on the *deployed* subnet, not on
-   the create panel. Mine showed unchecked at creation and enabled
-   afterward, and that cost the first deployment and about 40 minutes.
-4. On a cloud-only tenant, the `kdc_enable_cloud_group_sids` manifest
-   tag is mandatory. Without it, ACLs granted to cloud groups fail
-   with no error logged anywhere.
-5. FSLogix 3.26 has no frxtray.exe. Profile status is the Operational
-   event log (Event 25, Error 0 is success) and the profile log under
-   `C:\ProgramData\FSLogix\Logs\Profile`.
-6. Two Event 26 errors about the domain controller at every FSLogix
-   service start are normal on an Entra-joined host. The errors that
-   matter have a logon timestamp.
-7. Cloud Shell has no `C:` drive. Handles and RBAC from Cloud Shell,
-   logs and registry from Run command.
-8. Break RBAC last. With the group at Reader, every logon fails at the
-   share level and hides whatever the ACLs are doing.
-9. Portal ACL edits on a folder don't propagate to existing files. To
-   change what an existing profile can do, edit the VHDX, or run the
-   RestSetAcls script the Manage inheritance pane hands you.
-10. 0x3B in the FSLogix log is not a network problem when it's on a
-    VHDX open. Check the file's ACL before the network.
-11. `PreventLoginWithFailure` is the fail-closed switch for attach
-    failures. `PreventLoginWithTempProfile` is for a different failure
-    and will let the user straight through.
-12. The Manage inheritance pane prints the storage account key in the
-    script it shows you. Don't screenshot it, or rotate the key after.
-
-The `.VHDX.metadata` file, by the way, only exists while the container
-is attached. It was there at 12:42 the day before and gone by the time
-labuser1 signed out. I still don't know what's in it.
+I had a good time with this one, the broken parts especially. The
+next labs are already picked: Cisco ACLs and Palo Alto firewall
+configurations.
