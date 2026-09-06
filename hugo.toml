@@ -25,6 +25,12 @@ disableKinds = ["taxonomy", "term"]
   email       = "p3@cfworx.tech"
 
 [markup]
+  # Table of contents for lab posts (layouts/_default/single.html):
+  # built from the ## and ### headings.
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel   = 3
+    ordered    = false
   [markup.goldmark.renderer]
     # Keep raw HTML in Markdown disabled (safer default).
     unsafe = false

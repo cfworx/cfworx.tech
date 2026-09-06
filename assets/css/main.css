@@ -590,6 +590,58 @@ article h3::after {
   article h2::after, article h3::after { display: none; }
 }
 
+/* ---- table of contents (lab posts) ----------------------------------------
+   Native <details>, open by default, built by Hugo from the ## and ###
+   headings (see [markup.tableOfContents] in hugo.toml). Same triangle
+   marker as the home-page post groups. */
+
+.toc {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 1.7rem;
+  padding: 0.5rem 1rem 0.6rem;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  font: 0.85rem var(--sans);
+}
+
+.toc summary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55em;
+  cursor: pointer;
+  font-weight: 700;
+  list-style: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.toc summary::-webkit-details-marker { display: none; } /* Safari */
+.toc summary::before {
+  content: "\25B8";               /* right-pointing triangle */
+  color: var(--enet);
+  font-size: 0.8em;
+  line-height: 1;
+  flex: none;
+}
+.toc[open] summary::before { content: "\25BE"; }
+.toc summary:hover { color: var(--enet); }
+
+/* Reset the hanging-marker list style that article lists use. */
+.toc ul {
+  list-style: none;
+  margin: 0.45rem 0 0;
+  padding-left: 1.15em;
+}
+.toc ul ul { margin-top: 0.1rem; padding-left: 1.1em; }
+.toc li { margin: 0.28em 0; }
+.toc a { text-decoration: none; }
+.toc a:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media print { .toc { display: none; } }
+
 blockquote {
   margin: 1.1em 0;
   padding-left: 1em;

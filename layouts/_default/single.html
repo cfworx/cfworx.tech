@@ -12,6 +12,17 @@
     </p>
     {{- end }}
   </header>
+  {{- /* Table of contents on lab posts with three or more headings.
+         Native <details>, open by default, no JS. */ -}}
+  {{- if eq .Section "homelab" }}
+  {{- $toc := .TableOfContents }}
+  {{- if ge (len (findRE "<li>" $toc)) 3 }}
+  <details class="toc" open>
+    <summary>Contents</summary>
+    {{ $toc }}
+  </details>
+  {{- end }}
+  {{- end }}
   {{ .Content }}
 </article>
 {{- if ne .Section "" }}
