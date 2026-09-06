@@ -1,5 +1,5 @@
 ---
-title: "Hands-on with Citrix Director and Web Studio"
+title: "Hands on with Citrix Director and Web Studio"
 date: 2026-09-06
 description: "One morning in Citrix's official Director lab: where Director's numbers come from, a server at 100% memory reporting 2% load, a profile reset the manual verifies wrong, and four connection failures made on purpose."
 draft: false
@@ -445,7 +445,7 @@ and the lab clock had run out.
 
 ## Conclusion
 
-That was the lab, start to finish. In one morning I got hands-on
+That was the lab, start to finish. In one morning I got hands on
 time with Director, Web Studio, Hyper-V Manager, Remote Desktop
 Connection Manager, and HDX on a real Site: sessions opened and
 shadowed, logons broken into phases, a profile reset, machines
