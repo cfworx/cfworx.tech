@@ -312,4 +312,10 @@ running 9.1.1, the number's been the same since the first boot log,
 and that's the target the second box now has to hit.
 
 Next is a static management IP so the console cable can go back in
-the drawer.
+the drawer. Not today, though: work has networking issues of its own
+waiting on me, so I'm off to troubleshoot those, and the PA-220 gets
+a graceful shutdown for now:
+
+```text
+admin@PA-220> request shutdown system
+```
