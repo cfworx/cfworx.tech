@@ -8,7 +8,6 @@
   <nav aria-label="Site">
     <a href="/"{{ if .IsHome }} aria-current="page"{{ end }}>home</a>
     <a href="/tools/"{{ if eq .Section "tools" }} aria-current="page"{{ end }}>tools</a>
-    <a href="/about/"{{ if eq .RelPermalink "/about/" }} aria-current="page"{{ end }}>about</a>
     <button id="theme-toggle" class="theme-toggle" type="button" hidden
       aria-label="Toggle dark mode" aria-pressed="false">
       <svg class="icon-moon" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M20.4 14.2A8.5 8.5 0 1 1 9.8 3.6a7 7 0 0 0 10.6 10.6z"/></svg>

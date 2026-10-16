@@ -1,6 +1,10 @@
 ---
 title: About
 description: "About Cory, an IT specialist studying for the CCNA."
+# Switched off: never built or listed. Safe to delete this file.
+build:
+  render: never
+  list: never
 ---
 
 Hi, I'm Cory. I do IT support for a large organization.

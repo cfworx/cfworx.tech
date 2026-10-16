@@ -1,6 +1,6 @@
 ---
 title: "RAS, DMZ, and virtualization foundations"
-date: 2026-10-16
+date: 2026-10-16T05:15:00-07:00
 description: "AZ-140 notes on remote access and VPNs, DMZs and perimeter networks, and virtualization: hypervisors, Hyper-V, checkpoints, and elasticity."
 draft: false
 ---

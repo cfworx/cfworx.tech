@@ -14,7 +14,6 @@ of one topic at a time.
 {{ range where site.RegularPages "Section" "ne" "" }}- [{{ .Title }}]({{ .Permalink }}) ({{ .Date.Format "2006-01-02" }}){{ with .Description }}: {{ . }}{{ end }}
 {{ end }}
 ## Meta
-- [About Cory]({{ "about/" | absURL }}): who runs this site and how to reach him
 - Contact: p3@cfworx.tech
 - [Sitemap]({{ "sitemap.xml" | absURL }})
 - [Full text of every post]({{ "llms-full.txt" | absURL }})
