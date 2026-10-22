@@ -18,7 +18,7 @@ disableKinds = ["taxonomy", "term"]
   # Sections shown on the home page and in llms.txt, in this order.
   # Adding a category later = create content/<slug>/_index.md, then add
   # the slug here. Nothing else to touch.
-  sectionOrder = ["notes", "homelab", "tools", "misc"]
+  sectionOrder = ["notes", "homelab", "tools"]
   tagline     = "Cory's IT Repo"
   description = "Cory's public IT notebook: CCNA study notes and homelab write-ups, written down as I go."
   author      = "Cory"

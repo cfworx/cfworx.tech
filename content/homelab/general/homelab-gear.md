@@ -5,7 +5,7 @@ description: "The gear behind the CCNA study plan: two Catalyst switches, two 19
 draft: false
 ---
 
-The CCNA exam is November 2, and [the study plan](/misc/general/ccna-plan/) is already in motion. A plan full of VLAN and OSPF labs eventually needs something to lab *on*.
+The CCNA exam is November 2, and the study plan is already in motion. A plan full of VLAN and OSPF labs eventually needs something to lab *on*.
 
 So I went shopping on eBay. Total damage: around $400 for six pieces of used enterprise gear, and all of it is set up and running.
 

@@ -1,7 +1,9 @@
 {{ define "main" }}
+{{- with .Content }}
 <section class="intro">
-{{ .Content }}
+{{ . }}
 </section>
+{{- end }}
 
 {{- /* Hidden until search.js enables it, so no dead controls without JS.
        Two result sections: matching titles first, then matches found in

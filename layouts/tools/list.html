@@ -1,5 +1,7 @@
-{{- /* The tools section: grouped cards (icon, name, what it drills),
-       no dates or year groupings (tools are destinations, not posts). */}}
+{{- /* The tools section: grouped compact cards (icon and name only;
+       each tool's description stays in front matter for its meta
+       description and llms.txt), no dates or year groupings (tools are
+       destinations, not posts). */}}
 {{ define "main" }}
 <article class="section-page">
   <header class="post-header">
@@ -24,10 +26,7 @@
     <li>
       <a href="{{ .RelPermalink }}">
         <span class="toolcard-icon">{{ partial "tool-icon.html" (.Params.icon | default "quiz") }}</span>
-        <span class="toolcard-body">
-          <span class="toolcard-title">{{ .Title }}</span>
-          <span class="toolcard-desc">{{ .Description }}</span>
-        </span>
+        <span class="toolcard-title">{{ .Title }}</span>
       </a>
     </li>
     {{- end }}
@@ -43,10 +42,7 @@
     <li>
       <a href="{{ .RelPermalink }}">
         <span class="toolcard-icon">{{ partial "tool-icon.html" (.Params.icon | default "quiz") }}</span>
-        <span class="toolcard-body">
-          <span class="toolcard-title">{{ .Title }}</span>
-          <span class="toolcard-desc">{{ .Description }}</span>
-        </span>
+        <span class="toolcard-title">{{ .Title }}</span>
       </a>
     </li>
     {{- end }}
