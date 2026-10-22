@@ -27,28 +27,37 @@
 
 # Movies
 - { title: "The 40-Year-Old Virgin", year: 2005, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "American Sniper", year: 2014, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "The American West of John Ford", year: 1971, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Angel and the Badman", year: 1947, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Arizona Bound", year: 1941, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Beerfest", year: 2006, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Below the Border", year: 1942, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Big Daddy", year: 1999, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Bio-Dome", year: 1996, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "Blue Steel", year: 1934, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "The Boondock Saints", year: 1999, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Boot Hill Bandits", year: 1942, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Call the Mesquiteers", year: 1938, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Christmas with the Kranks", year: 2004, format: dvd, location: "hdd01", added: "2026-10-22" }
+- { title: "Clueless", year: 1995, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Come On, Cowboys", year: 1937, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Confessions of a Teenage Drama Queen", year: 2004, format: dvd, location: "hdd01", added: "2026-10-22" }
+- { title: "Couples Retreat", year: 2009, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Crazy, Stupid, Love.", year: 2011, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "Dakota", year: 1945, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "The Dawn Rider", year: 1935, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "Desert Command", year: 1946, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "The Desert Trail", year: 1935, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "Detroit Rock City", year: 1999, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Divergent", year: 2014, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Dodgeball: A True Underdog Story", year: 2004, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "EuroTrip", year: 2004, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Forbidden Trails", year: 1941, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Forks Over Knives", year: 2011, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "Ghost Town Gold", year: 1936, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Ghost Town Law", year: 1942, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Gran Torino", year: 2008, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "The Gunman from Bodie", year: 1941, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Gunsmoke Ranch", year: 1937, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Hell Town", year: 1937, format: dvd, location: "hdd01", added: "2026-10-21" }
@@ -75,6 +84,8 @@
 - { title: "The Man from Utah", year: 1934, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "McLintock!", year: 1963, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Mean Girls", year: 2004, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Meet the Fockers", year: 2004, format: dvd, location: "hdd01", added: "2026-10-22" }
+- { title: "Miami Vice", year: 2006, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Mr. Deeds", year: 2002, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Napoleon Dynamite", year: 2004, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "'Neath the Arizona Skies", year: 1934, format: dvd, location: "hdd01", added: "2026-10-21" }
@@ -87,6 +98,7 @@
 - { title: "The Range Busters", year: 1940, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "The Range Feud", year: 1931, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "Red Dawn", year: 2012, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Reno 911!: Miami", year: 2007, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Resident Evil", year: 2002, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Riders of Destiny", year: 1933, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Riders of the West", year: 1942, format: dvd, location: "hdd01", added: "2026-10-21" }
@@ -131,6 +143,7 @@
 - { title: "Despicable Me 3", year: 2017, format: dvd, location: "hdd01", kids: true, added: "2026-10-20" }
 - { title: "Finding Nemo", year: 2003, format: dvd, location: "hdd01", kids: true, added: "2026-10-20" }
 - { title: "Hey There, It's Yogi Bear!", year: 1964, format: dvd, location: "hdd01", kids: true, added: "2026-10-20" }
+- { title: "Moana", year: 2016, format: dvd, location: "hdd01", kids: true, added: "2026-10-22" }
 - { title: "Pocahontas", year: 1995, format: dvd, location: "hdd01", kids: true, added: "2026-10-20" }
 - { title: "Pocahontas II: Journey to a New World", year: 1998, format: dvd, location: "hdd01", kids: true, added: "2026-10-20" }
 - { title: "Shrek the Third", year: 2007, format: dvd, location: "hdd01", kids: true, added: "2026-10-20" }
