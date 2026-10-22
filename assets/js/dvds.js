@@ -1028,16 +1028,6 @@
   window.addEventListener('offline', paintOnline);
   paintOnline();
 
-  var builtEl = $('dvd-built');
-  function paintBuilt() {
-    var d = new Date(builtEl.getAttribute('datetime'));
-    if (!isNaN(d)) {
-      builtEl.textContent = d.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }) +
-        ' at ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
-    }
-  }
-  paintBuilt();
-
   var installBtn = $('dvd-install');
   var installPrompt = null;
   window.addEventListener('beforeinstallprompt', function (e) {
@@ -1068,8 +1058,6 @@
       paintTotals();
       render();
       changed = true;
-      var b = fresh.getElementById('dvd-built');
-      if (b) { builtEl.setAttribute('datetime', b.getAttribute('datetime')); paintBuilt(); }
     }
     var src = function (d) {
       var s = d.querySelector('script[src*="/js/dvds"]');

@@ -178,8 +178,7 @@ mark {
 /* ---- layout ---------------------------------------------------------------
    Phone: one column. .side uses display: contents so its children sit
    directly in .app; that keeps the search bar sticky over the whole
-   list (a sticky element can't outlive its parent box). The footer is
-   pulled below the list with `order`.
+   list (a sticky element can't outlive its parent box).
    Desktop (min-width 960px): the controls become a sticky left column
    and the list gets the rest. */
 
@@ -192,8 +191,7 @@ mark {
 }
 
 .side { display: contents; }
-.main { order: 1; min-height: 40vh; }
-.foot { order: 2; }
+.main { min-height: 40vh; }
 
 /* ---- top bar ------------------------------------------------------------- */
 
@@ -726,15 +724,6 @@ mark {
 }
 .btn-quiet:hover { border-color: var(--muted); }
 
-/* ---- footer -------------------------------------------------------------- */
-
-.foot {
-  margin: 32px 0 0;
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-.foot p { margin: 0 0 6px; }
-
 /* ---- sheets (native <dialog>) ------------------------------------------- */
 
 .sheet {
@@ -874,7 +863,6 @@ mark {
     overflow: visible;
   }
   .chip-gap { display: none; }
-  .foot { margin-top: 26px; }
   .group h2 { top: 0; }
   .row { padding-right: 8px; }
   .row:hover .row-title { color: var(--accent); }
