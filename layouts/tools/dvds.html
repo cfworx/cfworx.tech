@@ -7,7 +7,19 @@
        never executes, so the strict CSP is happy). assets/js/dvds.js
        renders and searches it; static/tools/dvds/sw.js keeps a copy
        for offline use. */ -}}
-{{- $raw := hugo.Data.dvds | default slice -}}
+{{- /* Read the file directly rather than through site.Data/hugo.Data:
+       hugo.Data only exists from Hugo 0.156 and site.Data warns from
+       then on, and this way the page builds on old and new versions
+       alike (Cloudflare's build may not run the same Hugo as your PC). */ -}}
+{{- $raw := slice -}}
+{{- $file := "data/dvds.yaml" -}}
+{{- if os.FileExists $file -}}
+  {{- /* Wrapped as a .yaml resource so Unmarshal knows the format (on a
+         bare string it guesses, and all the commas look like CSV). */ -}}
+  {{- with resources.FromString "dvd-tracker/dvds.yaml" (os.ReadFile $file) | transform.Unmarshal }}{{ $raw = . }}{{ end -}}
+{{- else -}}
+  {{- warnf "%s is missing: the DVD Tracker will be empty" $file -}}
+{{- end -}}
 {{- $known := slice "dvd" "bluray" "4k" -}}
 {{- /* Check every line (warnings show in the build log) and count the
        formats for the totals at the top. */ -}}
