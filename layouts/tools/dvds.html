@@ -1,0 +1,144 @@
+{{- /* DVD Tracker, /tools/dvds/. A standalone page on purpose: it's an
+       app-style tool with its own look (assets/css/dvds.css), so it
+       doesn't use baseof.html or the site stylesheet.
+
+       Read-only: the collection is data/dvds.yaml, edited by hand. It's
+       embedded at the bottom as inert JSON (type="application/json"
+       never executes, so the strict CSP is happy). assets/js/dvds.js
+       renders and searches it; static/tools/dvds/sw.js keeps a copy
+       for offline use. */ -}}
+{{- $raw := hugo.Data.dvds | default slice -}}
+{{- $known := slice "dvd" "bluray" "4k" -}}
+{{- /* Check every line (warnings show in the build log) and count the
+       formats for the totals at the top. */ -}}
+{{- $count := newScratch -}}
+{{- range $known }}{{ $count.Set . 0 }}{{ end -}}
+{{- range $i, $d := $raw -}}
+  {{- if not (reflect.IsMap $d) -}}
+    {{- warnf "data/dvds.yaml: entry %d isn't a { title: ... } line" (add $i 1) -}}
+  {{- else if not $d.title -}}
+    {{- warnf "data/dvds.yaml: entry %d has no title" (add $i 1) -}}
+  {{- else -}}
+    {{- $fmts := $d.format | default "dvd" -}}
+    {{- if not (reflect.IsSlice $fmts) }}{{ $fmts = slice $fmts }}{{ end -}}
+    {{- range $fmts -}}
+      {{- $f := lower (string .) -}}
+      {{- if in $known $f -}}
+        {{- $count.Add $f 1 -}}
+      {{- else -}}
+        {{- warnf "data/dvds.yaml: %q has format %q; use dvd, bluray or 4k" $d.title . -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $dvd := $count.Get "dvd" }}{{ $bluray := $count.Get "bluray" }}{{ $uhd := $count.Get "4k" -}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{ .Title }} · {{ site.Title }}</title>
+<meta name="description" content="{{ partial "meta-desc.html" . }}">
+{{- /* A personal list: keep it out of search engines. */}}
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#eef0f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1426" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="{{ .Permalink }}">
+<link rel="manifest" href="/tools/dvds/manifest.webmanifest">
+<link rel="icon" href="/tools/dvds/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/tools/dvds/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="DVDs">
+<link rel="preload" href="/fonts/archivo-2.001.woff2" as="font" type="font/woff2" crossorigin>
+{{- with resources.Get "js/theme.js" }}
+{{- $js := . | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
+{{- end }}
+{{- with resources.Get "css/dvds.css" }}
+{{- $css := . | fingerprint }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+{{- end }}
+{{- with resources.Get "js/dvds.js" }}
+{{- $js := . | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- end }}
+</head>
+<body>
+<div class="app" id="dvd-app">
+  <div class="side">
+    <header class="top">
+      <a class="back" href="{{ .Parent.RelPermalink }}"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M14.5 5.5 8 12l6.5 6.5"/></svg>{{ .Parent.Title }}</a>
+      <div class="top-end">
+        <span class="status" id="dvd-offline" title="Showing the copy saved on this device" hidden>Offline</span>
+        <button class="text-btn" id="dvd-install" type="button" hidden>Install</button>
+        <button class="icon-btn theme-btn" id="dvd-theme" type="button" aria-label="Dark theme" aria-pressed="false" hidden>
+          <svg class="moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M20.4 14.2A8.5 8.5 0 1 1 9.8 3.6a7 7 0 0 0 10.6 10.6z"/></svg>
+          <svg class="sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8"/></g></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="hero">
+      <h1>{{ .Title }}</h1>
+      <p class="totals" id="dvd-totals">
+        <span class="total total-dvd"><b>{{ $dvd }}</b> {{ cond (eq $dvd 1) "DVD" "DVDs" }}</span>
+        <span class="total total-bluray"><b>{{ $bluray }}</b> {{ cond (eq $bluray 1) "Blu-ray" "Blu-rays" }}</span>
+        {{- with $uhd }}
+        <span class="total total-4k"><b>{{ . }}</b> 4K UHD</span>
+        {{- end }}
+      </p>
+    </div>
+
+    <div class="searchbar" id="dvd-searchbar">
+      <form class="search" id="dvd-search" role="search" action="{{ .RelPermalink }}" method="get">
+        <label class="visually-hidden" for="dvd-q">Search your collection</label>
+        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></g></svg>
+        <input id="dvd-q" name="q" type="search" placeholder="Do I own…" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="search">
+        <button class="clear" id="dvd-clear" type="button" aria-label="Clear search" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button>
+      </form>
+    </div>
+
+    <section class="verdict" id="dvd-verdict" aria-live="polite" hidden></section>
+
+    <div class="controls" id="dvd-controls" hidden>
+      <div class="chips" id="dvd-chips" role="group" aria-label="Filter the list"></div>
+      <div class="list-meta">
+        <span id="dvd-shown"></span>
+        <label class="sort" for="dvd-sort">Sort
+          <span class="select">
+            <select id="dvd-sort">
+              <option value="title">A–Z</option>
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="added">Recently added</option>
+              <option value="location">Location</option>
+            </select>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></svg>
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <footer class="foot">
+      <p>List updated <time id="dvd-built" datetime="{{ now.UTC.Format "2006-01-02T15:04:05Z" }}">{{ now.Format "January 2, 2006" }}</time>.</p>
+      <p>Works offline once it has loaded. Add it to your home screen to open it in one tap.</p>
+    </footer>
+  </div>
+
+  <main class="main" id="main">
+    <div id="dvd-list"></div>
+    <noscript><p class="noscript">The DVD Tracker needs JavaScript: the list and the search both run here in your browser. Nothing leaves the page.</p></noscript>
+  </main>
+</div>
+
+<dialog class="sheet" id="dvd-detail" aria-labelledby="dvd-detail-title">
+  <div class="sheet-body" id="dvd-detail-body"></div>
+</dialog>
+
+<div class="toast" id="dvd-toast" role="status" aria-live="polite" hidden></div>
+
+<script type="application/json" id="dvd-data">{{ $raw | jsonify | safeJS }}</script>
+</body>
+</html>

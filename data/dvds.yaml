@@ -1,0 +1,169 @@
+# Your DVD and Blu-ray collection, shown at /tools/dvds/ (DVD Tracker).
+#
+# This file is the whole collection; the page itself is read-only.
+# One title per line, in any order: the tracker does its own sorting.
+# Add a line, commit, push. The page updates when Cloudflare rebuilds.
+#
+#   title    required, always in double quotes
+#   year     release year; it tells remakes apart (Red Dawn 1984 vs 2012)
+#   format   dvd | bluray | 4k   (own it on both? give each copy its own
+#            line, so each one keeps its own location)
+#   location where it lives, in quotes: "hdd01" for a DVD ripped to the
+#            first media drive (the disc itself goes in a box), "shelf"
+#            for discs that stay on the shelf (Blu-rays). Any label works.
+#   type     leave it out for movies; tv for a season or box set
+#   kids     true for kids' titles (the Kid's Movies / Kid's TV Shows folders)
+#   seasons  TV only, in quotes: "1", "1-3" or "1, 4"
+#   notes    anything else worth knowing; the search reads it
+#   added    date it joined the collection, "YYYY-MM-DD"; drives
+#            the "Recently added" sort
+#
+# Example:
+#   - { title: "Skyfall", year: 2012, format: bluray, location: "shelf", added: "2026-10-23" }
+#
+# This list started from the rips on the media drive, hdd01 (October
+# 2026). Every rip there is DVD-sized, so everything below started as
+# dvd; change any that are really Blu-ray.
+
+# Movies
+- { title: "The 40-Year-Old Virgin", year: 2005, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "The American West of John Ford", year: 1971, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Angel and the Badman", year: 1947, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Arizona Bound", year: 1941, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Below the Border", year: 1942, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Big Daddy", year: 1999, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Bio-Dome", year: 1996, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Blue Steel", year: 1934, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Boot Hill Bandits", year: 1942, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Call the Mesquiteers", year: 1938, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Come On, Cowboys", year: 1937, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Crazy, Stupid, Love.", year: 2011, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Dakota", year: 1945, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "The Dawn Rider", year: 1935, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Desert Command", year: 1946, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "The Desert Trail", year: 1935, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Detroit Rock City", year: 1999, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Dodgeball: A True Underdog Story", year: 2004, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "EuroTrip", year: 2004, format: dvd, location: "hdd01", added: "2026-10-22" }
+- { title: "Forbidden Trails", year: 1941, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Forks Over Knives", year: 2011, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Ghost Town Gold", year: 1936, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Ghost Town Law", year: 1942, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "The Gunman from Bodie", year: 1941, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Gunsmoke Ranch", year: 1937, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Hell Town", year: 1937, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "His Private Secretary", year: 1933, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Hit the Saddle", year: 1937, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Hocus Pocus", year: 1993, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "The Hunger Games", year: 2012, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "The Hunger Games: Catching Fire", year: 2013, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "The Hurricane Express", year: 1932, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "I Am Legend", year: 2007, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "I Love You, Man", year: 2009, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Jarhead", year: 2005, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Joe Dirt", year: 2001, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Jurassic Park III", year: 2001, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "The Kid's Last Ride", year: 1941, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Knocked Up", year: 2007, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Land of the Lost", year: 2009, format: dvd, location: "hdd01", added: "2026-10-22" }
+- { title: "The Lawless Frontier", year: 1934, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Little Miss Sunshine", year: 2006, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Lone Survivor", year: 2013, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "The Lord of the Rings: The Fellowship of the Ring", year: 2001, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "The Lord of the Rings: The Return of the King", year: 2003, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "The Lucky Texan", year: 1934, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "The Man from Utah", year: 1934, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "McLintock!", year: 1963, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Mean Girls", year: 2004, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Mr. Deeds", year: 2002, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Napoleon Dynamite", year: 2004, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "'Neath the Arizona Skies", year: 1934, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Orange County", year: 2002, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Pain & Gain", year: 2013, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Paradise Canyon", year: 1935, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "The Perfect Storm", year: 2000, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Rainbow Valley", year: 1935, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Randy Rides Alone", year: 1934, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "The Range Busters", year: 1940, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "The Range Feud", year: 1931, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Red Dawn", year: 2012, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Resident Evil", year: 2002, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Riders of Destiny", year: 1933, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Riders of the West", year: 1942, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Riders of the Whistling Skull", year: 1937, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Roarin' Lead", year: 1936, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Rock River Renegades", year: 1942, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Sagebrush Trail", year: 1933, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "The Shadow of the Eagle", year: 1932, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Skyfall", year: 2012, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Slumdog Millionaire", year: 2008, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Spider-Man", year: 2002, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "The Star Packer", year: 1934, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Star Trek", year: 2009, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Star Wars: Episode I – The Phantom Menace", year: 1999, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Star Wars: Episode III – Revenge of the Sith", year: 2005, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Starship Troopers 3: Marauder", year: 2008, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Super Troopers", year: 2001, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Teenage Mutant Ninja Turtles", year: 2014, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "The Terminator", year: 1984, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Texas Cyclone", year: 1932, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Texas Terror", year: 1935, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Texas Trouble Shooters", year: 1942, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "There's Something About Mary", year: 1998, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "The Three Mesquiteers", year: 1936, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "The Three Stooges Meet Hercules", year: 1962, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "The Trail Beyond", year: 1934, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Trail of the Silver Spurs", year: 1941, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Twilight", year: 2008, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "The Twilight Saga: Breaking Dawn – Part 1", year: 2011, format: dvd, location: "hdd01", added: "2026-10-22" }
+- { title: "Two-Fisted Law", year: 1932, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Walk the Line", year: 2005, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "West of the Divide", year: 1934, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Winds of the Wasteland", year: 1936, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Wrangler's Roost", year: 1941, format: dvd, location: "hdd01", added: "2026-10-21" }
+
+# Kids' movies
+- { title: "Aladdin", year: 1992, format: dvd, location: "hdd01", kids: true, added: "2026-10-21" }
+- { title: "Alice in Wonderland", year: 1951, format: dvd, location: "hdd01", kids: true, added: "2026-10-20" }
+- { title: "Alvin and the Chipmunks", year: 2007, format: dvd, location: "hdd01", kids: true, added: "2026-10-20" }
+- { title: "The Aristocats", year: 1970, format: dvd, location: "hdd01", kids: true, added: "2026-10-21" }
+- { title: "Cinderella", year: 1950, format: dvd, location: "hdd01", kids: true, added: "2026-10-20" }
+- { title: "Despicable Me 3", year: 2017, format: dvd, location: "hdd01", kids: true, added: "2026-10-20" }
+- { title: "Finding Nemo", year: 2003, format: dvd, location: "hdd01", kids: true, added: "2026-10-20" }
+- { title: "Hey There, It's Yogi Bear!", year: 1964, format: dvd, location: "hdd01", kids: true, added: "2026-10-20" }
+- { title: "Pocahontas", year: 1995, format: dvd, location: "hdd01", kids: true, added: "2026-10-20" }
+- { title: "Pocahontas II: Journey to a New World", year: 1998, format: dvd, location: "hdd01", kids: true, added: "2026-10-20" }
+- { title: "Shrek the Third", year: 2007, format: dvd, location: "hdd01", kids: true, added: "2026-10-20" }
+- { title: "The SpongeBob Movie: Sponge Out of Water", year: 2015, format: dvd, location: "hdd01", kids: true, added: "2026-10-20" }
+- { title: "The SpongeBob SquarePants Movie", year: 2004, format: dvd, location: "hdd01", kids: true, added: "2026-10-20" }
+
+# TV
+- { title: "Family Guy", year: 1999, format: dvd, location: "hdd01", type: tv, seasons: "1-2", added: "2026-10-20" }
+
+# Kids' TV
+- { title: "Pac-Man and the Ghostly Adventures", year: 2013, format: dvd, location: "hdd01", type: tv, kids: true, seasons: "1", notes: "4 episodes: 19, 20, 23, 26", added: "2026-10-20" }
+
+# Blu-rays on the shelf (not ripped; they stay on the shelf)
+- { title: "American Psycho", year: 2000, format: bluray, location: "shelf", notes: "Uncut version", added: "2026-10-22" }
+- { title: "Berserk", year: 1997, format: bluray, location: "shelf", type: tv, notes: "The complete 1997 TV series", added: "2026-10-22" }
+- { title: "The Boondock Saints II: All Saints Day", year: 2009, format: bluray, location: "shelf", added: "2026-10-22" }
+- { title: "Cloudy with a Chance of Meatballs", year: 2009, format: bluray, location: "shelf", kids: true, notes: "Blu-ray 3D", added: "2026-10-22" }
+- { title: "The Conjuring", year: 2013, format: bluray, location: "shelf", added: "2026-10-22" }
+- { title: "Dinner for Schmucks", year: 2010, format: bluray, location: "shelf", added: "2026-10-22" }
+- { title: "Dumb Money", year: 2023, format: bluray, location: "shelf", notes: "The GameStop Story", added: "2026-10-22" }
+- { title: "Easy A", year: 2010, format: bluray, location: "shelf", added: "2026-10-22" }
+- { title: "Game of Thrones", year: 2011, format: bluray, location: "shelf", type: tv, seasons: "2", notes: "Exclusive bonus disc edition", added: "2026-10-22" }
+- { title: "Harry Potter and the Sorcerer's Stone", year: 2001, format: bluray, location: "shelf", notes: "Complete 8-Film Collection (8-disc set)", added: "2026-10-22" }
+- { title: "Harry Potter and the Chamber of Secrets", year: 2002, format: bluray, location: "shelf", notes: "Complete 8-Film Collection (8-disc set)", added: "2026-10-22" }
+- { title: "Harry Potter and the Prisoner of Azkaban", year: 2004, format: bluray, location: "shelf", notes: "Complete 8-Film Collection (8-disc set)", added: "2026-10-22" }
+- { title: "Harry Potter and the Goblet of Fire", year: 2005, format: bluray, location: "shelf", notes: "Complete 8-Film Collection (8-disc set)", added: "2026-10-22" }
+- { title: "Harry Potter and the Order of the Phoenix", year: 2007, format: bluray, location: "shelf", notes: "Complete 8-Film Collection (8-disc set)", added: "2026-10-22" }
+- { title: "Harry Potter and the Half-Blood Prince", year: 2009, format: bluray, location: "shelf", notes: "Complete 8-Film Collection (8-disc set)", added: "2026-10-22" }
+- { title: "Harry Potter and the Deathly Hallows – Part 1", year: 2010, format: bluray, location: "shelf", notes: "Complete 8-Film Collection (8-disc set)", added: "2026-10-22" }
+- { title: "Harry Potter and the Deathly Hallows – Part 2", year: 2011, format: bluray, location: "shelf", notes: "Complete 8-Film Collection (8-disc set)", added: "2026-10-22" }
+- { title: "The Hunger Games", year: 2012, format: bluray, location: "shelf", added: "2026-10-22" }
+- { title: "The Interview", year: 2014, format: bluray, location: "shelf", notes: "Freedom Edition", added: "2026-10-22" }
+- { title: "Ted", year: 2012, format: bluray, location: "shelf", notes: "Unrated Thunder Buddies Collection", added: "2026-10-22" }
+- { title: "Ted 2", year: 2015, format: bluray, location: "shelf", notes: "Unrated Thunder Buddies Collection", added: "2026-10-22" }
+- { title: "Warcraft", year: 2016, format: bluray, location: "shelf", added: "2026-10-22" }
+- { title: "Zombieland", year: 2009, format: bluray, location: "shelf", added: "2026-10-22" }

@@ -15,7 +15,8 @@
   {{- $groups := slice
         (dict "key" "addressing" "name" "IP addressing")
         (dict "key" "protocols"  "name" "Ports & protocols")
-        (dict "key" "ios"        "name" "Cisco IOS") }}
+        (dict "key" "ios"        "name" "Cisco IOS")
+        (dict "key" "misc"       "name" "Miscellaneous") }}
   {{- $pages := .RegularPages }}
   {{- range $g := $groups }}
   {{- $in := where $pages "Params.group" $g.key }}
