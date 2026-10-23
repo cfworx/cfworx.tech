@@ -26,6 +26,7 @@
 # dvd; change any that are really Blu-ray.
 
 # Movies
+- { title: "28 Days", year: 2000, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "The 40-Year-Old Virgin", year: 2005, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "American Sniper", year: 2014, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "The American West of John Ford", year: 1971, format: dvd, location: "hdd01", added: "2026-10-21" }
@@ -35,9 +36,11 @@
 - { title: "Below the Border", year: 1942, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Big Daddy", year: 1999, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Bio-Dome", year: 1996, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Blades of Glory", year: 2007, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Blue Steel", year: 1934, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "The Boondock Saints", year: 1999, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Boot Hill Bandits", year: 1942, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Bridget Jones's Diary", year: 2001, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Call the Mesquiteers", year: 1938, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Christmas with the Kranks", year: 2004, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Clueless", year: 1995, format: dvd, location: "hdd01", added: "2026-10-22" }
@@ -47,12 +50,16 @@
 - { title: "Crazy, Stupid, Love.", year: 2011, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "Dakota", year: 1945, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "The Dawn Rider", year: 1935, format: dvd, location: "hdd01", added: "2026-10-20" }
+- { title: "Deep Impact", year: 1998, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Desert Command", year: 1946, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "The Desert Trail", year: 1935, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "Detroit Rock City", year: 1999, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Divergent", year: 2014, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Dodgeball: A True Underdog Story", year: 2004, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Eternal Sunshine of the Spotless Mind", year: 2004, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "EuroTrip", year: 2004, format: dvd, location: "hdd01", added: "2026-10-22" }
+- { title: "The Fast and the Furious", year: 2001, format: dvd, location: "hdd01", added: "2026-10-22" }
+- { title: "Fat Albert", year: 2004, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Forbidden Trails", year: 1941, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Forks Over Knives", year: 2011, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "Ghost Town Gold", year: 1936, format: dvd, location: "hdd01", added: "2026-10-21" }
@@ -64,6 +71,7 @@
 - { title: "His Private Secretary", year: 1933, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Hit the Saddle", year: 1937, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Hocus Pocus", year: 1993, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Hook", year: 1991, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "The Hunger Games", year: 2012, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "The Hunger Games: Catching Fire", year: 2013, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "The Hurricane Express", year: 1932, format: dvd, location: "hdd01", added: "2026-10-21" }
@@ -87,6 +95,7 @@
 - { title: "Meet the Fockers", year: 2004, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Miami Vice", year: 2006, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Mr. Deeds", year: 2002, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Nacho Libre", year: 2006, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Napoleon Dynamite", year: 2004, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "'Neath the Arizona Skies", year: 1934, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Orange County", year: 2002, format: dvd, location: "hdd01", added: "2026-10-21" }
@@ -116,6 +125,7 @@
 - { title: "Star Wars: Episode III – Revenge of the Sith", year: 2005, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Starship Troopers 3: Marauder", year: 2008, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Super Troopers", year: 2001, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "Superstar", year: 1999, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Teenage Mutant Ninja Turtles", year: 2014, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "The Terminator", year: 1984, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "Texas Cyclone", year: 1932, format: dvd, location: "hdd01", added: "2026-10-20" }
@@ -128,6 +138,7 @@
 - { title: "Trail of the Silver Spurs", year: 1941, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Twilight", year: 2008, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "The Twilight Saga: Breaking Dawn – Part 1", year: 2011, format: dvd, location: "hdd01", added: "2026-10-22" }
+- { title: "The Twilight Saga: Eclipse", year: 2010, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Two-Fisted Law", year: 1932, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "Walk the Line", year: 2005, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "West of the Divide", year: 1934, format: dvd, location: "hdd01", added: "2026-10-21" }
