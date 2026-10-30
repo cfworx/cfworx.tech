@@ -5,9 +5,10 @@ description: "AZ-140 notes on building an AD DS domain controller as an Azure VM
 draft: false
 ---
 
-AVD session hosts join a domain, so the lab needs one. Real world: an
-on-prem domain reached from Azure over a VPN gateway or ExpressRoute.
-Lab: everything in the cloud, a domain controller as an Azure VM.
+AVD needs a domain for the session hosts to join. In a real company
+that's usually an existing on-prem domain, connected to Azure over a
+VPN gateway or ExpressRoute. For this lab I don't have anything
+on-prem, so the domain controller is just a VM in Azure.
 
 ## The VM
 
@@ -22,7 +23,7 @@ Virtual machines → Create.
 | Size | Default, 2 vCPU / 4 GB |
 | Inbound ports | Public RDP (to configure it) |
 | OS disk | Standard HDD (saves credit) |
-| Network | New VNet avd-vnet, default 10.0.0.0/16 |
+| Network | New VNet avd-vnet. Course: 10.0.0.0/16; mine: 172.16.0.0, DC at 172.16.0.4 |
 | Auto-shutdown | On, 7 PM |
 | Boot diagnostics | Off |
 
