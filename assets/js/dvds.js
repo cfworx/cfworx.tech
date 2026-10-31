@@ -17,7 +17,18 @@
      own   - every word matched a title you have
      warn  - you have it, but not in the format you typed, or only a
              near-spelling matched ("Did you mean ...?")
-     none  - nothing matched; similar titles are listed underneath */
+     none  - nothing matched; similar titles are listed underneath
+     hunt  - you don't own it, but it fills a gap in a series you've
+             started (see below)
+
+   The Hunt list tab: data/collections.yaml lists series (films in
+   order, or a TV show's seasons). A series you own some but not all
+   of is shown with the missing ones marked, closest to complete first.
+   "Owned" is worked out here from the collection, never stored.
+
+   Staff picks: data/recommendations.yaml, shelves of films you'd
+   likely enjoy given what you own. Anything you own, or that's already
+   on the Hunt list, is left off; a search for a pick says so. */
 (function () {
   'use strict';
 
@@ -58,6 +69,7 @@
     check: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" d="m5.5 12.5 4.2 4.2 8.8-9.4"/></svg>',
     cross: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" d="M7 7l10 10M17 7 7 17"/></svg>',
     bang: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" d="M12 6v8"/><circle cx="12" cy="18.6" r="1.9" fill="currentColor"/></svg>',
+    plus: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" d="M12 6v12M6 12h12"/></svg>',
     close: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>',
     drive: '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.6" y="4.2" width="12.8" height="7.6" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="11.4" cy="8" r="1.1" fill="currentColor"/><path d="M4.2 8h3.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
     shelf: '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1.8 13.6h12.4M3.6 12.8V4.6M6.2 12.8V3.4M8.8 12.8V5.6M10.8 12.8l2.2-7.6"/></g></svg>',
@@ -268,6 +280,18 @@
   var raw = parseJSON(dataEl.textContent);
   if (!Array.isArray(raw)) { raw = []; }
 
+  /* Poster files in /tools/dvds/posters/, named "<title words>-<year>.jpg". */
+  var postersEl = $('dvd-posters');
+  var posters = new Set(Array.isArray(postersEl && parseJSON(postersEl.textContent)) ? parseJSON(postersEl.textContent) : []);
+
+  var picksEl = $('dvd-picks');
+  var rawPicks = picksEl ? parseJSON(picksEl.textContent) : null;
+  if (!Array.isArray(rawPicks)) { rawPicks = []; }
+
+  var setsEl = $('dvd-sets');
+  var rawSets = setsEl ? parseJSON(setsEl.textContent) : null;
+  if (!Array.isArray(rawSets)) { rawSets = []; }
+
   var items = [];
   var byId = new Map();
   var formatsPresent = [];
@@ -299,6 +323,145 @@
       if (!b) { return -1; }
       return a.localeCompare(b, 'en', { numeric: true });
     }).map(function (k) { return { key: k, label: k ? locLabel(seen.get(k)) : 'No location' }; });
+
+    buildSets();
+    buildPicks();
+  }
+
+  /* ---- staff picks ------------------------------------------------------ */
+
+  var shelves = [];      /* { name, because: [owned items], films: [{title, year}] } */
+  var pickItems = [];    /* the films on them, searchable */
+
+  function buildPicks() {
+    shelves = [];
+    pickItems = [];
+    var ownedKey = new Set(items.map(function (it) { return it.sortKey + '|' + (it.year || ''); }));
+    var huntKey = new Set(huntItems.map(function (it) { return it.sortKey + '|' + (it.year || ''); }));
+    var listed = new Set();
+    rawPicks.forEach(function (c, ci) {
+      if (!c || typeof c !== 'object' || !c.shelf || !Array.isArray(c.films)) { return; }
+      var because = [];
+      (Array.isArray(c.because) ? c.because : []).forEach(function (t) {
+        var k = titleKey(String(t));
+        var hit = items.find(function (it) { return it.sortKey === k; });
+        if (hit && because.indexOf(hit) === -1) { because.push(hit); }
+      });
+      var films = [];
+      c.films.forEach(function (f) {
+        if (typeof f === 'string') { f = { title: f }; }
+        if (!f || typeof f !== 'object' || !f.title) { return; }
+        var t = String(f.title).trim();
+        var y = parseInt(f.year, 10) || null;
+        var k = titleKey(t) + '|' + (y || '');
+        if (ownedKey.has(k) || huntKey.has(k) || listed.has(k)) { return; }
+        listed.add(k);
+        films.push({ title: t, year: y });
+      });
+      if (!films.length) { return; }
+      var shelf = { name: String(c.shelf), because: because, films: films };
+      shelves.push(shelf);
+      films.forEach(function (f, i) {
+        var it = makeItem({ title: f.title, year: f.year }, 'p' + ci + '-' + i);
+        if (it) { it.shelf = shelf; pickItems.push(it); }
+      });
+    });
+  }
+
+  function pickHits(q) {
+    if (!q.terms.length) { return []; }
+    return pickItems.map(function (it) { return score(it, q); })
+      .filter(function (r) { return r.strong && !r.typoOnly; })
+      .sort(function (a, b) { return (b.points - a.points) || byTitle(a.item, b.item); });
+  }
+
+  function listOf(names) {
+    if (names.length < 2) { return names.join(''); }
+    return names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
+  }
+
+  function becauseText(shelf) {
+    var b = shelf.because.slice(0, 3).map(function (it) { return it.title; });
+    if (!b.length) { return ''; }
+    return 'Because you have ' + (shelf.because.length > 3 ? b.join(', ') + ' and more' : listOf(b));
+  }
+
+  /* ---- series (the Hunt list) ------------------------------------------ */
+
+  var sets = [];         /* every series in data/collections.yaml, with what you own */
+  var huntItems = [];    /* the missing films of series you've started, searchable */
+
+  /* The same key makeItem gives a title: words, minus a leading article. */
+  function titleKey(title) {
+    var w = words(title);
+    if (w.length > 1 && (w[0] === 'the' || w[0] === 'a' || w[0] === 'an')) { w.shift(); }
+    return w.join(' ');
+  }
+
+  function buildSets() {
+    sets = [];
+    huntItems = [];
+    var owned = new Map();
+    items.forEach(function (it) {
+      var k = it.sortKey + '|' + (it.year || '');
+      if (!owned.has(k)) { owned.set(k, []); }
+      owned.get(k).push(it);
+    });
+
+    rawSets.forEach(function (c, ci) {
+      if (!c || typeof c !== 'object' || !c.name) { return; }
+      var entries = [];
+      var tv = false;
+      if (c.show && typeof c.show === 'object') {
+        var st = String(c.show.title || '').trim();
+        var n = parseInt(c.show.seasons, 10);
+        if (!st || !(n > 0) || n > 99) { return; }
+        tv = true;
+        var shows = items.filter(function (it) { return it.tv && it.sortKey === titleKey(st); });
+        for (var sn = 1; sn <= n; sn++) {
+          entries.push({
+            title: st + ' \u2013 Season ' + sn,
+            year: null,
+            season: sn,
+            owned: shows.filter(function (it) { return seasonNumbers(it.seasons).indexOf(sn) !== -1; })
+          });
+        }
+      } else if (Array.isArray(c.films)) {
+        c.films.forEach(function (f) {
+          if (typeof f === 'string') { f = { title: f }; }
+          if (!f || typeof f !== 'object' || !f.title) { return; }
+          var t = String(f.title).trim();
+          var y = parseInt(f.year, 10) || null;
+          entries.push({ title: t, year: y, season: 0, owned: owned.get(titleKey(t) + '|' + (y || '')) || [] });
+        });
+      }
+      if (!entries.length) { return; }
+      var have = entries.filter(function (e) { return e.owned.length; }).length;
+      var set = { name: String(c.name), tv: tv, entries: entries, have: have, missing: entries.length - have };
+      sets.push(set);
+
+      if (have && set.missing) {
+        entries.forEach(function (e, i) {
+          if (e.owned.length) { return; }
+          var it = makeItem({ title: e.title, year: e.year, type: tv ? 'tv' : '', seasons: e.season ? String(e.season) : '' }, 'h' + ci + '-' + i);
+          if (it) { it.set = set; huntItems.push(it); }
+        });
+      }
+    });
+  }
+
+  function huntingSets() {
+    return sets.filter(function (x) { return x.have && x.missing; }).sort(function (a, b) {
+      return (a.missing - b.missing) || a.name.localeCompare(b.name);
+    });
+  }
+
+  /* Missing films the query names (for the search verdict). */
+  function huntHits(q) {
+    if (!q.terms.length) { return []; }
+    return huntItems.map(function (it) { return score(it, q); })
+      .filter(function (r) { return r.strong && !r.typoOnly; })
+      .sort(function (a, b) { return (b.points - a.points) || byTitle(a.item, b.item); });
   }
 
   /* ---- search --------------------------------------------------------- */
@@ -549,10 +712,49 @@
     return bits.length ? '<span class="row-sub">' + bits.join('') + '</span>' : '';
   }
 
+  /* -- covers: the real poster when there is one, a drawn case when not -- */
+
+  var POSTER_DIR = '/tools/dvds/posters/';
+  var COVER_COLORS = 10;
+
+  function posterSlug(title, year) {
+    return words(title).join('-') + (year ? '-' + year : '');
+  }
+
+  function posterFile(title, year) {
+    var base = posterSlug(title, year);
+    var exts = ['.jpg', '.jpeg', '.png', '.webp'];
+    for (var i = 0; i < exts.length; i++) {
+      if (posters.has(base + exts[i])) { return POSTER_DIR + encodeURIComponent(base + exts[i]); }
+    }
+    return '';
+  }
+
+  function hueOf(text) {
+    var h = 0;
+    for (var i = 0; i < text.length; i++) { h = (h * 31 + text.charCodeAt(i)) >>> 0; }
+    return h % COVER_COLORS;
+  }
+
+  /* `band` is the case's format strip: DVD, Blu-ray, 4K, or "?" for a
+     film still to find. */
+  function cover(title, year, band, extra) {
+    var img = posterFile(title, year);
+    var drawn = '<span class="cover-band">' + esc(band) + '</span>' +
+      '<span class="cover-title">' + esc(title) + '</span>';
+    return '<span class="cover c' + hueOf(title) + (extra ? ' ' + extra : '') + (img ? ' has-poster' : '') + '" aria-hidden="true">' +
+      drawn + (img ? '<img class="poster" src="' + esc(img) + '" alt="" loading="lazy" decoding="async" width="200" height="300">' : '') +
+      '</span>';
+  }
+
+  function caseCover(it) {
+    var f = it.formats[it.formats.length - 1];
+    return cover(it.title, it.year, FORMAT_BADGE[f] || f.toUpperCase(), 'band-' + cls(f));
+  }
+
   function row(it, terms) {
-    var spine = it.formats.map(function (f) { return '<i class="f-' + cls(f) + '"></i>'; }).join('');
     return '<li><button class="row" type="button" data-id="' + esc(it.id) + '">' +
-      '<span class="spine" aria-hidden="true">' + spine + '</span>' +
+      caseCover(it) +
       '<span class="row-main"><span class="row-title">' + highlight(it.title, terms) + '</span>' + subLine(it) + '</span>' +
       '<span class="row-end">' + (it.year ? '<span class="row-year">' + it.year + '</span>' : '') +
       '<span class="fmts">' + badges(it) + '</span></span>' +
@@ -586,7 +788,8 @@
     kind: ['all', 'movie', 'tv', 'kids'].indexOf(prefs.kind) === -1 ? 'all' : prefs.kind,
     format: typeof prefs.format === 'string' ? prefs.format : '',
     location: typeof prefs.location === 'string' ? prefs.location : null,   /* null = any */
-    sort: ['title', 'newest', 'oldest', 'added', 'location'].indexOf(prefs.sort) === -1 ? 'title' : prefs.sort
+    sort: ['title', 'newest', 'oldest', 'added', 'location'].indexOf(prefs.sort) === -1 ? 'title' : prefs.sort,
+    view: ['have', 'hunt', 'picks'].indexOf(prefs.view) === -1 ? 'have' : prefs.view
   };
 
   function savePrefs() { writeStore(PREFS_KEY, prefs); }
@@ -695,6 +898,86 @@
     listEl.innerHTML = html;
   }
 
+  /* -- the Hunt list -- */
+
+  function missingRow(e) {
+    return '<li><div class="row is-missing">' +
+      cover(e.title, e.year, 'Wanted', 'cover-wanted') +
+      '<span class="row-main"><span class="row-title"><span class="visually-hidden">Missing: </span>' + esc(e.title) + '</span>' +
+      '<span class="row-sub"><span class="need">Still to find</span></span></span>' +
+      '<span class="row-end">' + (e.year ? '<span class="row-year">' + e.year + '</span>' : '') + '</span>' +
+      '</div></li>';
+  }
+
+  function setRows(set) {
+    var shown = new Set();
+    return set.entries.map(function (e) {
+      if (!e.owned.length) { return missingRow(e); }
+      return e.owned.filter(function (it) {
+        if (shown.has(it.id)) { return false; }
+        shown.add(it.id);
+        return true;
+      }).map(function (it) { return row(it); }).join('');
+    }).join('');
+  }
+
+  function renderHunt() {
+    var hunting = huntingSets();
+    var complete = sets.filter(function (x) { return !x.missing; }).sort(function (a, b) { return a.name.localeCompare(b.name); });
+    var toFind = hunting.reduce(function (n, x) { return n + x.missing; }, 0);
+    var html = '';
+    if (hunting.length) {
+      html += '<p class="hunt-intro">' + plural(toFind, 'title') + ' to find across ' + plural(hunting.length, 'series', 'series') +
+        '. Closest to complete first.</p>';
+      hunting.forEach(function (x) {
+        html += '<section class="group hunt-set"><h2>' + esc(x.name) +
+          '<span class="set-count">' + x.have + ' of ' + x.entries.length + (x.tv ? ' seasons' : '') + '</span></h2>' +
+          '<ul class="shelf">' + setRows(x) + '</ul></section>';
+      });
+    } else {
+      html += '<div class="empty"><p>No gaps: every series you\u2019ve started is complete.</p></div>';
+    }
+    if (complete.length) {
+      html += '<section class="group hunt-done"><h2>Complete</h2><p>' +
+        complete.map(function (x) { return esc(x.name); }).join(' \u00b7 ') + '</p></section>';
+    }
+    listEl.innerHTML = html;
+  }
+
+  /* -- staff picks -- */
+
+  function pickRow(f) {
+    return '<li><a class="row is-pick" href="' + esc(imdbUrl(f)) + '" target="_blank" rel="noopener noreferrer">' +
+      cover(f.title, f.year, 'Staff pick', 'cover-pick') +
+      '<span class="row-main"><span class="row-title">' + esc(f.title) + '</span>' +
+      '<span class="row-sub"><span class="need pick">You\u2019d like it</span></span></span>' +
+      '<span class="row-end">' + (f.year ? '<span class="row-year">' + f.year + '</span>' : '') + '</span>' +
+      '</a></li>';
+  }
+
+  function renderPicks() {
+    var total = shelves.reduce(function (n, x) { return n + x.films.length; }, 0);
+    var html = '<p class="hunt-intro">' + plural(total, 'film') + ' you don\u2019t have yet, picked from what\u2019s on your shelves. Tap one to look it up.</p>';
+    shelves.forEach(function (x) {
+      var why = becauseText(x);
+      html += '<section class="group pick-shelf"><h2>' + esc(x.name) + '</h2>' +
+        (why ? '<p class="pick-why">' + esc(why) + '</p>' : '') +
+        '<ul class="shelf">' + x.films.map(pickRow).join('') + '</ul></section>';
+    });
+    if (!shelves.length) { html = '<div class="empty"><p>No picks right now: you own them all.</p></div>'; }
+    listEl.innerHTML = html;
+  }
+
+  function paintTabs() {
+    tabsEl.hidden = !sets.length && !shelves.length;
+    nHave.textContent = items.length;
+    nHunt.textContent = huntItems.length;
+    nPicks.textContent = pickItems.length;
+    tabsEl.querySelectorAll('[data-view]').forEach(function (b) {
+      b.setAttribute('aria-selected', b.dataset.view === prefs.view ? 'true' : 'false');
+    });
+  }
+
   /* -- search mode -- */
 
   var lastState = '';
@@ -736,7 +1019,7 @@
     var res = search(q);
     var v = '';
     var mood = 'is-own';
-    var it;
+    var it, hunt, pick;
     var seasons = function (x) { return x.tv && x.seasons ? ' ' + esc(seasonsText(x.seasons)) + '.' : ''; };
 
     if (res.state === 'own') {
@@ -768,6 +1051,21 @@
       it = res.strong[0].item;
       v = verdictMark(ICON.bang) + '<div class="verdict-text"><h2>Did you mean ' + esc(it.title) + '?</h2>' +
         '<p>Closest spelling in your collection' + (it.year ? ', from ' + it.year : '') + '.</p>' + whereLine(it) + '</div>';
+    } else if ((hunt = huntHits(q)).length) {
+      /* Not owned, but it fills a gap in a series you've started. */
+      mood = 'is-hunt';
+      it = hunt[0].item;
+      var set = it.set;
+      v = verdictMark(ICON.plus) + '<div class="verdict-text"><h2>On your hunt list</h2>' +
+        '<p>You don\u2019t own ' + titleWithYear(it) + ' yet. You have ' + set.have + ' of the ' + set.entries.length + ' ' +
+        esc(set.name) + (set.tv ? ' seasons' : ' films') + '.</p></div>';
+    } else if ((pick = pickHits(q)).length) {
+      /* Not owned, and a staff pick for you. */
+      mood = 'is-pick';
+      it = pick[0].item;
+      var why = becauseText(it.shelf);
+      v = verdictMark(ICON.plus) + '<div class="verdict-text"><h2>Staff pick</h2>' +
+        '<p>You don\u2019t own ' + titleWithYear(it) + ', but you\u2019d likely enjoy it.' + (why ? ' ' + esc(why) + '.' : '') + '</p></div>';
     } else {
       mood = 'is-none';
       v = verdictMark(ICON.cross) + '<div class="verdict-text"><h2>Not in your collection</h2>' +
@@ -787,7 +1085,12 @@
 
     var list = '';
     if (res.state === 'none') {
-      if (res.similar.length) {
+      if (hunt && hunt.length) {
+        /* The rest of that series: what you have and what's still missing. */
+        list = '<h2 class="list-head">' + esc(hunt[0].item.set.name) + '</h2><ul class="shelf">' + setRows(hunt[0].item.set) + '</ul>';
+      } else if (pick && pick.length) {
+        list = '<h2 class="list-head">' + esc(pick[0].item.shelf.name) + '</h2><ul class="shelf">' + pick[0].item.shelf.films.map(pickRow).join('') + '</ul>';
+      } else if (res.similar.length) {
         list = '<h2 class="list-head">Similar titles you own</h2>' + shelf(res.similar.map(function (r) { return r.item; }), q.terms);
       }
     } else {
@@ -814,13 +1117,21 @@
   var shownEl = $('dvd-shown');
   var totalsEl = $('dvd-totals');
   var toastEl = $('dvd-toast');
+  var tabsEl = $('dvd-tabs');
+  var nHave = $('dvd-n-have');
+  var nHunt = $('dvd-n-hunt');
+  var nPicks = $('dvd-n-picks');
 
   var searching = false;
   var frame = 0;
 
   function render() {
     searching = input.value.trim().length > 0;
-    controls.hidden = searching;
+    var view = searching ? 'have' : prefs.view;
+    var hunting = view === 'hunt';
+    var picking = view === 'picks';
+    controls.hidden = searching || hunting || picking;
+    paintTabs();
     if (searching) {
       renderSearch(parseQuery(input.value));
     } else {
@@ -828,7 +1139,7 @@
       verdictEl.innerHTML = '';
       lastState = '';
       lastVerdict = '';
-      renderBrowse();
+      if (hunting) { renderHunt(); } else if (picking) { renderPicks(); } else { renderBrowse(); }
     }
   }
 
@@ -908,6 +1219,25 @@
     render();
   });
 
+  tabsEl.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-view]');
+    if (!b) { return; }
+    prefs.view = b.dataset.view;
+    savePrefs();
+    if (input.value) { input.value = ''; clearBtn.hidden = true; }   /* a tab shows its list, not the last search */
+    render();
+  });
+
+  /* Arrow keys move between the two tabs, as in any tab list. */
+  tabsEl.addEventListener('keydown', function (e) {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') { return; }
+    var order = ['have', 'hunt', 'picks'];
+    var next = order[(order.indexOf(prefs.view) + (e.key === 'ArrowRight' ? 1 : 2)) % 3];
+    var b = tabsEl.querySelector('[data-view="' + next + '"]');
+    b.focus();
+    b.click();
+  });
+
   sortEl.addEventListener('change', function () {
     prefs.sort = sortEl.value;
     savePrefs();
@@ -982,11 +1312,13 @@
     if (it.added) { facts += '<dt>Added</dt><dd>' + esc(prettyDate(it.added)) + '</dd>'; }
 
     detailBody.innerHTML =
+      '<div class="sheet-case">' + caseCover(it) + '</div>' +
       '<div class="sheet-head"><h2 id="dvd-detail-title">' + esc(it.title) + '</h2>' +
       '<button class="icon-btn" type="button" data-close aria-label="Close">' + ICON.close + '</button></div>' +
       '<div class="detail-fmts">' + badges(it) + '</div>' +
       '<dl class="facts">' + facts + '</dl>' +
-      '<div class="sheet-actions"><a class="btn-quiet" href="' + esc(imdbUrl(it)) + '" target="_blank" rel="noopener noreferrer">Look it up on IMDb</a></div>';
+      '<div class="sheet-actions"><a class="btn-quiet" href="' + esc(imdbUrl(it)) + '" target="_blank" rel="noopener noreferrer">Look it up on IMDb</a></div>' +
+      (posterFile(it.title, it.year) ? '<p class="credit">Cover art from TMDB. This tracker uses the TMDB API but is not endorsed or certified by TMDB.</p>' : '');
     if (canDialog) { detail.showModal(); } else { detail.setAttribute('open', ''); }
   }
 
@@ -1051,7 +1383,22 @@
     var fresh = new DOMParser().parseFromString(html, 'text/html');
     var el = fresh.getElementById('dvd-data');
     var next = el ? parseJSON(el.textContent) : null;
+    var postersFresh = fresh.getElementById('dvd-posters');
+    var nextPosters = postersFresh ? parseJSON(postersFresh.textContent) : null;
+    if (Array.isArray(nextPosters)) { posters = new Set(nextPosters); }
+    var setsFresh = fresh.getElementById('dvd-sets');
+    var nextSets = setsFresh ? parseJSON(setsFresh.textContent) : null;
     var changed = false;
+    var picksFresh = fresh.getElementById('dvd-picks');
+    var nextPicks = picksFresh ? parseJSON(picksFresh.textContent) : null;
+    if (Array.isArray(nextPicks) && JSON.stringify(nextPicks) !== JSON.stringify(rawPicks)) {
+      rawPicks = nextPicks;
+      if (!Array.isArray(next)) { next = raw.slice(); raw = []; }
+    }
+    if (Array.isArray(nextSets) && JSON.stringify(nextSets) !== JSON.stringify(rawSets)) {
+      rawSets = nextSets;
+      if (!Array.isArray(next)) { next = raw.slice(); raw = []; }   /* forces the rebuild below */
+    }
     if (Array.isArray(next) && JSON.stringify(next) !== JSON.stringify(raw)) {
       raw = next;
       rebuild();
@@ -1080,6 +1427,93 @@
     navigator.serviceWorker.register('/tools/dvds/sw.js', { scope: '/tools/dvds/' }).catch(function () {});
   }
 
+  /* A poster that won't load (offline, before it was ever seen) falls
+     back to the drawn cover underneath it. */
+  doc.addEventListener('error', function (e) {
+    var t = e.target;
+    if (t && t.classList && t.classList.contains('poster')) {
+      t.parentNode.classList.remove('has-poster');
+      t.remove();
+    }
+  }, true);
+
+  /* ---- popcorn ------------------------------------------------------------ */
+
+  /* Opening the store: a bucket pops up and popcorn bursts across the
+     screen. Once per visit (tap the store sign to see it again), never
+     with reduced motion, and it never blocks a tap. */
+  var POP_KEY = 'cfworx-dvds-popped';
+  var KERNEL = '<svg viewBox="0 0 40 40" aria-hidden="true" focusable="false">' +
+    '<g class="k-puff"><circle cx="14" cy="16" r="9"/><circle cx="25" cy="13" r="9"/><circle cx="28" cy="24" r="8.5"/>' +
+    '<circle cx="17" cy="27" r="9"/><circle cx="21" cy="20" r="9"/></g>' +
+    '<g class="k-butter"><circle cx="24" cy="25" r="4.2"/><circle cx="13" cy="14" r="2.6"/></g>' +
+    '<g class="k-shine"><circle cx="20" cy="13" r="2.4"/><circle cx="12" cy="22" r="1.6"/></g></svg>';
+  var BUCKET = '<svg viewBox="0 0 120 130" aria-hidden="true" focusable="false">' +
+    '<g class="b-pop"><circle cx="30" cy="32" r="16"/><circle cx="52" cy="22" r="18"/><circle cx="74" cy="24" r="17"/>' +
+    '<circle cx="92" cy="34" r="15"/><circle cx="44" cy="38" r="15"/><circle cx="80" cy="40" r="14"/></g>' +
+    '<path class="b-red" d="M14 42h92l-12 84H26z"/>' +
+    '<path class="b-white" d="M32 42h14l2 84H38zM60 42h14l-4 84H60z"/>' +
+    '<rect class="b-label" x="24" y="66" width="72" height="26" rx="5"/>' +
+    '<text class="b-text" x="60" y="85" text-anchor="middle">POPCORN</text></svg>';
+
+  function popcorn() {
+    if (!Element.prototype.animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
+    var old = doc.querySelector('.popcorn');
+    if (old) { old.remove(); }
+    var stage = doc.createElement('div');
+    stage.className = 'popcorn';
+    stage.setAttribute('aria-hidden', 'true');
+    doc.body.appendChild(stage);
+
+    var W = window.innerWidth, H = window.innerHeight;
+    var bucket = doc.createElement('div');
+    bucket.className = 'pop-bucket';
+    bucket.innerHTML = BUCKET;
+    stage.appendChild(bucket);
+    bucket.animate([
+      { transform: 'translate(-50%, 110%) rotate(-6deg)' },
+      { transform: 'translate(-50%, 0) rotate(3deg)', offset: 0.18 },
+      { transform: 'translate(-50%, 6%) rotate(-2deg)', offset: 0.26 },
+      { transform: 'translate(-50%, 0) rotate(0)', offset: 0.7 },
+      { transform: 'translate(-50%, 120%) rotate(8deg)' }
+    ], { duration: 2600, easing: 'ease-in-out', fill: 'forwards' });
+
+    var count = Math.round(Math.min(90, Math.max(46, W / 9)));
+    var longest = 0;
+    for (var i = 0; i < count; i++) {
+      var k = doc.createElement('div');
+      k.className = 'kernel';
+      k.innerHTML = KERNEL;
+      stage.appendChild(k);
+      var size = 18 + Math.random() * 22;
+      var x0 = W / 2 + (Math.random() - 0.5) * 70;
+      var y0 = H - 90;
+      var vx = (Math.random() - 0.5) * W * 1.25;
+      var up = H * (0.75 + Math.random() * 0.5);        /* how high it flies */
+      var spin = (Math.random() - 0.5) * 900;
+      var dur = 1500 + Math.random() * 1100;
+      var delay = 260 + Math.pow(Math.random(), 1.6) * 900;
+      var frames = [];
+      for (var f = 0; f <= 14; f++) {
+        var t = f / 14;
+        var x = x0 + vx * t;
+        var y = y0 - up * (2.2 * t) + up * 2.2 * 1.25 * t * t;   /* up, then down past the bottom */
+        frames.push({
+          transform: 'translate(' + (x - size / 2).toFixed(1) + 'px,' + (y - size / 2).toFixed(1) + 'px) rotate(' + (spin * t).toFixed(0) + 'deg) scale(' + (t === 0 ? 0.3 : 1) + ')',
+          opacity: t === 0 ? 0 : 1
+        });
+      }
+      k.style.width = size + 'px';
+      k.style.height = size + 'px';
+      k.animate(frames, { duration: dur, delay: delay, easing: 'linear', fill: 'both' });
+      longest = Math.max(longest, dur + delay);
+    }
+    setTimeout(function () { stage.remove(); }, Math.max(longest, 2600) + 100);
+  }
+
+  var marquee = $('dvd-marquee');
+  if (marquee) { marquee.addEventListener('click', popcorn); }
+
   /* ---- start -------------------------------------------------------------- */
 
   rebuild();
@@ -1092,6 +1526,10 @@
     clearBtn.hidden = false;
   }
   render();
+
+  var popped = false;
+  try { popped = sessionStorage.getItem(POP_KEY) === '1'; sessionStorage.setItem(POP_KEY, '1'); } catch (e) { /* no storage: pop anyway */ }
+  if (!popped) { popcorn(); }
 
   /* On a computer, be ready to type. On a phone, wait for a tap so the
      keyboard doesn't cover the list. */

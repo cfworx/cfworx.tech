@@ -5,15 +5,15 @@
      and works with no signal in a store. The live page is fetched in
      the background; when it differs, it's saved and handed to the open
      tab, which swaps in the new list without a reload.
-   - Fingerprinted CSS/JS and the versioned font never change, so
-     they're served from the cache whenever they're there.
+   - Fingerprinted CSS/JS, the versioned font and the posters never
+     change, so they're served from the cache whenever they're there.
    - Icons and the manifest: saved copy first, refreshed behind it.
 
    Bump VERSION when this file's logic changes; old caches are dropped
    when the new worker takes over. */
 'use strict';
 
-const VERSION = 'dvds-v1';
+const VERSION = 'dvds-v2';
 const PAGE = '/tools/dvds/';
 const ASSET_RE = /(?:href|src)="(\/(?:css|js|fonts)\/[^"]+|\/tools\/dvds\/[^"]+)"/g;
 
@@ -43,7 +43,7 @@ self.addEventListener('fetch', (event) => {
     }
     return;
   }
-  if (/^\/(css|js|fonts)\//.test(url.pathname)) {
+  if (/^\/(css|js|fonts)\//.test(url.pathname) || url.pathname.startsWith(PAGE + 'posters/')) {
     event.respondWith(cacheFirst(req));
     return;
   }

@@ -1,0 +1,186 @@
+# Staff picks, for the DVD Tracker's "Staff picks" tab (/tools/dvds/):
+# films you'd likely enjoy, going by what's already in data/dvds.yaml.
+#
+# A pick you own (same title and year in dvds.yaml, any format) drops
+# off the shelf by itself, and so does anything on the Hunt list; you
+# never need to delete lines here. Add shelves or films any time.
+#
+#   shelf    the shelf's name
+#   because  titles from your collection this shelf is based on (only
+#            the ones you own are shown, so it's fine to list extras)
+#   films    { title: "...", year: 2004 }
+
+- shelf: "Frat Pack comedies"
+  because: ["Blades of Glory", "Wedding Crashers", "The 40-Year-Old Virgin", "Dodgeball: A True Underdog Story", "Knocked Up", "I Love You, Man", "Forgetting Sarah Marshall", "Dinner for Schmucks", "Couples Retreat"]
+  films:
+    - { title: "Anchorman: The Legend of Ron Burgundy", year: 2004 }
+    - { title: "Talladega Nights: The Ballad of Ricky Bobby", year: 2006 }
+    - { title: "Step Brothers", year: 2008 }
+    - { title: "Old School", year: 2003 }
+    - { title: "Zoolander", year: 2001 }
+    - { title: "Superbad", year: 2007 }
+    - { title: "Tropic Thunder", year: 2008 }
+    - { title: "Role Models", year: 2008 }
+    - { title: "Pineapple Express", year: 2008 }
+    - { title: "The Other Guys", year: 2010 }
+    - { title: "Get Him to the Greek", year: 2010 }
+    - { title: "Hot Rod", year: 2007 }
+
+- shelf: "Sandler, Spade & friends"
+  because: ["Big Daddy", "Mr. Deeds", "Joe Dirt", "Bio-Dome", "Superstar", "Fat Albert"]
+  films:
+    - { title: "Happy Gilmore", year: 1996 }
+    - { title: "Billy Madison", year: 1995 }
+    - { title: "The Waterboy", year: 1998 }
+    - { title: "The Wedding Singer", year: 1998 }
+    - { title: "50 First Dates", year: 2004 }
+    - { title: "Tommy Boy", year: 1995 }
+    - { title: "Deuce Bigalow: Male Gigolo", year: 1999 }
+    - { title: "Grown Ups", year: 2010 }
+
+- shelf: "Road trips & party comedies"
+  because: ["Super Troopers", "Beerfest", "EuroTrip", "Orange County", "Detroit Rock City", "Napoleon Dynamite", "Nacho Libre", "Reno 911!: Miami"]
+  films:
+    - { title: "Club Dread", year: 2004 }
+    - { title: "Harold & Kumar Go to White Castle", year: 2004 }
+    - { title: "Road Trip", year: 2000 }
+    - { title: "Dude, Where's My Car?", year: 2000 }
+    - { title: "American Pie", year: 1999 }
+    - { title: "Accepted", year: 2006 }
+    - { title: "Hot Tub Time Machine", year: 2010 }
+    - { title: "Wet Hot American Summer", year: 2001 }
+
+- shelf: "Teen comedies & rom-coms"
+  because: ["Mean Girls", "Clueless", "Confessions of a Teenage Drama Queen", "Easy A", "Crazy, Stupid, Love.", "Bridget Jones's Diary", "28 Days", "Juno"]
+  films:
+    - { title: "10 Things I Hate About You", year: 1999 }
+    - { title: "She's the Man", year: 2006 }
+    - { title: "Legally Blonde", year: 2001 }
+    - { title: "13 Going on 30", year: 2004 }
+    - { title: "Freaky Friday", year: 2003 }
+    - { title: "The Princess Diaries", year: 2001 }
+    - { title: "Bring It On", year: 2000 }
+    - { title: "How to Lose a Guy in 10 Days", year: 2003 }
+    - { title: "Love Actually", year: 2003 }
+    - { title: "(500) Days of Summer", year: 2009 }
+    - { title: "Friends with Benefits", year: 2011 }
+
+- shelf: "Stallone, Statham & the action aisle"
+  because: ["The Expendables", "Transporter 2", "Rocky Balboa", "Universal Soldier: The Return", "Tears of the Sun", "Max Payne", "Miami Vice", "Phone Booth"]
+  films:
+    - { title: "First Blood", year: 1982 }
+    - { title: "Cliffhanger", year: 1993 }
+    - { title: "Demolition Man", year: 1993 }
+    - { title: "Crank", year: 2006 }
+    - { title: "The Bank Job", year: 2008 }
+    - { title: "Taken", year: 2008 }
+    - { title: "Man on Fire", year: 2004 }
+    - { title: "Collateral", year: 2004 }
+    - { title: "Heat", year: 1995 }
+    - { title: "Shooter", year: 2007 }
+    - { title: "The Rundown", year: 2003 }
+
+- shelf: "War stories"
+  because: ["Platoon", "Jarhead", "Lone Survivor", "American Sniper", "Tears of the Sun", "Pain & Gain"]
+  films:
+    - { title: "Black Hawk Down", year: 2001 }
+    - { title: "Saving Private Ryan", year: 1998 }
+    - { title: "Full Metal Jacket", year: 1987 }
+    - { title: "We Were Soldiers", year: 2002 }
+    - { title: "The Hurt Locker", year: 2008 }
+    - { title: "Hacksaw Ridge", year: 2016 }
+    - { title: "Fury", year: 2014 }
+    - { title: "13 Hours: The Secret Soldiers of Benghazi", year: 2016 }
+
+- shelf: "Sci-fi & disaster"
+  because: ["I Am Legend", "Deep Impact", "The Perfect Storm", "Starship Troopers", "The Terminator", "The Matrix Reloaded", "Avatar", "Star Trek"]
+  films:
+    - { title: "Armageddon", year: 1998 }
+    - { title: "Independence Day", year: 1996 }
+    - { title: "Twister", year: 1996 }
+    - { title: "The Day After Tomorrow", year: 2004 }
+    - { title: "War of the Worlds", year: 2005 }
+    - { title: "Total Recall", year: 1990 }
+    - { title: "Minority Report", year: 2002 }
+    - { title: "District 9", year: 2009 }
+    - { title: "Edge of Tomorrow", year: 2014 }
+    - { title: "Pacific Rim", year: 2013 }
+
+- shelf: "Quests & chosen ones"
+  because: ["The Hunger Games", "Divergent", "The Maze Runner", "Percy Jackson & the Olympians: The Lightning Thief", "Twilight", "Harry Potter and the Sorcerer's Stone", "The Lord of the Rings: The Fellowship of the Ring"]
+  films:
+    - { title: "The Hobbit: An Unexpected Journey", year: 2012 }
+    - { title: "The Chronicles of Narnia: The Lion, the Witch and the Wardrobe", year: 2005 }
+    - { title: "Stardust", year: 2007 }
+    - { title: "The Golden Compass", year: 2007 }
+    - { title: "Ender's Game", year: 2013 }
+    - { title: "The Giver", year: 2014 }
+
+- shelf: "Family movie night"
+  because: ["Finding Nemo", "WALL-E", "Cars", "Moana", "Bolt", "Shrek 2", "Despicable Me 3", "Aladdin", "Coraline"]
+  films:
+    - { title: "Toy Story", year: 1995 }
+    - { title: "Monsters, Inc.", year: 2001 }
+    - { title: "The Incredibles", year: 2004 }
+    - { title: "Ratatouille", year: 2007 }
+    - { title: "Up", year: 2009 }
+    - { title: "The Lion King", year: 1994 }
+    - { title: "Lilo & Stitch", year: 2002 }
+    - { title: "Tangled", year: 2010 }
+    - { title: "Frozen", year: 2013 }
+    - { title: "Zootopia", year: 2016 }
+    - { title: "How to Train Your Dragon", year: 2010 }
+    - { title: "Kung Fu Panda", year: 2008 }
+    - { title: "Ice Age", year: 2002 }
+    - { title: "Wreck-It Ralph", year: 2012 }
+    - { title: "The Nightmare Before Christmas", year: 1993 }
+    - { title: "Kubo and the Two Strings", year: 2016 }
+
+- shelf: "More John Wayne"
+  because: ["McLintock!", "Angel and the Badman", "Riders of Destiny", "The Lucky Texan", "Blue Steel", "Sagebrush Trail", "The Star Packer"]
+  films:
+    - { title: "Stagecoach", year: 1939 }
+    - { title: "Red River", year: 1948 }
+    - { title: "Hondo", year: 1953 }
+    - { title: "The Searchers", year: 1956 }
+    - { title: "Rio Bravo", year: 1959 }
+    - { title: "The Man Who Shot Liberty Valance", year: 1962 }
+    - { title: "El Dorado", year: 1966 }
+    - { title: "True Grit", year: 1969 }
+    - { title: "The Shootist", year: 1976 }
+
+- shelf: "Crime, cult & dark comedy"
+  because: ["The Boondock Saints", "Pain & Gain", "American Psycho", "Gangster Squad", "Zombieland", "The Interview", "Phone Booth"]
+  films:
+    - { title: "Lock, Stock and Two Smoking Barrels", year: 1998 }
+    - { title: "Snatch", year: 2000 }
+    - { title: "Pulp Fiction", year: 1994 }
+    - { title: "Fight Club", year: 1999 }
+    - { title: "The Departed", year: 2006 }
+    - { title: "Shaun of the Dead", year: 2004 }
+    - { title: "Hot Fuzz", year: 2007 }
+    - { title: "In Bruges", year: 2008 }
+    - { title: "Seven Psychopaths", year: 2012 }
+    - { title: "This Is the End", year: 2013 }
+
+- shelf: "Holiday shelf"
+  because: ["Christmas with the Kranks", "Hocus Pocus", "The Search for Santa Paws"]
+  films:
+    - { title: "Elf", year: 2003 }
+    - { title: "Home Alone", year: 1990 }
+    - { title: "National Lampoon's Christmas Vacation", year: 1989 }
+    - { title: "The Santa Clause", year: 1994 }
+    - { title: "Jingle All the Way", year: 1996 }
+    - { title: "Four Christmases", year: 2008 }
+
+- shelf: "True stories & big hearts"
+  because: ["Walk the Line", "Slumdog Millionaire", "Little Miss Sunshine", "Gran Torino", "Silver Linings Playbook", "Wonder", "Eternal Sunshine of the Spotless Mind"]
+  films:
+    - { title: "Ray", year: 2004 }
+    - { title: "Crazy Heart", year: 2009 }
+    - { title: "Bohemian Rhapsody", year: 2018 }
+    - { title: "Million Dollar Baby", year: 2004 }
+    - { title: "Good Will Hunting", year: 1997 }
+    - { title: "The Pursuit of Happyness", year: 2006 }
+    - { title: "The Blind Side", year: 2009 }
+    - { title: "Garden State", year: 2004 }

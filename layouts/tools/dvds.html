@@ -2,7 +2,9 @@
        app-style tool with its own look (assets/css/dvds.css), so it
        doesn't use baseof.html or the site stylesheet.
 
-       Read-only: the collection is data/dvds.yaml, edited by hand. It's
+       Read-only: the collection is data/dvds.yaml, edited by hand, and
+       the Hunt list's series are data/collections.yaml, and the staff
+       picks are data/recommendations.yaml. All are
        embedded at the bottom as inert JSON (type="application/json"
        never executes, so the strict CSP is happy). assets/js/dvds.js
        renders and searches it; static/tools/dvds/sw.js keeps a copy
@@ -19,6 +21,41 @@
   {{- with resources.FromString "dvd-tracker/dvds.yaml" (os.ReadFile $file) | transform.Unmarshal }}{{ $raw = . }}{{ end -}}
 {{- else -}}
   {{- warnf "%s is missing: the DVD Tracker will be empty" $file -}}
+{{- end -}}
+{{- /* Series and collections for the Hunt list (same reading as above). */ -}}
+{{- $sets := slice -}}
+{{- $setsFile := "data/collections.yaml" -}}
+{{- if os.FileExists $setsFile -}}
+  {{- with resources.FromString "dvd-tracker/collections.yaml" (os.ReadFile $setsFile) | transform.Unmarshal }}{{ $sets = . }}{{ end -}}
+  {{- range $i, $c := $sets -}}
+    {{- if or (not (reflect.IsMap $c)) (not $c.name) -}}
+      {{- warnf "data/collections.yaml: entry %d needs a name" (add $i 1) -}}
+    {{- else if and (not $c.films) (not $c.show) -}}
+      {{- warnf "data/collections.yaml: %q has no films (or show)" $c.name -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- /* Staff picks: data/recommendations.yaml (same reading again). */ -}}
+{{- $picks := slice -}}
+{{- $picksFile := "data/recommendations.yaml" -}}
+{{- if os.FileExists $picksFile -}}
+  {{- with resources.FromString "dvd-tracker/recommendations.yaml" (os.ReadFile $picksFile) | transform.Unmarshal }}{{ $picks = . }}{{ end -}}
+  {{- range $i, $c := $picks -}}
+    {{- if or (not (reflect.IsMap $c)) (not $c.shelf) (not $c.films) -}}
+      {{- warnf "data/recommendations.yaml: entry %d needs a shelf and films" (add $i 1) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- /* Cover art: any image in static/tools/dvds/posters/ named after a
+       title ("skyfall-2012.jpg"; scripts/dvd-posters.py fetches them).
+       Only the file names go in the page; titles without one get a
+       drawn cover. */ -}}
+{{- $posters := slice -}}
+{{- $posterDir := "static/tools/dvds/posters" -}}
+{{- if os.FileExists $posterDir -}}
+  {{- range os.ReadDir $posterDir -}}
+    {{- if and (not .IsDir) (findRE `\.(jpe?g|png|webp)$` .Name) }}{{ $posters = $posters | append .Name }}{{ end -}}
+  {{- end -}}
 {{- end -}}
 {{- $known := slice "dvd" "bluray" "4k" -}}
 {{- /* Check every line (warnings show in the build log) and count the
@@ -93,7 +130,11 @@
     </header>
 
     <div class="hero">
-      <h1>{{ .Title }}</h1>
+      <div class="marquee" id="dvd-marquee">
+        <p class="store-name" aria-hidden="true">cfworx video</p>
+        <h1>{{ .Title }}</h1>
+        <p class="store-tag" aria-hidden="true">Be kind, rewind</p>
+      </div>
       <p class="totals" id="dvd-totals">
         <span class="total total-dvd"><b>{{ $dvd }}</b> {{ cond (eq $dvd 1) "DVD" "DVDs" }}</span>
         <span class="total total-bluray"><b>{{ $bluray }}</b> {{ cond (eq $bluray 1) "Blu-ray" "Blu-rays" }}</span>
@@ -101,6 +142,12 @@
         <span class="total total-4k"><b>{{ . }}</b> 4K UHD</span>
         {{- end }}
       </p>
+    </div>
+
+    <div class="tabs" id="dvd-tabs" role="tablist" aria-label="What to show" hidden>
+      <button class="tab" type="button" role="tab" id="dvd-tab-have" aria-selected="true" aria-controls="main" data-view="have">Collection <span class="n" id="dvd-n-have"></span></button>
+      <button class="tab" type="button" role="tab" id="dvd-tab-hunt" aria-selected="false" aria-controls="main" data-view="hunt">Hunt list <span class="n" id="dvd-n-hunt"></span></button>
+      <button class="tab" type="button" role="tab" id="dvd-tab-picks" aria-selected="false" aria-controls="main" data-view="picks">Staff picks <span class="n" id="dvd-n-picks"></span></button>
     </div>
 
     <div class="searchbar" id="dvd-searchbar">
@@ -147,5 +194,8 @@
 <div class="toast" id="dvd-toast" role="status" aria-live="polite" hidden></div>
 
 <script type="application/json" id="dvd-data">{{ $raw | jsonify | safeJS }}</script>
+<script type="application/json" id="dvd-posters">{{ $posters | jsonify | safeJS }}</script>
+<script type="application/json" id="dvd-picks">{{ $picks | jsonify | safeJS }}</script>
+<script type="application/json" id="dvd-sets">{{ $sets | jsonify | safeJS }}</script>
 </body>
 </html>
