@@ -924,6 +924,8 @@ mark {
 .cover-wanted .cover-band { background: var(--tag); color: var(--tag-ink); }
 .cover-wanted .cover-title { color: #d8d8e2; text-shadow: none; }
 .cover-wanted.has-poster .poster { filter: grayscale(1) brightness(0.45); }
+/* In the details sheet the cover is shown in full colour. */
+.sheet-case .cover-wanted.has-poster .poster { filter: none; }
 
 .row-main { display: block; min-width: 0; }
 
