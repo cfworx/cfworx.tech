@@ -231,6 +231,7 @@
     var seasons = text(raw.seasons);
     var notes = text(raw.notes);
     var location = text(raw.location);
+    var genre = text(raw.genre);
     var added = String(raw.added || '').slice(0, 10);
     if (!/^\d{4}-\d{2}-\d{2}$/.test(added)) { added = ''; }
 
@@ -263,6 +264,7 @@
       seasons: seasons,
       notes: notes,
       location: location,
+      genre: genre,
       added: added,
       order: index,
       words: tw,
@@ -544,7 +546,9 @@
   function matchTerm(term, it) {
     var q = term.raw;
     var best = 0;
-    var prefixOk = !term.numeric || (term.last && q.length >= 3);
+    /* A Roman numeral or number word is a whole number: "ii" is 2, never
+       the start of "iii" (Rocky II is not Rocky III). */
+    var prefixOk = !term.canon && (!term.numeric || (term.last && q.length >= 3));
     for (var k = 0; k < it.tokens.length; k++) {
       var t = it.tokens[k];
       if (t === q || (term.canon && t === term.canon)) { return 3; }
@@ -581,7 +585,9 @@
       r.strong = true;                       /* the query was only a format word */
     } else if (matched && !missing) {
       r.strong = true;
-    } else if (q.compact.length >= 4 && it.compact.indexOf(q.compact) !== -1) {
+    } else if (q.compact.length >= 4 && it.compact.indexOf(q.compact) !== -1 &&
+               !q.terms.some(function (t) { return t.canon; })) {
+      /* (not when a numeral was typed: "rocky ii" must not land inside "rockyiii") */
       r.strong = true;                       /* "spiderman", "euro trip", "biodome" */
       solid = Math.max(solid, 1);
       r.points += 4;
@@ -788,7 +794,7 @@
     kind: ['all', 'movie', 'tv', 'kids'].indexOf(prefs.kind) === -1 ? 'all' : prefs.kind,
     format: typeof prefs.format === 'string' ? prefs.format : '',
     location: typeof prefs.location === 'string' ? prefs.location : null,   /* null = any */
-    sort: ['title', 'newest', 'oldest', 'added', 'location'].indexOf(prefs.sort) === -1 ? 'title' : prefs.sort,
+    sort: ['title', 'genre', 'newest', 'oldest', 'added', 'location'].indexOf(prefs.sort) === -1 ? 'title' : prefs.sort,
     view: ['have', 'hunt', 'picks'].indexOf(prefs.view) === -1 ? 'have' : prefs.view
   };
 
@@ -810,6 +816,16 @@
     added: function (a, b) {
       return (b.added || '').localeCompare(a.added || '') || byTitle(a, b);
     },
+    /* Store aisles: genres A-Z, titles without one last. */
+    genre: function (a, b) {
+      var x = a.genre.toLowerCase(), y = b.genre.toLowerCase();
+      if (x !== y) {
+        if (!x) { return 1; }
+        if (!y) { return -1; }
+        return x.localeCompare(y);
+      }
+      return byTitle(a, b);
+    },
     location: function (a, b) {
       var x = a.location.toLowerCase(), y = b.location.toLowerCase();
       if (x !== y) {
@@ -827,6 +843,7 @@
       return /[a-z]/.test(c) ? c.toUpperCase() : '#';
     }
     if (prefs.sort === 'added') { return dayLabel(it.added); }
+    if (prefs.sort === 'genre') { return it.genre || 'No genre yet'; }
     if (prefs.sort === 'location') { return it.location ? locLabel(it.location) : 'No location'; }
     return it.year ? (Math.floor(it.year / 10) * 10) + 's' : 'Year unknown';
   }
@@ -1305,6 +1322,7 @@
     var facts = '';
     if (it.year) { facts += '<dt>Released</dt><dd>' + it.year + '</dd>'; }
     facts += '<dt>Type</dt><dd>' + (it.tv ? 'TV' : 'Movie') + (it.kids ? ', for kids' : '') + '</dd>';
+    if (it.genre) { facts += '<dt>Genre</dt><dd>' + esc(it.genre) + '</dd>'; }
     if (it.tv && it.seasons) { facts += '<dt>Seasons</dt><dd>' + esc(seasonsText(it.seasons).replace(/^Seasons? /, '')) + '</dd>'; }
     facts += '<dt>Format</dt><dd>' + esc(formatList(it.formats)) + '</dd>';
     if (it.location) { facts += '<dt>Location</dt><dd>' + locTag(it.location) + '</dd>'; }

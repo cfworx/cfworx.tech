@@ -153,6 +153,11 @@
     - { title: "The Hunger Games: Mockingjay – Part 2", year: 2015 }
     - { title: "The Hunger Games: The Ballad of Songbirds & Snakes", year: 2023 }
 
+- name: "Hollow Man"
+  films:
+    - { title: "Hollow Man", year: 2000 }
+    - { title: "Hollow Man 2", year: 2006 }
+
 - name: "James Bond (Daniel Craig)"
   films:
     - { title: "Casino Royale", year: 2006 }
@@ -239,6 +244,14 @@
   films:
     - { title: "Pocahontas", year: 1995 }
     - { title: "Pocahontas II: Journey to a New World", year: 1998 }
+
+- name: "Rambo"
+  films:
+    - { title: "First Blood", year: 1982 }
+    - { title: "Rambo: First Blood Part II", year: 1985 }
+    - { title: "Rambo III", year: 1988 }
+    - { title: "Rambo", year: 2008 }
+    - { title: "Rambo: Last Blood", year: 2019 }
 
 - name: "Resident Evil"
   films:
