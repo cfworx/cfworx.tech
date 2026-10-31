@@ -433,14 +433,15 @@ mark {
   justify-content: center;
   gap: 3px;
   min-width: 0;
-  height: 62px;
-  padding: 0 6px;
+  height: 64px;
+  padding: 0 12px;
   border: 3px solid var(--blue);
   border-radius: 10px;
   background: #fff;
   color: var(--blue);
-  font-size: 0.86rem;
-  letter-spacing: 0.01em;
+  font-size: 0.8rem;
+  font-stretch: 100%;               /* narrower than the other signs, so labels get room */
+  letter-spacing: 0.02em;
   white-space: nowrap;
   box-shadow: 0 4px 0 var(--blue-deep);
 }
@@ -1250,7 +1251,7 @@ a.row { text-decoration: none; }
 @media (min-width: 960px) {
   .app {
     display: grid;
-    grid-template-columns: 24rem minmax(0, 1fr);
+    grid-template-columns: 26rem minmax(0, 1fr);
     column-gap: 28px;
     align-items: start;
     max-width: 82rem;
@@ -1313,5 +1314,5 @@ a.row { text-decoration: none; }
 }
 
 @media (max-width: 379px) {
-  .tab { font-size: 0.74rem; letter-spacing: 0; }
+  .tab { padding: 0 8px; font-size: 0.72rem; letter-spacing: 0; }
 }
