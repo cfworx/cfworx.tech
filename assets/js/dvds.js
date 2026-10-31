@@ -1318,7 +1318,7 @@
       '<div class="detail-fmts">' + badges(it) + '</div>' +
       '<dl class="facts">' + facts + '</dl>' +
       '<div class="sheet-actions"><a class="btn-quiet" href="' + esc(imdbUrl(it)) + '" target="_blank" rel="noopener noreferrer">Look it up on IMDb</a></div>' +
-      (posterFile(it.title, it.year) ? '<p class="credit">Cover art from TMDB. This tracker uses the TMDB API but is not endorsed or certified by TMDB.</p>' : '');
+      (posterFile(it.title, it.year) ? '<p class="credit">Cover art from the film\u2019s Wikipedia article.</p>' : '');
     if (canDialog) { detail.showModal(); } else { detail.setAttribute('open', ''); }
   }
 
