@@ -42,6 +42,7 @@
 - { title: "Blue Steel", year: 1934, format: dvd, location: "hdd01", added: "2026-10-20" }
 - { title: "The Boondock Saints", year: 1999, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Boot Hill Bandits", year: 1942, format: dvd, location: "hdd01", added: "2026-10-21" }
+- { title: "The Bourne Supremacy", year: 2004, format: dvd, location: "hdd01", added: "2026-10-31" }
 - { title: "Bridget Jones's Diary", year: 2001, format: dvd, location: "hdd01", added: "2026-10-22" }
 - { title: "Call the Mesquiteers", year: 1938, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Christmas with the Kranks", year: 2004, format: dvd, location: "hdd01", added: "2026-10-22" }
@@ -129,6 +130,8 @@
 - { title: "Roarin' Lead", year: 1936, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Rock River Renegades", year: 1942, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Rocky Balboa", year: 2006, format: dvd, location: "hdd01", added: "2026-10-23" }
+- { title: "Rush Hour", year: 1998, format: dvd, location: "hdd01", added: "2026-10-31" }
+- { title: "Rush Hour 3", year: 2007, format: dvd, location: "hdd01", added: "2026-10-31" }
 - { title: "Sagebrush Trail", year: 1933, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "The Shadow of the Eagle", year: 1932, format: dvd, location: "hdd01", added: "2026-10-21" }
 - { title: "Silver Linings Playbook", year: 2012, format: dvd, location: "hdd01", added: "2026-10-23" }
