@@ -1312,11 +1312,6 @@ a.row { text-decoration: none; }
   .row-title { font-size: 0.9rem; }
 }
 
-.credit {
-  color: var(--muted);
-  font-size: 0.75rem;
-}
-
 /* Aisles off-screen aren't drawn until they scroll near: the whole
    collection renders fast even on an old phone. */
 .group {

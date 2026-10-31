@@ -1354,8 +1354,7 @@
       '<button class="icon-btn" type="button" data-close aria-label="Close">' + ICON.close + '</button></div>' +
       '<p class="sheet-status">' + esc(status) + ' \u00b7 not in your collection</p>' +
       '<dl class="facts">' + facts + '</dl>' +
-      '<div class="sheet-actions"><a class="btn-quiet" href="' + esc(imdbUrl(lookup)) + '" target="_blank" rel="noopener noreferrer">Look it up on IMDb</a></div>' +
-      (posterFile(it.title, it.year) ? '<p class="credit">Cover art from the film\u2019s Wikipedia or TMDB page.</p>' : '');
+      '<div class="sheet-actions"><a class="btn-quiet" href="' + esc(imdbUrl(lookup)) + '" target="_blank" rel="noopener noreferrer">Look it up on IMDb</a></div>';
     showSheet();
   }
 
@@ -1378,8 +1377,7 @@
       '<button class="icon-btn" type="button" data-close aria-label="Close">' + ICON.close + '</button></div>' +
       '<div class="detail-fmts">' + badges(it) + '</div>' +
       '<dl class="facts">' + facts + '</dl>' +
-      '<div class="sheet-actions"><a class="btn-quiet" href="' + esc(imdbUrl(it)) + '" target="_blank" rel="noopener noreferrer">Look it up on IMDb</a></div>' +
-      (posterFile(it.title, it.year) ? '<p class="credit">Cover art from the film\u2019s Wikipedia or TMDB page.</p>' : '');
+      '<div class="sheet-actions"><a class="btn-quiet" href="' + esc(imdbUrl(it)) + '" target="_blank" rel="noopener noreferrer">Look it up on IMDb</a></div>';
     showSheet();
   }
 
