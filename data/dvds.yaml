@@ -106,6 +106,7 @@
 - { title: "The Hurricane Express", year: 1932, format: dvd, location: "hdd01", genre: "Action", added: "2026-10-21" }
 - { title: "I Am Legend", year: 2007, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-20" }
 - { title: "I Love You, Man", year: 2009, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-21" }
+- { title: "Insurgent", year: 2015, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-31" }
 - { title: "Jarhead", year: 2005, format: dvd, location: "hdd01", genre: "War", added: "2026-10-20" }
 - { title: "Joe Dirt", year: 2001, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-20" }
 - { title: "Juno", year: 2007, format: dvd, location: "hdd01", genre: "Drama", added: "2026-10-24" }
@@ -133,6 +134,7 @@
 - { title: "Napoleon Dynamite", year: 2004, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-20" }
 - { title: "'Neath the Arizona Skies", year: 1934, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
 - { title: "Orange County", year: 2002, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-21" }
+- { title: "The Other Guys", year: 2010, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-31" }
 - { title: "Pain & Gain", year: 2013, format: dvd, location: "hdd01", genre: "Crime", added: "2026-10-21" }
 - { title: "Paradise Canyon", year: 1935, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
 - { title: "Percy Jackson & the Olympians: The Lightning Thief", year: 2010, format: dvd, location: "hdd01", genre: "Fantasy", added: "2026-10-24" }
@@ -224,6 +226,7 @@
 
 # TV
 - { title: "Family Guy", year: 1999, format: dvd, location: "hdd01", type: tv, seasons: "1-2", genre: "Comedy", added: "2026-10-20" }
+- { title: "One Piece", year: 1999, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Action", added: "2026-10-31" }
 
 # Kids' TV
 - { title: "Pac-Man and the Ghostly Adventures", year: 2013, format: dvd, location: "hdd01", type: tv, kids: true, seasons: "1", genre: "Family", notes: "4 episodes: 19, 20, 23, 26", added: "2026-10-20" }

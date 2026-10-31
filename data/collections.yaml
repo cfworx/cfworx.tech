@@ -92,8 +92,8 @@
 - name: "Divergent"
   films:
     - { title: "Divergent", year: 2014 }
-    - { title: "The Divergent Series: Insurgent", year: 2015 }
-    - { title: "The Divergent Series: Allegiant", year: 2016 }
+    - { title: "Insurgent", year: 2015 }
+    - { title: "Allegiant", year: 2016 }
 
 - name: "The Expendables"
   films:

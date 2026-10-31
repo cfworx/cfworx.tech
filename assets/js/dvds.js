@@ -365,7 +365,7 @@
       shelves.push(shelf);
       films.forEach(function (f, i) {
         var it = makeItem({ title: f.title, year: f.year }, 'p' + ci + '-' + i);
-        if (it) { it.shelf = shelf; pickItems.push(it); }
+        if (it) { it.shelf = shelf; f.wantId = it.id; wantById.set(it.id, it); pickItems.push(it); }
       });
     });
   }
@@ -391,6 +391,7 @@
   /* ---- series (the Hunt list) ------------------------------------------ */
 
   var sets = [];         /* every series in data/collections.yaml, with what you own */
+  var wantById = new Map();  /* Hunt list and Staff pick titles, for their details sheet */
   var huntItems = [];    /* the missing films of series you've started, searchable */
 
   /* The same key makeItem gives a title: words, minus a leading article. */
@@ -402,6 +403,7 @@
 
   function buildSets() {
     sets = [];
+    wantById = new Map();
     huntItems = [];
     var owned = new Map();
     items.forEach(function (it) {
@@ -446,7 +448,7 @@
         entries.forEach(function (e, i) {
           if (e.owned.length) { return; }
           var it = makeItem({ title: e.title, year: e.year, type: tv ? 'tv' : '', seasons: e.season ? String(e.season) : '' }, 'h' + ci + '-' + i);
-          if (it) { it.set = set; huntItems.push(it); }
+          if (it) { it.set = set; e.wantId = it.id; wantById.set(it.id, it); huntItems.push(it); }
         });
       }
     });
@@ -918,12 +920,13 @@
   /* -- the Hunt list -- */
 
   function missingRow(e) {
-    return '<li><div class="row is-missing">' +
+    var tag = e.wantId ? 'button' : 'div';
+    return '<li><' + tag + ' class="row is-missing"' + (e.wantId ? ' type="button" data-want="' + esc(e.wantId) + '"' : '') + '>' +
       cover(e.title, e.year, 'Wanted', 'cover-wanted') +
       '<span class="row-main"><span class="row-title"><span class="visually-hidden">Missing: </span>' + esc(e.title) + '</span>' +
       '<span class="row-sub"><span class="need">Still to find</span></span></span>' +
       '<span class="row-end">' + (e.year ? '<span class="row-year">' + e.year + '</span>' : '') + '</span>' +
-      '</div></li>';
+      '</' + tag + '></li>';
   }
 
   function setRows(set) {
@@ -964,17 +967,17 @@
   /* -- staff picks -- */
 
   function pickRow(f) {
-    return '<li><a class="row is-pick" href="' + esc(imdbUrl(f)) + '" target="_blank" rel="noopener noreferrer">' +
+    return '<li><button class="row is-pick" type="button" data-want="' + esc(f.wantId) + '">' +
       cover(f.title, f.year, 'Staff pick', 'cover-pick') +
       '<span class="row-main"><span class="row-title">' + esc(f.title) + '</span>' +
       '<span class="row-sub"><span class="need pick">You\u2019d like it</span></span></span>' +
       '<span class="row-end">' + (f.year ? '<span class="row-year">' + f.year + '</span>' : '') + '</span>' +
-      '</a></li>';
+      '</button></li>';
   }
 
   function renderPicks() {
     var total = shelves.reduce(function (n, x) { return n + x.films.length; }, 0);
-    var html = '<p class="hunt-intro">' + plural(total, 'film') + ' you don\u2019t have yet, picked from what\u2019s on your shelves. Tap one to look it up.</p>';
+    var html = '<p class="hunt-intro">' + plural(total, 'film') + ' you don\u2019t have yet, picked from what\u2019s on your shelves. Tap one for details and IMDb.</p>';
     shelves.forEach(function (x) {
       var why = becauseText(x);
       html += '<section class="group pick-shelf"><h2>' + esc(x.name) + '</h2>' +
@@ -1262,9 +1265,10 @@
   });
 
   listEl.addEventListener('click', function (e) {
-    var b = e.target.closest('[data-id], [data-action]');
+    var b = e.target.closest('[data-id], [data-want], [data-action]');
     if (!b) { return; }
     if (b.dataset.id) { openDetail(b.dataset.id); return; }
+    if (b.dataset.want) { openWanted(b.dataset.want); return; }
     if (b.dataset.action === 'reset-filters') {
       prefs.kind = 'all';
       prefs.format = '';
@@ -1316,6 +1320,45 @@
     return 'https://www.imdb.com/find/?q=' + encodeURIComponent(it.title + (it.year ? ' ' + it.year : ''));
   }
 
+  function showSheet() {
+    if (canDialog) { detail.showModal(); } else { detail.setAttribute('open', ''); }
+  }
+
+  /* A title you don't own yet (Hunt list or Staff pick): what it is,
+     why it's listed, and a way to look it up. */
+  function openWanted(id) {
+    var it = wantById.get(id);
+    if (!it) { return; }
+    var lookup = it;
+    var facts = '';
+    var status;
+    var coverHtml;
+    if (it.set) {
+      var set = it.set;
+      if (set.tv) { lookup = { title: it.title.replace(/\s+\u2013\s+Season\s+\d+$/, ''), year: null }; }
+      status = 'On your hunt list';
+      coverHtml = cover(it.title, it.year, 'Wanted', 'cover-wanted');
+      facts += '<dt>Series</dt><dd>' + esc(set.name) + '</dd>';
+      facts += '<dt>You have</dt><dd>' + set.have + ' of ' + set.entries.length + (set.tv ? ' seasons' : ' films') + '</dd>';
+    } else {
+      status = 'Staff pick';
+      coverHtml = cover(it.title, it.year, 'Staff pick', 'cover-pick');
+      facts += '<dt>Shelf</dt><dd>' + esc(it.shelf.name) + '</dd>';
+      var why = becauseText(it.shelf);
+      if (why) { facts += '<dt>Why</dt><dd>' + esc(why) + '</dd>'; }
+    }
+    if (it.year) { facts = '<dt>Released</dt><dd>' + it.year + '</dd>' + facts; }
+    detailBody.innerHTML =
+      '<div class="sheet-case">' + coverHtml + '</div>' +
+      '<div class="sheet-head"><h2 id="dvd-detail-title">' + esc(it.title) + '</h2>' +
+      '<button class="icon-btn" type="button" data-close aria-label="Close">' + ICON.close + '</button></div>' +
+      '<p class="sheet-status">' + esc(status) + ' \u00b7 not in your collection</p>' +
+      '<dl class="facts">' + facts + '</dl>' +
+      '<div class="sheet-actions"><a class="btn-quiet" href="' + esc(imdbUrl(lookup)) + '" target="_blank" rel="noopener noreferrer">Look it up on IMDb</a></div>' +
+      (posterFile(it.title, it.year) ? '<p class="credit">Cover art from the film\u2019s Wikipedia or TMDB page.</p>' : '');
+    showSheet();
+  }
+
   function openDetail(id) {
     var it = byId.get(id);
     if (!it) { return; }
@@ -1336,8 +1379,8 @@
       '<div class="detail-fmts">' + badges(it) + '</div>' +
       '<dl class="facts">' + facts + '</dl>' +
       '<div class="sheet-actions"><a class="btn-quiet" href="' + esc(imdbUrl(it)) + '" target="_blank" rel="noopener noreferrer">Look it up on IMDb</a></div>' +
-      (posterFile(it.title, it.year) ? '<p class="credit">Cover art from the film\u2019s Wikipedia article.</p>' : '');
-    if (canDialog) { detail.showModal(); } else { detail.setAttribute('open', ''); }
+      (posterFile(it.title, it.year) ? '<p class="credit">Cover art from the film\u2019s Wikipedia or TMDB page.</p>' : '');
+    showSheet();
   }
 
   /* ---- theme ------------------------------------------------------------ */

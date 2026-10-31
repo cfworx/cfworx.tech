@@ -1142,6 +1142,16 @@ a.row { text-decoration: none; }
 .facts dd { margin: 0; font-weight: 750; overflow-wrap: anywhere; }
 
 .detail-fmts { display: flex; gap: 6px; margin: 12px 0 0; }
+.sheet-status {
+  display: inline-block;
+  margin: 12px 0 0;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--tag);
+  color: var(--tag-ink);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
 .detail-fmts .fmt { font-size: 0.8rem; padding: 3px 9px; }
 
 .sheet-actions {
