@@ -64,6 +64,12 @@
     - { title: "Cars 2", year: 2011 }
     - { title: "Cars 3", year: 2017 }
 
+- name: "Charlie's Angels"
+  films:
+    - { title: "Charlie's Angels", year: 2000 }
+    - { title: "Charlie's Angels: Full Throttle", year: 2003 }
+    - { title: "Charlie's Angels", year: 2019 }
+
 - name: "Cinderella"
   films:
     - { title: "Cinderella", year: 1950 }
@@ -123,6 +129,14 @@
 
 - name: "Game of Thrones"
   show: { title: "Game of Thrones", year: 2011, seasons: 8 }
+
+- name: "Godzilla (MonsterVerse)"
+  films:
+    - { title: "Godzilla", year: 2014 }
+    - { title: "Kong: Skull Island", year: 2017 }
+    - { title: "Godzilla: King of the Monsters", year: 2019 }
+    - { title: "Godzilla vs. Kong", year: 2021 }
+    - { title: "Godzilla x Kong: The New Empire", year: 2024 }
 
 - name: "Grease"
   films:
