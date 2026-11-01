@@ -267,5 +267,6 @@
 - { title: "Solo: A Star Wars Story", year: 2018, format: bluray, location: "shelf", genre: "Sci-Fi", added: "2026-11-01" }
 - { title: "Ted", year: 2012, format: bluray, location: "shelf", genre: "Comedy", notes: "Unrated Thunder Buddies Collection", added: "2026-10-22" }
 - { title: "Ted 2", year: 2015, format: bluray, location: "shelf", genre: "Comedy", notes: "Unrated Thunder Buddies Collection", added: "2026-10-22" }
+- { title: "The Twilight Saga: Breaking Dawn – Part 2", year: 2012, format: bluray, location: "shelf", genre: "Fantasy", added: "2026-11-01" }
 - { title: "Warcraft", year: 2016, format: bluray, location: "shelf", genre: "Fantasy", added: "2026-10-22" }
 - { title: "Zombieland", year: 2009, format: bluray, location: "shelf", genre: "Horror", added: "2026-10-22" }
