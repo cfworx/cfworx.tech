@@ -242,6 +242,7 @@
 - { title: "The Search for Santa Paws", year: 2010, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-31" }
 - { title: "Shrek 2", year: 2004, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-22" }
 - { title: "Shrek the Third", year: 2007, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-20" }
+- { title: "Sylvester & Hippety Hopper: Marsupial Mayhem", year: 2013, format: dvd, location: "hdd01", kids: true, genre: "Family", notes: "Looney Tunes Super Stars, 18 cartoon classics", added: "2026-11-01" }
 - { title: "The SpongeBob Movie: Sponge Out of Water", year: 2015, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-20" }
 - { title: "The SpongeBob SquarePants Movie", year: 2004, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-20" }
 - { title: "WALL-E", year: 2008, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-31" }

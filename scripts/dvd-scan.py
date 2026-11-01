@@ -47,8 +47,15 @@ TITLE_FIXES = {
     "The Hunger Games - Mockingjay Part 2": "The Hunger Games: Mockingjay – Part 2",
 }
 
+# Folders named without a year: folder name -> (title, year).
+FOLDER_FIXES = {
+    "Sylvester & Hippety Hopper": ("Sylvester & Hippety Hopper: Marsupial Mayhem", 2013),
+}
+
 
 def split(folder):
+    if folder.strip() in FOLDER_FIXES:
+        return FOLDER_FIXES[folder.strip()]
     m = re.fullmatch(r"(.+?) \((\d{4})\)", folder.strip())
     if not m:
         return None, None
