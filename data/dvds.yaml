@@ -251,6 +251,7 @@
 - { title: "The Boondock Saints II: All Saints Day", year: 2009, format: bluray, location: "shelf", genre: "Crime", added: "2026-10-22" }
 - { title: "Cloudy with a Chance of Meatballs", year: 2009, format: bluray, location: "shelf", kids: true, genre: "Family", notes: "Blu-ray 3D", added: "2026-10-22" }
 - { title: "The Conjuring", year: 2013, format: bluray, location: "shelf", genre: "Horror", added: "2026-10-22" }
+- { title: "Dinner for Schmucks", year: 2010, format: bluray, location: "shelf", genre: "Comedy", added: "2026-10-22" }
 - { title: "Dumb Money", year: 2023, format: bluray, location: "shelf", genre: "Comedy", notes: "The GameStop Story", added: "2026-10-22" }
 - { title: "Easy A", year: 2010, format: bluray, location: "shelf", genre: "Comedy", added: "2026-10-22" }
 - { title: "Game of Thrones", year: 2011, format: bluray, location: "shelf", type: tv, seasons: "2", genre: "Fantasy", notes: "Exclusive bonus disc edition", added: "2026-10-22" }
