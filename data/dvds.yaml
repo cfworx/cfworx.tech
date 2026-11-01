@@ -46,6 +46,7 @@
 - { title: "The 40-Year-Old Virgin", year: 2005, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-20" }
 - { title: "American Sniper", year: 2014, format: dvd, location: "hdd01", genre: "War", added: "2026-10-22" }
 - { title: "The American West of John Ford", year: 1971, format: dvd, location: "hdd01", genre: "Documentary", added: "2026-10-21" }
+- { title: "Anchorman: The Legend of Ron Burgundy", year: 2004, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-11-01" }
 - { title: "Angel and the Badman", year: 1947, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
 - { title: "Arizona Bound", year: 1941, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
 - { title: "Assassin's Creed", year: 2016, format: dvd, location: "hdd01", genre: "Action", added: "2026-10-23" }
@@ -140,6 +141,7 @@
 - { title: "Mr. Deeds", year: 2002, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-21" }
 - { title: "Nacho Libre", year: 2006, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-22" }
 - { title: "Napoleon Dynamite", year: 2004, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-20" }
+- { title: "National Lampoon's Christmas Vacation", year: 1989, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-11-01" }
 - { title: "'Neath the Arizona Skies", year: 1934, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
 - { title: "Old School", year: 2003, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-31" }
 - { title: "Orange County", year: 2002, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-21" }
@@ -180,7 +182,10 @@
 - { title: "Spider-Man", year: 2002, format: dvd, location: "hdd01", genre: "Action", added: "2026-10-21" }
 - { title: "The Star Packer", year: 1934, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-20" }
 - { title: "Star Trek", year: 2009, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-21" }
+- { title: "Star Trek Beyond", year: 2016, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-11-01" }
+- { title: "Star Trek Into Darkness", year: 2013, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-11-01" }
 - { title: "Star Wars: Episode I – The Phantom Menace", year: 1999, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-21" }
+- { title: "Star Wars: Episode II – Attack of the Clones", year: 2002, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-11-01" }
 - { title: "Star Wars: Episode III – Revenge of the Sith", year: 2005, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-21" }
 - { title: "Starship Troopers", year: 1997, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-31" }
 - { title: "Starship Troopers 3: Marauder", year: 2008, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-21" }
@@ -223,14 +228,17 @@
 - { title: "Cars", year: 2006, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-31" }
 - { title: "Cinderella", year: 1950, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-20" }
 - { title: "Coraline", year: 2009, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-23" }
+- { title: "Dennis the Menace", year: 1993, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-01" }
 - { title: "Despicable Me 3", year: 2017, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-20" }
 - { title: "Finding Nemo", year: 2003, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-20" }
+- { title: "Frosty the Snowman", year: 1969, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-01" }
 - { title: "Hey There, It's Yogi Bear!", year: 1964, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-20" }
 - { title: "Moana", year: 2016, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-22" }
 - { title: "Peter Pan", year: 1953, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-31" }
 - { title: "Planes: Fire & Rescue", year: 2014, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-31" }
 - { title: "Pocahontas", year: 1995, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-20" }
 - { title: "Pocahontas II: Journey to a New World", year: 1998, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-20" }
+- { title: "Rudolph the Red-Nosed Reindeer", year: 1964, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-01" }
 - { title: "The Search for Santa Paws", year: 2010, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-31" }
 - { title: "Shrek 2", year: 2004, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-22" }
 - { title: "Shrek the Third", year: 2007, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-20" }
@@ -240,6 +248,7 @@
 
 # TV
 - { title: "Family Guy", year: 1999, format: dvd, location: "hdd01", type: tv, seasons: "1-2", genre: "Comedy", added: "2026-10-20" }
+- { title: "The Office (US)", year: 2005, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Comedy", added: "2026-11-01" }
 - { title: "One Piece", year: 1999, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Action", added: "2026-10-31" }
 
 # Kids' TV

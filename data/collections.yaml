@@ -37,6 +37,11 @@
     - { title: "Alvin and the Chipmunks: Chipwrecked", year: 2011 }
     - { title: "Alvin and the Chipmunks: The Road Chip", year: 2015 }
 
+- name: "Anchorman"
+  films:
+    - { title: "Anchorman: The Legend of Ron Burgundy", year: 2004 }
+    - { title: "Anchorman 2: The Legend Continues", year: 2013 }
+
 - name: "Avatar"
   films:
     - { title: "Avatar", year: 2009 }
@@ -92,6 +97,11 @@
     - { title: "The Conjuring 2", year: 2016 }
     - { title: "The Conjuring: The Devil Made Me Do It", year: 2021 }
     - { title: "The Conjuring: Last Rites", year: 2025 }
+
+- name: "Dennis the Menace"
+  films:
+    - { title: "Dennis the Menace", year: 1993 }
+    - { title: "Dennis the Menace Strikes Again", year: 1998 }
 
 - name: "Despicable Me"
   films:
@@ -243,6 +253,17 @@
   films:
     - { title: "Moana", year: 2016 }
     - { title: "Moana 2", year: 2024 }
+
+- name: "National Lampoon's Vacation"
+  films:
+    - { title: "National Lampoon's Vacation", year: 1983 }
+    - { title: "National Lampoon's European Vacation", year: 1985 }
+    - { title: "National Lampoon's Christmas Vacation", year: 1989 }
+    - { title: "Vegas Vacation", year: 1997 }
+    - { title: "Vacation", year: 2015 }
+
+- name: "The Office (US)"
+  show: { title: "The Office (US)", year: 2005, seasons: 9 }
 
 - name: "Percy Jackson"
   films:
