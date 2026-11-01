@@ -145,8 +145,9 @@
 - name: "Game of Thrones"
   show: { title: "Game of Thrones", year: 2011, seasons: 8 }
 
-- name: "Godzilla (MonsterVerse)"
+- name: "Godzilla"
   films:
+    - { title: "Godzilla", year: 1998 }
     - { title: "Godzilla", year: 2014 }
     - { title: "Kong: Skull Island", year: 2017 }
     - { title: "Godzilla: King of the Monsters", year: 2019 }

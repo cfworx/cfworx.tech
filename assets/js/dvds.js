@@ -955,15 +955,16 @@
       '</' + tag + '></li>';
   }
 
+  /* One card per title in a series: owning it on DVD and Blu-ray
+     doesn't matter here, so only the first copy is shown. */
   function setRows(set) {
     var shown = new Set();
     return set.entries.map(function (e) {
       if (!e.owned.length) { return missingRow(e); }
-      return e.owned.filter(function (it) {
-        if (shown.has(it.id)) { return false; }
-        shown.add(it.id);
-        return true;
-      }).map(function (it) { return row(it); }).join('');
+      var it = e.owned.find(function (x) { return !shown.has(x.id); });
+      if (!it) { return ''; }
+      e.owned.forEach(function (x) { shown.add(x.id); });
+      return row(it);
     }).join('');
   }
 
