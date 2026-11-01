@@ -1054,6 +1054,18 @@ a.row { text-decoration: none; }
   clip-path: polygon(8px 0, 100% 0, 100% 100%, 8px 100%, 0 50%);
 }
 
+.hunt-find { margin: 12px 0 2px; }
+.hunt-find input { height: 50px; font-size: 1rem; }
+.hunt-set[hidden], .done-set[hidden], .hunt-done[hidden] { display: none; }
+.done-set {
+  display: inline-block;
+  margin: 0 8px 8px 0;
+  padding: 2px 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  line-height: 1.6;
+}
+
 .hunt-done p {
   margin: 0;
   padding: 14px 4px 4px;

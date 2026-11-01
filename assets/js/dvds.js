@@ -454,10 +454,36 @@
     });
   }
 
+  /* Series names A to Z, ignoring a leading "The". */
+  function setOrder(a, b) {
+    return titleKey(a.name).localeCompare(titleKey(b.name), 'en', { numeric: true });
+  }
+
   function huntingSets() {
-    return sets.filter(function (x) { return x.have && x.missing; }).sort(function (a, b) {
-      return (a.missing - b.missing) || a.name.localeCompare(b.name);
+    return sets.filter(function (x) { return x.have && x.missing; }).sort(setOrder);
+  }
+
+  /* Words a series can be found by: its name and every title in it. */
+  function setWords(x) {
+    var w = words(x.name);
+    x.entries.forEach(function (e) { w = w.concat(words(e.title)); });
+    return w.join(' ');
+  }
+
+  /* Hunt list filter: every word typed starts a word of the series. */
+  function filterHunt(text) {
+    var q = words(text);
+    var shown = 0;
+    listEl.querySelectorAll('[data-set-words]').forEach(function (el) {
+      var hay = ' ' + el.dataset.setWords;
+      var hit = q.every(function (w) { return hay.indexOf(' ' + w) !== -1; });
+      el.hidden = !hit;
+      if (hit && el.classList.contains('hunt-set')) { shown++; }
     });
+    var done = listEl.querySelector('.hunt-done');
+    if (done) { done.hidden = !done.querySelector('[data-set-words]:not([hidden])'); }
+    var none = $('hunt-none');
+    if (none) { none.hidden = !(q.length && !shown && (!done || done.hidden)); }
   }
 
   /* Missing films the query names (for the search verdict). */
@@ -943,14 +969,18 @@
 
   function renderHunt() {
     var hunting = huntingSets();
-    var complete = sets.filter(function (x) { return !x.missing; }).sort(function (a, b) { return a.name.localeCompare(b.name); });
+    var complete = sets.filter(function (x) { return !x.missing; }).sort(setOrder);
     var toFind = hunting.reduce(function (n, x) { return n + x.missing; }, 0);
     var html = '';
     if (hunting.length) {
       html += '<p class="hunt-intro">' + plural(toFind, 'title') + ' to find across ' + plural(hunting.length, 'series', 'series') +
-        '. Closest to complete first.</p>';
+        ', A to Z.</p>' +
+        '<div class="search hunt-find"><label class="visually-hidden" for="hunt-find">Find a series on the hunt list</label>' +
+        '<svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></g></svg>' +
+        '<input id="hunt-find" type="search" placeholder="Find a series\u2026" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="search"></div>' +
+        '<p class="hunt-intro" id="hunt-none" hidden>No series on the list matches that.</p>';
       hunting.forEach(function (x) {
-        html += '<section class="group hunt-set"><h2>' + esc(x.name) +
+        html += '<section class="group hunt-set" data-set-words="' + esc(setWords(x)) + '"><h2>' + esc(x.name) +
           '<span class="set-count">' + x.have + ' of ' + x.entries.length + (x.tv ? ' seasons' : '') + '</span></h2>' +
           '<ul class="shelf">' + setRows(x) + '</ul></section>';
       });
@@ -959,7 +989,7 @@
     }
     if (complete.length) {
       html += '<section class="group hunt-done"><h2>Complete</h2><p>' +
-        complete.map(function (x) { return esc(x.name); }).join(' \u00b7 ') + '</p></section>';
+        complete.map(function (x) { return '<span class="done-set" data-set-words="' + esc(setWords(x)) + '">' + esc(x.name) + '</span>'; }).join('') + '</p></section>';
     }
     listEl.innerHTML = html;
   }
@@ -1263,6 +1293,18 @@
     savePrefs();
     render();
   });
+
+  listEl.addEventListener('input', function (e) {
+    if (e.target.id === 'hunt-find') { filterHunt(e.target.value); }
+  });
+  listEl.addEventListener('keydown', function (e) {
+    if (e.target.id === 'hunt-find' && e.key === 'Escape' && e.target.value) {
+      e.stopPropagation();
+      e.target.value = '';
+      filterHunt('');
+    }
+  });
+  listEl.addEventListener('submit', function (e) { e.preventDefault(); });
 
   listEl.addEventListener('click', function (e) {
     var b = e.target.closest('[data-id], [data-want], [data-action]');
