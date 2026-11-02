@@ -74,8 +74,12 @@ Manager shows a warning:
 
 - **Deployment options**: new forest (first DC anywhere), new domain in
   an existing forest, or another DC in an existing domain.
-- **Course domain** `examlabpractice.live`, mine `division3builds.live`.
-  Private DNS only, not tied to the public domain.
+- **Course domain** `examlabpractice.live`. I first built mine as
+  `division3builds.live` (the screenshots), then rebuilt it as
+  `division3builds.com`, a domain I own. Same name as the domain
+  verified in Entra, so synced users keep their
+  `user@division3builds.com` sign-in. Private DNS only on the DC,
+  not tied to the public DNS.
 - **Functional level**: Windows Server 2016 is the highest a 2022 DC
   offers. There's no 2019 or 2022 level; Server 2025 added the next one.
 - **DSRM** (Directory Services Restore Mode) password: the local admin
@@ -95,7 +99,7 @@ PowerShell does the same thing:
 
 ```powershell
 Install-WindowsFeature AD-Domain-Services -IncludeManagementTools
-Install-ADDSForest -DomainName "division3builds.live" -InstallDns
+Install-ADDSForest -DomainName "division3builds.com" -InstallDns
 ```
 
 `Install-ADDSForest` prompts for the DSRM password and reboots when it
