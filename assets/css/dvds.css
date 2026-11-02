@@ -1005,6 +1005,7 @@ mark {
 .cover-pick .cover-band { background: #d71920; }
 a.row { text-decoration: none; }
 .need.pick { color: #ff6b6b; }
+.need.have { color: #4fd88f; }
 .pick-why {
   margin: 10px 2px 0;
   color: var(--rack-muted);
@@ -1156,6 +1157,9 @@ a.row { text-decoration: none; }
 .facts dd { margin: 0; font-weight: 750; overflow-wrap: anywhere; }
 
 .detail-fmts { display: flex; gap: 6px; margin: 12px 0 0; }
+.copies { margin: 0; padding: 0; list-style: none; }
+.copies li + li { margin-top: 6px; }
+.copies .loc { margin-left: 4px; }
 .sheet-status {
   display: inline-block;
   margin: 12px 0 0;

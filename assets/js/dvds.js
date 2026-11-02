@@ -427,6 +427,8 @@
             title: st + ' \u2013 Season ' + sn,
             year: null,
             season: sn,
+            show: st,
+            showYear: parseInt(c.show.year, 10) || null,
             owned: shows.filter(function (it) { return seasonNumbers(it.seasons).indexOf(sn) !== -1; })
           });
         }
@@ -741,7 +743,9 @@
     if (it.tv && it.seasons) {
       kind += ', ' + seasonsText(it.seasons).toLowerCase();
     }
-    if (it.location) { bits.push(locTag(it.location)); }
+    if (it.locations && it.locations.length > 1) {
+      it.locations.forEach(function (l) { bits.push(locTag(l)); });
+    } else if (it.location) { bits.push(locTag(it.location)); }
     if (kind) { bits.push('<span>' + esc(kind) + '</span>'); }
     return bits.length ? '<span class="row-sub">' + bits.join('') + '</span>' : '';
   }
@@ -796,8 +800,53 @@
   }
 
   function shelf(list, terms) {
-    return '<ul class="shelf">' + list.map(function (it) { return row(it, terms); }).join('') + '</ul>';
+    return '<ul class="shelf">' + mergeCopies(list).map(function (it) { return row(it, terms); }).join('') + '</ul>';
   }
+
+  /* The same film on DVD and Blu-ray is one card with both badges.
+     The merged card keeps every copy, for its details sheet. */
+  function copyKey(it) { return it.sortKey + '|' + (it.year || '') + '|' + (it.tv ? 'tv' : ''); }
+
+  function mergeCopies(list) {
+    var groups = new Map();
+    var order = [];
+    list.forEach(function (it) {
+      var src = it.copies || [it];
+      var k = copyKey(it);
+      if (!groups.has(k)) { groups.set(k, []); order.push(k); }
+      src.forEach(function (c) { if (groups.get(k).indexOf(c) === -1) { groups.get(k).push(c); } });
+    });
+    return order.map(function (k) {
+      var copies = groups.get(k);
+      return copies.length === 1 ? copies[0] : mergedItem(copies);
+    });
+  }
+
+  function mergedItem(copies) {
+    var id = 'm-' + copies.map(function (c) { return c.id; }).join('-');
+    if (byId.has(id)) { return byId.get(id); }
+    var m = Object.assign({}, copies[0]);
+    m.id = id;
+    m.copies = copies;
+    m.formats = [];
+    m.locations = [];
+    var seasons = [];
+    copies.forEach(function (c) {
+      c.formats.forEach(function (f) { if (m.formats.indexOf(f) === -1) { m.formats.push(f); } });
+      if (c.location && m.locations.indexOf(c.location) === -1) { m.locations.push(c.location); }
+      seasonNumbers(c.seasons).forEach(function (n) { if (seasons.indexOf(n) === -1) { seasons.push(n); } });
+      if (c.kids) { m.kids = true; }
+      if (c.added && (!m.added || c.added > m.added)) { m.added = c.added; }
+    });
+    m.formats.sort(byFormat);
+    m.location = m.locations[0] || '';   /* for sorting by location */
+    m.seasons = seasons.sort(function (a, b) { return a - b; }).join(', ');
+    m.notes = '';
+    byId.set(id, m);
+    return m;
+  }
+
+  function titleCount(list) { return mergeCopies(list).length; }
 
   /* -- totals at the top: how many of each format -- */
 
@@ -915,8 +964,9 @@
 
   function renderBrowse() {
     renderChips();
-    var shown = items.filter(passes).sort(SORTS[prefs.sort]);
-    shownEl.textContent = (shown.length === items.length) ? plural(items.length, 'title') : shown.length + ' of ' + items.length;
+    var shown = mergeCopies(items.filter(passes).sort(SORTS[prefs.sort]));
+    var allTitles = titleCount(items);
+    shownEl.textContent = (shown.length === allTitles) ? plural(allTitles, 'title') : shown.length + ' of ' + allTitles;
 
     if (!items.length) {
       listEl.innerHTML = '<div class="empty"><p>No titles yet. They come from <code>data/dvds.yaml</code>.</p></div>';
@@ -945,10 +995,18 @@
 
   /* -- the Hunt list -- */
 
+  /* A season's own poster, else the show's. */
+  function entryCover(e, label, extra) {
+    if (e.season && !posterFile(e.title, null) && posterFile(e.show, e.showYear)) {
+      return cover(e.show, e.showYear, label, extra);
+    }
+    return cover(e.title, e.year, label, extra);
+  }
+
   function missingRow(e) {
     var tag = e.wantId ? 'button' : 'div';
     return '<li><' + tag + ' class="row is-missing"' + (e.wantId ? ' type="button" data-want="' + esc(e.wantId) + '"' : '') + '>' +
-      cover(e.title, e.year, 'Wanted', 'cover-wanted') +
+      entryCover(e, 'Wanted', 'cover-wanted') +
       '<span class="row-main"><span class="row-title"><span class="visually-hidden">Missing: </span>' + esc(e.title) + '</span>' +
       '<span class="row-sub"><span class="need">Still to find</span></span></span>' +
       '<span class="row-end">' + (e.year ? '<span class="row-year">' + e.year + '</span>' : '') + '</span>' +
@@ -957,10 +1015,26 @@
 
   /* One card per title in a series: owning it on DVD and Blu-ray
      doesn't matter here, so only the first copy is shown. */
+  /* A TV season you own: its own card, even when one rip holds
+     several seasons. Tapping it opens the copy that has it. */
+  function ownedSeasonRow(e) {
+    var it = e.owned[0];
+    var fmts = [];
+    e.owned.forEach(function (c) { c.formats.forEach(function (f) { if (fmts.indexOf(f) === -1) { fmts.push(f); } }); });
+    fmts.sort(byFormat);
+    return '<li><button class="row" type="button" data-id="' + esc(it.id) + '">' +
+      entryCover(e, FORMAT_BADGE[fmts[fmts.length - 1]] || 'DVD', 'band-' + cls(fmts[fmts.length - 1])) +
+      '<span class="row-main"><span class="row-title">' + esc(e.title) + '</span>' +
+      '<span class="row-sub"><span class="need have">You have it</span></span></span>' +
+      '<span class="row-end"><span class="row-year"></span><span class="fmts">' + badges({ formats: fmts }) + '</span></span>' +
+      '</button></li>';
+  }
+
   function setRows(set) {
     var shown = new Set();
     return set.entries.map(function (e) {
       if (!e.owned.length) { return missingRow(e); }
+      if (e.season) { return ownedSeasonRow(e); }
       var it = e.owned.find(function (x) { return !shown.has(x.id); });
       if (!it) { return ''; }
       e.owned.forEach(function (x) { shown.add(x.id); });
@@ -1021,7 +1095,7 @@
 
   function paintTabs() {
     tabsEl.hidden = !sets.length && !shelves.length;
-    nHave.textContent = items.length;
+    nHave.textContent = titleCount(items);
     nHunt.textContent = huntItems.length;
     nPicks.textContent = pickItems.length;
     tabsEl.querySelectorAll('[data-view]').forEach(function (b) {
@@ -1380,7 +1454,8 @@
       var set = it.set;
       if (set.tv) { lookup = { title: it.title.replace(/\s+\u2013\s+Season\s+\d+$/, ''), year: null }; }
       status = 'On your hunt list';
-      coverHtml = cover(it.title, it.year, 'Wanted', 'cover-wanted');
+      var entry = set.entries.find(function (x) { return x.title === it.title; });
+      coverHtml = entry ? entryCover(entry, 'Wanted', 'cover-wanted') : cover(it.title, it.year, 'Wanted', 'cover-wanted');
       facts += '<dt>Series</dt><dd>' + esc(set.name) + '</dd>';
       facts += '<dt>You have</dt><dd>' + set.have + ' of ' + set.entries.length + (set.tv ? ' seasons' : ' films') + '</dd>';
     } else {
@@ -1410,8 +1485,18 @@
     if (it.genre) { facts += '<dt>Genre</dt><dd>' + esc(it.genre) + '</dd>'; }
     if (it.tv && it.seasons) { facts += '<dt>Seasons</dt><dd>' + esc(seasonsText(it.seasons).replace(/^Seasons? /, '')) + '</dd>'; }
     facts += '<dt>Format</dt><dd>' + esc(formatList(it.formats)) + '</dd>';
-    if (it.location) { facts += '<dt>Location</dt><dd>' + locTag(it.location) + '</dd>'; }
-    if (it.notes) { facts += '<dt>Notes</dt><dd>' + esc(it.notes) + '</dd>'; }
+    if (it.copies) {
+      /* One line per copy: format, where it is, and its own details. */
+      facts += '<dt>Copies</dt><dd><ul class="copies">' + it.copies.map(function (c) {
+        var bits = [esc(formatList(c.formats))];
+        if (c.tv && c.seasons) { bits.push(esc(seasonsText(c.seasons))); }
+        if (c.notes) { bits.push(esc(c.notes)); }
+        return '<li>' + bits.join(' \u00b7 ') + (c.location ? ' ' + locTag(c.location) : '') + '</li>';
+      }).join('') + '</ul></dd>';
+    } else {
+      if (it.location) { facts += '<dt>Location</dt><dd>' + locTag(it.location) + '</dd>'; }
+      if (it.notes) { facts += '<dt>Notes</dt><dd>' + esc(it.notes) + '</dd>'; }
+    }
     if (it.added) { facts += '<dt>Added</dt><dd>' + esc(prettyDate(it.added)) + '</dd>'; }
 
     detailBody.innerHTML =
