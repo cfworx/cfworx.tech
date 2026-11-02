@@ -228,17 +228,36 @@
 - { title: "Cars", year: 2006, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-31" }
 - { title: "Cinderella", year: 1950, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-20" }
 - { title: "Coraline", year: 2009, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-23" }
+- { title: "The Cricket on the Hearth", year: 1967, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-01" }
 - { title: "Dennis the Menace", year: 1993, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-01" }
 - { title: "Despicable Me 3", year: 2017, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-20" }
 - { title: "Finding Nemo", year: 2003, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-20" }
+- { title: "Frosty Returns", year: 1992, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-01" }
 - { title: "Frosty the Snowman", year: 1969, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-01" }
 - { title: "Hey There, It's Yogi Bear!", year: 1964, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-20" }
+- { title: "The Land Before Time", year: 1988, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-02" }
+- { title: "The Land Before Time II: The Great Valley Adventure", year: 1994, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-02" }
+- { title: "The Land Before Time III: The Time of the Great Giving", year: 1995, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-02" }
+- { title: "The Land Before Time IV: Journey Through the Mists", year: 1996, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-02" }
+- { title: "The Land Before Time IX: Journey to Big Water", year: 2002, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-02" }
+- { title: "The Land Before Time V: The Mysterious Island", year: 1997, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-02" }
+- { title: "The Land Before Time VI: The Secret of Saurus Rock", year: 1998, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-02" }
+- { title: "The Land Before Time VII: The Stone of Cold Fire", year: 2000, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-02" }
+- { title: "The Land Before Time VIII: The Big Freeze", year: 2001, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-02" }
+- { title: "The Land Before Time X: The Great Longneck Migration", year: 2003, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-02" }
+- { title: "The Land Before Time XI: Invasion of the Tinysauruses", year: 2005, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-02" }
+- { title: "The Land Before Time XII: The Great Day of the Flyers", year: 2006, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-02" }
+- { title: "The Land Before Time XIII: The Wisdom of Friends", year: 2007, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-02" }
+- { title: "The Land Before Time XIV: Journey of the Brave", year: 2016, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-02" }
+- { title: "The Little Drummer Boy", year: 1968, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-01" }
+- { title: "Mister Magoo's Christmas Carol", year: 1962, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-01" }
 - { title: "Moana", year: 2016, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-22" }
 - { title: "Peter Pan", year: 1953, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-31" }
 - { title: "Planes: Fire & Rescue", year: 2014, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-31" }
 - { title: "Pocahontas", year: 1995, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-20" }
 - { title: "Pocahontas II: Journey to a New World", year: 1998, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-20" }
 - { title: "Rudolph the Red-Nosed Reindeer", year: 1964, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-01" }
+- { title: "Santa Claus Is Comin' to Town", year: 1970, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-01" }
 - { title: "The Search for Santa Paws", year: 2010, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-31" }
 - { title: "Shrek 2", year: 2004, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-22" }
 - { title: "Shrek the Third", year: 2007, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-20" }
@@ -248,12 +267,19 @@
 - { title: "WALL-E", year: 2008, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-10-31" }
 
 # TV
+- { title: "Arrested Development", year: 2003, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Comedy", added: "2026-11-02" }
 - { title: "Family Guy", year: 1999, format: dvd, location: "hdd01", type: tv, seasons: "1-2", genre: "Comedy", added: "2026-10-20" }
+- { title: "Game of Thrones", year: 2011, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Fantasy", added: "2026-11-02" }
+- { title: "The IT Crowd", year: 2006, format: dvd, location: "hdd01", type: tv, seasons: "1-2", notes: "Plus specials", genre: "Comedy", added: "2026-11-02" }
+- { title: "Modern Family", year: 2009, format: dvd, location: "hdd01", type: tv, seasons: "1-2", genre: "Comedy", added: "2026-11-02" }
 - { title: "The Office (US)", year: 2005, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Comedy", added: "2026-11-01" }
 - { title: "One Piece", year: 1999, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Action", added: "2026-10-31" }
+- { title: "That '70s Show", year: 1998, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Comedy", added: "2026-11-02" }
 
 # Kids' TV
+- { title: "The New Adventures of Batman", year: 1977, format: dvd, location: "hdd01", type: tv, kids: true, seasons: "1", genre: "Family", added: "2026-11-01" }
 - { title: "Pac-Man and the Ghostly Adventures", year: 2013, format: dvd, location: "hdd01", type: tv, kids: true, seasons: "1", genre: "Family", notes: "4 episodes: 19, 20, 23, 26", added: "2026-10-20" }
+- { title: "Shaun the Sheep", year: 2007, format: dvd, location: "hdd01", type: tv, kids: true, seasons: "1", genre: "Family", added: "2026-11-01" }
 
 # Blu-rays on the shelf (not ripped; they stay on the shelf)
 - { title: "American Psycho", year: 2000, format: bluray, location: "shelf", genre: "Thriller", notes: "Uncut version", added: "2026-10-22" }

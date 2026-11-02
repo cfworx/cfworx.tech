@@ -89,7 +89,7 @@ def scan_folder(path, tv):
     for dirpath, dirs, files in os.walk(path):
         if tv:
             m = re.search(r"season\s*0*(\d+)", os.path.basename(dirpath), re.I)
-            if m and any(f.lower().endswith(VIDEO) for f in files):
+            if m and int(m.group(1)) > 0 and any(f.lower().endswith(VIDEO) for f in files):  # Season 00 = specials
                 seasons.append(int(m.group(1)))
         for f in files:
             if not f.lower().endswith(VIDEO) and not f.endswith("⁄.mkv"):
