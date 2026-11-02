@@ -119,13 +119,14 @@ def main():
         y = re.search(r"year: (\d+)", ln)
         loc = re.search(r'location: "([^"]*)"', ln)
         se = re.search(r'seasons: "([^"]*)"', ln)
-        entries.append({"line": i, "title": t, "year": int(y.group(1)) if y else None,
+        entries.append({"line": i, "raw": ln, "title": t, "year": int(y.group(1)) if y else None,
                         "loc": loc.group(1).lower() if loc else "", "seasons": se.group(1) if se else ""})
     on_list = {(norm(e["title"]), e["year"]): e for e in entries if e["loc"] == "hdd01"}
 
     report = {"new": [], "still_copying": [], "empty_folders": [], "not_on_drive": [], "tv_seasons_changed": [], "unreadable": []}
     on_drive = set()
     today = dt.date.today().isoformat()
+    changed = False
     for folder, section, kids, tv in SECTIONS:
         base = os.path.join(args.media, folder)
         if not os.path.isdir(base):
@@ -150,6 +151,14 @@ def main():
                 old = on_list[key]
                 if tv and seasons and seasons_text(seasons) != old["seasons"]:
                     report["tv_seasons_changed"].append({"title": label, "list": old["seasons"], "drive": seasons_text(seasons)})
+                    if not args.dry_run:   # the drive is the truth for ripped seasons
+                        at = lines.index(old["raw"])   # lines shift as new titles go in
+                        ln = lines[at]
+                        if 'seasons: "' in ln:
+                            lines[at] = re.sub(r'seasons: "[^"]*"', f'seasons: "{seasons_text(seasons)}"', ln)
+                        else:
+                            lines[at] = ln.replace("type: tv", f'type: tv, seasons: "{seasons_text(seasons)}"', 1)
+                        changed = True
                 continue
             added = dt.datetime.fromtimestamp(newest).date().isoformat() if newest else today
             parts = [f"title: {json.dumps(title, ensure_ascii=False)}", f"year: {year}", "format: dvd", 'location: "hdd01"']
@@ -173,7 +182,7 @@ def main():
                 lines.insert(j, new_line)
 
     report["not_on_drive"] = [f'{e["title"]} ({e["year"]})' for k, e in on_list.items() if k not in on_drive]
-    if not args.dry_run and report["new"]:
+    if not args.dry_run and (report["new"] or changed):
         with open(args.data, "w", encoding="utf-8", newline="\n") as fh:
             fh.write("\n".join(lines))
 

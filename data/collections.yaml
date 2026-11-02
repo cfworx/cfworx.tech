@@ -474,3 +474,29 @@
 
 - name: "That '70s Show"
   show: { title: "That '70s Show", year: 1998, seasons: 8 }
+
+- name: "Happy Feet"
+  films:
+    - { title: "Happy Feet", year: 2006 }
+    - { title: "Happy Feet Two", year: 2011 }
+
+- name: "Ice Age"
+  films:
+    - { title: "Ice Age", year: 2002 }
+    - { title: "Ice Age: The Meltdown", year: 2006 }
+    - { title: "Ice Age: Dawn of the Dinosaurs", year: 2009 }
+    - { title: "Ice Age: Continental Drift", year: 2012 }
+    - { title: "Ice Age: Collision Course", year: 2016 }
+
+- name: "The Lego Movie"
+  films:
+    - { title: "The Lego Movie", year: 2014 }
+    - { title: "The Lego Movie 2: The Second Part", year: 2019 }
+
+- name: "The Little Rascals"
+  films:
+    - { title: "The Little Rascals", year: 1994 }
+    - { title: "The Little Rascals Save the Day", year: 2014 }
+
+- name: "Roseanne"
+  show: { title: "Roseanne", year: 1988, seasons: 10 }
