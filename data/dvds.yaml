@@ -121,6 +121,7 @@
 - { title: "Juno", year: 2007, format: dvd, location: "hdd01", genre: "Drama", added: "2026-10-24" }
 - { title: "Jurassic Park III", year: 2001, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-20" }
 - { title: "The Kid's Last Ride", year: 1941, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
+- { title: "A Knight's Tale", year: 2001, format: dvd, location: "hdd01", genre: "Action", added: "2026-11-03" }
 - { title: "Knocked Up", year: 2007, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-21" }
 - { title: "Land of the Lost", year: 2009, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-22" }
 - { title: "The Lawless Frontier", year: 1934, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-20" }
@@ -283,6 +284,7 @@
 - { title: "That '70s Show", year: 1998, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Comedy", added: "2026-11-02" }
 
 # Kids' TV
+- { title: "Garfield and Friends", year: 1988, format: dvd, location: "hdd01", type: tv, kids: true, seasons: "6-7", genre: "Family", added: "2026-11-03" }
 - { title: "The New Adventures of Batman", year: 1977, format: dvd, location: "hdd01", type: tv, kids: true, seasons: "1", genre: "Family", added: "2026-11-01" }
 - { title: "Pac-Man and the Ghostly Adventures", year: 2013, format: dvd, location: "hdd01", type: tv, kids: true, seasons: "1", genre: "Family", notes: "4 episodes: 19, 20, 23, 26", added: "2026-10-20" }
 - { title: "Shaun the Sheep", year: 2007, format: dvd, location: "hdd01", type: tv, kids: true, seasons: "1", genre: "Family", added: "2026-11-01" }

@@ -500,3 +500,6 @@
 
 - name: "Roseanne"
   show: { title: "Roseanne", year: 1988, seasons: 10 }
+
+- name: "Garfield and Friends"
+  show: { title: "Garfield and Friends", year: 1988, seasons: 7 }
