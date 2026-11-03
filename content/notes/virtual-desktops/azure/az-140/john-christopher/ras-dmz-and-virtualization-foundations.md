@@ -17,7 +17,7 @@ Even Kerberos is old, dating back to the 1980s, but old doesn't
 automatically mean insecure: a lot of it has been updated over the
 years.
 
-![Whiteboard of the domain extended: a RAS/VPN server and a Hyper-V host running file, SQL, Exchange, and SharePoint VMs inside, a web server in the DMZ between two firewalls with 80/443/53 open on the outer one, and a hacker and a home user out on the internet](/notes/virtual-desktops/azure/az-140/images/dmz-ras-hyper-v.png)
+[![Whiteboard of the domain extended: a RAS/VPN server and a Hyper-V host running file, SQL, Exchange, and SharePoint VMs inside, a web server in the DMZ between two firewalls with 80/443/53 open on the outer one, and a hacker and a home user out on the internet](/notes/virtual-desktops/azure/az-140/images/dmz-ras-hyper-v.png)](/notes/virtual-desktops/azure/az-140/images/dmz-ras-hyper-v.png)
 
 ## The remote user
 

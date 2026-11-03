@@ -56,11 +56,11 @@ PowerShell module, AD Administrative Center).
 Installing the role doesn't make it a DC. Afterward the flag in Server
 Manager shows a warning:
 
-![Server Manager notification after installing AD DS: Post-deployment Configuration, configuration required for Active Directory Domain Services at NYC-DC1, with a Promote this server to a domain controller link](/notes/virtual-desktops/azure/az-140/images/ad-ds-promote-notification.png)
+[![Server Manager notification after installing AD DS: Post-deployment Configuration, configuration required for Active Directory Domain Services at NYC-DC1, with a Promote this server to a domain controller link](/notes/virtual-desktops/azure/az-140/images/ad-ds-promote-notification.png)](/notes/virtual-desktops/azure/az-140/images/ad-ds-promote-notification.png)
 
 ## Promote to a domain controller
 
-![AD DS Configuration Wizard, Deployment Configuration page with Add a new forest selected and root domain name division3builds.live](/notes/virtual-desktops/azure/az-140/images/ad-ds-new-forest.png)
+[![AD DS Configuration Wizard, Deployment Configuration page with Add a new forest selected and root domain name division3builds.live](/notes/virtual-desktops/azure/az-140/images/ad-ds-new-forest.png)](/notes/virtual-desktops/azure/az-140/images/ad-ds-new-forest.png)
 
 | Page | Setting |
 | --- | --- |
@@ -116,14 +116,14 @@ After the reboot, sign in again (now a domain account).
   The DC's own A record (nyc-dc1 → its private IP) is the address the
   VNet DNS setting will point at.
 
-![DNS Manager on NYC-DC1: the division3builds.live forward lookup zone containing _msdcs, _sites, _tcp, _udp, DomainDnsZones and ForestDnsZones folders, plus SOA, NS and A records for nyc-dc1](/notes/virtual-desktops/azure/az-140/images/ad-ds-dns-zone.png)
+[![DNS Manager on NYC-DC1: the division3builds.live forward lookup zone containing _msdcs, _sites, _tcp, _udp, DomainDnsZones and ForestDnsZones folders, plus SOA, NS and A records for nyc-dc1](/notes/virtual-desktops/azure/az-140/images/ad-ds-dns-zone.png)](/notes/virtual-desktops/azure/az-140/images/ad-ds-dns-zone.png)
 
 - **Tools → Active Directory Users and Computers**: the domain shows,
   and the Users container has the VM's admin account (it became the
   domain's admin), the built-in groups like Domain Admins, Domain
   Users, and Enterprise Admins, and the disabled Guest account.
 
-![Active Directory Users and Computers showing the Users container of division3builds.live with the built-in security groups and the admin account](/notes/virtual-desktops/azure/az-140/images/ad-ds-users-container.png)
+[![Active Directory Users and Computers showing the Users container of division3builds.live with the built-in security groups and the admin account](/notes/virtual-desktops/azure/az-140/images/ad-ds-users-container.png)](/notes/virtual-desktops/azure/az-140/images/ad-ds-users-container.png)
 
 - A DC hosting public DNS for the company isn't the goal. It serves the
   private zone for the domain.

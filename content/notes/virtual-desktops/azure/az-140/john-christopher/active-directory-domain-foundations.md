@@ -42,7 +42,7 @@ server holding the domain's database, the Active Directory database,
 and the whole service is still called AD DS (Active Directory Domain
 Services) today.
 
-![Whiteboard of a traditional AD DS domain for examlabpractice.com: two replicating domain controllers with AD databases and GPOs, a DNS server, a file server, 1000 computers, and a firewall out to the internet](/notes/virtual-desktops/azure/az-140/images/ad-ds-traditional-domain.png)
+[![Whiteboard of a traditional AD DS domain for examlabpractice.com: two replicating domain controllers with AD databases and GPOs, a DNS server, a file server, 1000 computers, and a firewall out to the internet](/notes/virtual-desktops/azure/az-140/images/ad-ds-traditional-domain.png)](/notes/virtual-desktops/azure/az-140/images/ad-ds-traditional-domain.png)
 
 Hearing *AD DS* generally means an on-prem domain, as opposed to
 Microsoft Entra ID (formerly Azure AD), the cloud identity service.

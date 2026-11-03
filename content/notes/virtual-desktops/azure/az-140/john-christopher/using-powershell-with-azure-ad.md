@@ -27,9 +27,9 @@ Hundreds of matches come back once Az is installed, from every
 module. The Entra ones are in **Az.Resources** with `AzAD` in the
 noun.
 
-![Get-Command -Verb get -Noun *user* output, with Get-AzADUser from Az.Resources near the top](/notes/virtual-desktops/azure/az-140/images/get-command-get-user.png)
+[![Get-Command -Verb get -Noun *user* output, with Get-AzADUser from Az.Resources near the top](/notes/virtual-desktops/azure/az-140/images/get-command-get-user.png)](/notes/virtual-desktops/azure/az-140/images/get-command-get-user.png)
 
-![Get-Command -Verb get -Noun *group* output, with Get-AzADGroup, Get-AzADGroupMember and Get-AzADGroupOwner from Az.Resources](/notes/virtual-desktops/azure/az-140/images/get-command-get-group.png)
+[![Get-Command -Verb get -Noun *group* output, with Get-AzADGroup, Get-AzADGroupMember and Get-AzADGroupOwner from Az.Resources](/notes/virtual-desktops/azure/az-140/images/get-command-get-group.png)](/notes/virtual-desktops/azure/az-140/images/get-command-get-group.png)
 
 Same cmdlets show up for the other worlds too, which is easy to mix
 up:
@@ -53,7 +53,7 @@ Get-AzADGroupMember -GroupDisplayName "<group name>"
 
 ## Creating a user
 
-![Get-Command -Verb new -Noun *user* output, with New-AzADUser from Az.Resources at the top](/notes/virtual-desktops/azure/az-140/images/get-command-new-user.png)
+[![Get-Command -Verb new -Noun *user* output, with New-AzADUser from Az.Resources at the top](/notes/virtual-desktops/azure/az-140/images/get-command-new-user.png)](/notes/virtual-desktops/azure/az-140/images/get-command-new-user.png)
 
 ```powershell
 $password = ConvertTo-SecureString -String "<password>" -AsPlainText -Force
@@ -74,7 +74,15 @@ New-AzADUser -DisplayName "James Williamson" -Password $password -AccountEnabled
 - The backtick at the end of a line continues the command on the next
   line.
 
-![New-AzADUser output for James Williamson with the UserPrincipalName jameswilliamson@division3builds.com; the password is blurred](/notes/virtual-desktops/azure/az-140/images/new-azaduser.png)
+Output (trimmed to the useful lines; the rest of the properties come
+back empty until set):
+
+```text
+DisplayName       : James Williamson
+Id                : <object id>
+UserPrincipalName : jameswilliamson@division3builds.com
+OdataType         : #microsoft.graph.user
+```
 
 **Course gotcha that's fixed now**: in the video `-AccountEnabled`
 threw "a parameter cannot be found" and got deleted. Current
@@ -95,7 +103,7 @@ Entra admin center → Users: James Williamson is there with
 **On-premises sync: No**. Created in the cloud, not synced from AD
 like Jane, Jason, and Adam.
 
-![Entra admin center Users list with James Williamson as a cloud-only user next to the synced test users; the real and admin accounts are blurred](/notes/virtual-desktops/azure/az-140/images/entra-users-new-cloud-user.png)
+[![Entra admin center Users list with James Williamson as a cloud-only user next to the synced test users; the real and admin accounts are blurred](/notes/virtual-desktops/azure/az-140/images/entra-users-new-cloud-user.png)](/notes/virtual-desktops/azure/az-140/images/entra-users-new-cloud-user.png)
 
 ## Az vs Microsoft Graph PowerShell
 

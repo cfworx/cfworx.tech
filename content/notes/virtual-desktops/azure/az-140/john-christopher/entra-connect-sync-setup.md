@@ -23,7 +23,7 @@ test users in it, and sync only that OU.
   Admins and Schema Admins to give it plenty of rights. Lab only;
   nothing in AVD needs schema rights.
 
-![ADUC with the AVDSync OU selected and the right-click menu open on New, User](/notes/virtual-desktops/azure/az-140/images/ad-avdsync-ou-new-user.png)
+[![ADUC with the AVDSync OU selected and the right-click menu open on New, User](/notes/virtual-desktops/azure/az-140/images/ad-avdsync-ou-new-user.png)](/notes/virtual-desktops/azure/az-140/images/ad-avdsync-ou-new-user.png)
 
 Users get `@division3builds.com` sign-in names because the AD domain
 is division3builds.com. That domain is also verified in Entra (TXT
@@ -65,7 +65,7 @@ filtering. Customize to pick the OU and turn on SSO.
 | Single sign-on | Domain admin credentials again |
 | Configure | Start sync when done, Install |
 
-![Entra Connect Sync User sign-in page with Password Hash Synchronization selected and the Enable single sign-on option](/notes/virtual-desktops/azure/az-140/images/entra-connect-user-sign-in.png)
+[![Entra Connect Sync User sign-in page with Password Hash Synchronization selected and the Enable single sign-on option](/notes/virtual-desktops/azure/az-140/images/entra-connect-user-sign-in.png)](/notes/virtual-desktops/azure/az-140/images/entra-connect-user-sign-in.png)
 
 ### Sign-in methods
 
@@ -100,7 +100,7 @@ Intranet zone) before browsers use it.
   step usually goes away after rebooting the VM and rerunning the
   wizard.
 
-![Entra Connect Sync Configuration complete page: sync started, warnings that the AD Recycle Bin isn't enabled, TPM recommended, mS-DS-ConsistencyGuid used as the source anchor, and Seamless SSO needs Group Policy](/notes/virtual-desktops/azure/az-140/images/entra-connect-configuration-complete.png)
+[![Entra Connect Sync Configuration complete page: sync started, warnings that the AD Recycle Bin isn't enabled, TPM recommended, mS-DS-ConsistencyGuid used as the source anchor, and Seamless SSO needs Group Policy](/notes/virtual-desktops/azure/az-140/images/entra-connect-configuration-complete.png)](/notes/virtual-desktops/azure/az-140/images/entra-connect-configuration-complete.png)
 
 The completion screen's notes:
 
@@ -120,7 +120,7 @@ The completion screen's notes:
 - **Entra Connect → Connect Sync**: last sync time, Password Hash Sync
   enabled, Seamless SSO enabled for the domain.
 
-![Entra admin center Users list: Adam Young, avd admin, Jane Dobbson and Jason Camp with on-premises sync Yes, two cloud-only accounts blurred](/notes/virtual-desktops/azure/az-140/images/entra-connect-synced-users.png)
+[![Entra admin center Users list: Adam Young, avd admin, Jane Dobbson and Jason Camp with on-premises sync Yes, two cloud-only accounts blurred](/notes/virtual-desktops/azure/az-140/images/entra-connect-synced-users.png)](/notes/virtual-desktops/azure/az-140/images/entra-connect-synced-users.png)
 
 Sync runs every 30 minutes. To push a change now, on the sync server:
 

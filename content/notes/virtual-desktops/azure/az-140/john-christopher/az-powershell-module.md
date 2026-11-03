@@ -61,7 +61,7 @@ Install-Module -Name Az -Repository PSGallery -Force -AllowClobber
 - It's big: `Az` is a rollup of every Az.* service module. Takes a few
   minutes.
 
-![PowerShell: Install-Module -Name Az -Force -AllowClobber with the NuGet provider prompt answered Y, then Get-Command -Verb connect listing Connect-AzAccount from Az.Accounts](/notes/virtual-desktops/azure/az-140/images/az-module-install.png)
+[![PowerShell: Install-Module -Name Az -Force -AllowClobber with the NuGet provider prompt answered Y, then Get-Command -Verb connect listing Connect-AzAccount from Az.Accounts](/notes/virtual-desktops/azure/az-140/images/az-module-install.png)](/notes/virtual-desktops/azure/az-140/images/az-module-install.png)
 
 What Microsoft's docs add:
 
@@ -95,6 +95,6 @@ Connect-AzAccount
 - `Get-AzContext` shows who and which subscription the session is
   using; `Disconnect-AzAccount` signs out.
 
-![PowerShell: Connect-AzAccount, account picker, retrieving subscriptions, the new login experience announcement, and the selected subscription in Default Directory](/notes/virtual-desktops/azure/az-140/images/connect-azaccount.png)
+[![PowerShell: Connect-AzAccount, account picker, retrieving subscriptions, the new login experience announcement, and the selected subscription in Default Directory](/notes/virtual-desktops/azure/az-140/images/connect-azaccount.png)](/notes/virtual-desktops/azure/az-140/images/connect-azaccount.png)
 
 Signed in, the Az cmdlets run against the chosen subscription.

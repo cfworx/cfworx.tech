@@ -11,7 +11,7 @@ capacity (VMs first) to customers who'd rather not run it on-prem.
 The course's analogy: paying a shop to change the oil instead of
 doing it yourself.
 
-![Whiteboard of the on-prem domain with Entra Connect (formerly Azure AD Connect) syncing up to a cloud of Azure and Microsoft 365 services, with IaaS, PaaS, and SaaS labels](/notes/virtual-desktops/azure/az-140/images/microsoft-cloud-entra-connect.png)
+[![Whiteboard of the on-prem domain with Entra Connect (formerly Azure AD Connect) syncing up to a cloud of Azure and Microsoft 365 services, with IaaS, PaaS, and SaaS labels](/notes/virtual-desktops/azure/az-140/images/microsoft-cloud-entra-connect.png)](/notes/virtual-desktops/azure/az-140/images/microsoft-cloud-entra-connect.png)
 
 ## IaaS vs PaaS vs SaaS
 
