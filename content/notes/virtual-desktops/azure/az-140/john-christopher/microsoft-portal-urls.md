@@ -41,8 +41,9 @@ Checked October 2026.
 - `www.office.com` → m365.cloud.microsoft, which is moving again: the
   Microsoft 365 Copilot app is becoming Microsoft Copilot at
   copilot.cloud.microsoft (rolling out since August 2026).
-- `client.wvd.microsoft.com` (old AVD web client) →
-  windows.cloud.microsoft (Windows App in a browser)
+- `client.wvd.microsoft.com` (old Remote Desktop web client):
+  unsupported since March 27, 2026, and it doesn't redirect. Use
+  windows.cloud.microsoft (Windows App in a browser).
 
 ## Defender is still security.microsoft.com
 

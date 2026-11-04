@@ -1,7 +1,7 @@
 ---
 title: "Syncing AD to Entra ID with Entra Connect"
 date: 2026-11-02T06:00:00-08:00
-description: "AZ-140 notes on syncing the lab domain to Entra ID: pilot OU and test users, where Entra Connect Sync downloads now, the custom install, and checking the sync."
+description: "AZ-140 notes on syncing the lab domain to Entra ID: pilot OU and test users, where to download Entra Connect Sync, the custom install, and checking sync."
 draft: false
 ---
 
@@ -20,8 +20,8 @@ test users in it, and sync only that OU.
 - In AVDSync → New → User: Jane Dobbson, Jason Camp, Adam Young.
   Password set, "must change password at next logon" unchecked.
 - One admin account, **avd admin**. The course adds it to Enterprise
-  Admins and Schema Admins to give it plenty of rights. Lab only;
-  nothing in AVD needs schema rights.
+  Admins and Schema Admins. Enterprise Admin is what the Connect Sync
+  wizard asks for (below); nothing in this lab needs Schema Admins.
 
 [![ADUC with the AVDSync OU selected and the right-click menu open on New, User](/notes/virtual-desktops/azure/az-140/images/ad-avdsync-ou-new-user.png)](/notes/virtual-desktops/azure/az-140/images/ad-avdsync-ou-new-user.png)
 
@@ -40,6 +40,8 @@ Microsoft Download Center doesn't get new versions anymore.
   Manage tab → Download Connect Sync.**
 - Download and install it on the server that will run sync. In the lab
   that's the DC. Supported, but production puts it on its own server.
+  Microsoft lists 6 GB RAM as the minimum for the sync server; the lab
+  DC has 4 GB, fine for a few test users.
 - Sign in with Global Administrator or Hybrid Identity Administrator.
 
 The Microsoft 365 admin center has a guided setup for the same thing
@@ -56,7 +58,7 @@ filtering. Customize to pick the OU and turn on SSO.
 | Required components | Defaults, Install |
 | User sign-in | Password Hash Sync + Enable single sign-on |
 | Connect to Entra | Global Admin (cloud account) |
-| Connect directories | Add the forest with a domain admin account |
+| Connect directories | Add the forest, Create new account, Enterprise Admin credentials |
 | Entra sign-in | UPN suffix shows Verified |
 | Domain/OU filtering | Only AVDSync |
 | Identifying users | Defaults |
@@ -82,15 +84,19 @@ infrastructure, and cloud sign-in keeps working if on-prem goes down.
 in to the cloud without asking for the password again. The wizard
 creates a computer account in AD for it. The completion screen points
 out it also needs a Group Policy setting (the Entra sign-in URL in the
-Intranet zone) before browsers use it.
+Intranet zone) before browsers use it. For Windows 10/11 Microsoft
+recommends hybrid join instead (SSO through the PRT sign-in token);
+Seamless SSO is for older Windows. It's also not AVD's own Microsoft
+Entra single sign-on to session hosts, a separate exam topic.
 
 ### What's different from the video
 
 - **Group writeback**: the course turns it on (writing cloud groups
   back down into the OU). That version (v2) was retired in June 2024
   and can't be enabled anymore. Cloud Sync's "group provisioning to
-  AD" replaced it. The Group Writeback page left in the wizard is the
-  old v1, for Microsoft 365 groups only.
+  AD" replaced it. The Group Writeback option left in the wizard is
+  the old v1, for Microsoft 365 groups only, and it's only available
+  when the forest has on-prem Exchange (not in this lab).
 - **Application-based authentication**: during Configure the wizard
   sets up application-based authentication to Entra ID. Microsoft
   retires the old method on April 7, 2027; anything below version
@@ -127,6 +133,9 @@ Sync runs every 30 minutes. To push a change now, on the sync server:
 ```powershell
 Start-ADSyncSyncCycle -PolicyType Delta
 ```
+
+If PowerShell doesn't recognize the cmdlet, run `Import-Module ADSync`
+first.
 
 `Delta` sends only changes; `Initial` does a full sync (after changing
 filtering or rules).

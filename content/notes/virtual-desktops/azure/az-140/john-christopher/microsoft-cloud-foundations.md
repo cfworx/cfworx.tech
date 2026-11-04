@@ -7,7 +7,7 @@ draft: false
 
 Cloud services came out of virtualization: Amazon, Google, IBM, and
 Microsoft already had huge datacenters, so they started renting out
-capacity (VMs first) to customers who'd rather not run it on-prem.
+capacity to customers who'd rather not run it on-prem.
 The course's analogy: paying a shop to change the oil instead of
 doing it yourself.
 
@@ -31,8 +31,8 @@ itself. Control and work both drop going down the table.
 
 The tell: patching the OS means IaaS. Microsoft runs the OS but it's
 your app or config on top: PaaS. Just signing users in and using it:
-SaaS. Data, identities, and accounts are the customer's job in every
-model.
+SaaS. Data, accounts and identities, and the devices people use are
+the customer's job in every model.
 
 The course splits it by admin effort instead: anything that still
 has to be administered counts as PaaS, the finished user experience
@@ -48,7 +48,7 @@ Microsoft's version is the exam answer.
 |  | Azure | Microsoft 365 |
 | --- | --- | --- |
 | Mostly | IaaS, plus PaaS (and a little SaaS) | SaaS |
-| Billing | Pay for what's used: CPU, RAM, storage, network | Subscription with per-user licenses, monthly |
+| Billing | Pay for what's used: CPU, RAM, storage, network | Per-user licenses, priced per month on a monthly or annual commitment |
 | Directory | Entra ID | Same Entra ID |
 
 The two are tied together through one Entra ID tenant: users created
@@ -77,7 +77,8 @@ still say Azure AD.
   application management). The cloud's replacement for
   [GPOs](/notes/virtual-desktops/azure/az-140/john-christopher/active-directory-domain-foundations/#group-policy):
   settings, policies, app deployment. Manages on-prem machines too.
-- **OneDrive for Business**: per-user cloud file storage.
+- **OneDrive** (formerly OneDrive for Business): per-user cloud file
+  storage.
 
 ## Hybrid identity
 
@@ -100,10 +101,14 @@ How the sync behaves:
   created in the cloud doesn't come down to AD. Cloud Sync is closing
   that gap: cloud users down to AD is in preview, cloud security
   groups down to AD is GA.
-- Password writeback: a password changed in the cloud gets written
-  back to AD.
-- Seamless SSO: signing in to the domain on a corporate machine signs
-  in to the cloud too.
+- Password writeback (optional, goes with self-service password
+  reset, needs Entra ID P1/P2 or Microsoft 365 Business Premium): a
+  password changed or reset in the cloud gets written back to AD.
+- Seamless SSO (optional, with password hash sync or pass-through
+  auth): signing in to the domain on a corporate machine signs in to
+  the cloud too. For Windows 10/11 Microsoft recommends hybrid join
+  instead, which does the same through the sign-in token (PRT);
+  Seamless SSO is for older Windows.
 
 ## Where it's heading
 

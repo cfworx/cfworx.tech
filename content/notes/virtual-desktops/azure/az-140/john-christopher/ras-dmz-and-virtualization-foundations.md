@@ -51,7 +51,11 @@ AVD turns this around, which is worth remembering later: session
 hosts and clients both connect *outbound* to the AVD service over
 HTTPS (TCP 443), a reverse connection. The session hosts have no
 inbound ports open, and users don't need a VPN to reach their
-desktop.
+desktop. That's how every connection starts; RDP then tries to move
+to UDP (RDP Shortpath). Over the internet that's still outbound only
+(UDP 3478 to Microsoft's STUN/TURN servers), but Shortpath for managed networks
+(over a VPN or ExpressRoute) has each session host listen on UDP 3390
+inbound.
 
 ## The DMZ
 

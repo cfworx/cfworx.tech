@@ -1,7 +1,7 @@
 ---
 title: "Concepts of using virtual networks and subnets in Azure"
 date: 2026-11-04T04:30:00-08:00
-description: "AZ-140 notes on Azure networking concepts: VNets and subnets, reserved addresses, NSGs, peering and hub-spoke, UDRs and Azure Firewall, VPN gateway vs ExpressRoute."
+description: "AZ-140 notes on Azure networking: VNets and subnets, reserved addresses, NSGs, peering and hub-spoke, UDRs and Azure Firewall, VPN gateway vs ExpressRoute."
 draft: false
 ---
 
@@ -38,9 +38,9 @@ subnet is a /29: 8 minus 5 = 3 usable.
 
 ### Addressing
 
-- Azure assigns addresses from the subnet automatically (the course
-  calls it DHCP). Default is dynamic; set **static** on the NIC in
-  Azure when it has to stay put, like a
+- Azure hands out addresses from the subnet over DHCP. Default is
+  dynamic; set **static** on the NIC in Azure when it has to stay
+  put, like a
   [domain controller](/notes/virtual-desktops/azure/az-140/john-christopher/ad-ds-domain-controller-in-azure/).
 - **Plan so ranges never overlap** with on-prem or with any VNet that
   will be peered. Overlap breaks routing once they're connected, and
@@ -57,10 +57,11 @@ subnet is a /29: 8 minus 5 = 3 usable.
   That's changing. Microsoft is retiring "default outbound access":
   new VNets created with API versions after March 31, 2026 (and the
   portal already) get **private subnets**, with no internet access
-  until an explicit method is added (NAT Gateway, a public IP, or
-  outbound rules on a load balancer). Existing VNets keep working.
-  AVD session hosts need outbound 443 to the AVD service, so a private
-  subnet needs one of those.
+  until an explicit method is added (NAT Gateway, a public IP,
+  outbound rules on a load balancer, or a UDR sending traffic through
+  a firewall). Existing VNets keep working. AVD session hosts need
+  outbound access to the AVD service ([below](#where-avd-fits)), so a
+  private subnet needs one of those.
 
 ## NSGs (network security groups)
 
@@ -69,8 +70,13 @@ subnet is a /29: 8 minus 5 = 3 usable.
 - Attach to a **subnet** (covers everything in it) or a **NIC** (one
   VM). Both can apply; traffic has to pass both.
 - Stateful: allowing a request in also allows the reply out.
-- Default rules allow traffic within the VNet and outbound to the
-  internet, and deny other inbound from the internet.
+- Default rules (can't be deleted, only overridden by a lower
+  priority number): inbound allows `VirtualNetwork` and Azure Load
+  Balancer probes and denies the rest; outbound allows
+  `VirtualNetwork` and the internet and denies the rest.
+- The `VirtualNetwork` tag isn't just this VNet. It includes peered
+  VNets and on-prem networks connected through a gateway, so their
+  traffic is allowed in by default.
 - Not a full firewall: no deep inspection. That's **Azure Firewall**.
 
 ## Multiple VNets: peering and hub-spoke
@@ -97,7 +103,9 @@ or workload, each peered only to the hub.
 - Spoke-to-spoke goes through the hub because of the non-transitive
   rule: a **UDR** (user-defined route) on each spoke subnet sends
   traffic to the Azure Firewall's private IP as the next hop, and the
-  firewall decides what's allowed.
+  firewall decides what's allowed. The peerings also need **allow
+  forwarded traffic** turned on, since that traffic didn't start in
+  the hub.
 - The same UDR trick (`0.0.0.0/0` → firewall) forces internet-bound
   traffic through the firewall too.
 - Azure Firewall needs its own subnet named `AzureFirewallSubnet`
@@ -110,20 +118,29 @@ or workload, each peered only to the hub.
 | | VPN gateway | ExpressRoute |
 | --- | --- | --- |
 | Path | Encrypted IPsec tunnel over the internet | Private circuit through a telecom provider |
-| On-prem side | VPN device (course: VPN concentrator) | Provider's equipment |
+| On-prem side | VPN device (course: VPN concentrator) | Your edge routers running BGP with Microsoft (the provider's, with a managed IPVPN) |
 | Speed | Limited by gateway size and internet link | 50 Mbps to 10 Gbps circuits |
 | Cost | Lower | Higher |
 
-- The VPN gateway lives in a subnet named `GatewaySubnet` (/27
-  recommended). Site-to-site connects an office; point-to-site connects
-  one computer.
+- The VPN gateway lives in a subnet named `GatewaySubnet`, /27 or
+  larger (only the Basic SKU can go smaller). Site-to-site connects an
+  office; point-to-site connects one computer.
 - The course's "10 to 100 Gbps" is **ExpressRoute Direct**: dual 10,
   100, or 400 Gbps ports straight into Microsoft's network.
 - ExpressRoute is private but not encrypted by default.
 
 ## Where AVD fits
 
-Session hosts are VMs in a subnet. They need to reach a DC (VNet DNS
-servers pointed at it, as in the AD DS note), outbound 443 to the AVD
-service, and with a hub-spoke design they sit in a spoke while the DCs
-and firewall sit in the hub.
+Session hosts are VMs in a subnet. What they need from the network:
+
+- **A DC**, when they're joined to AD DS like this lab (VNet DNS
+  servers pointed at it, as in the AD DS note). Entra-joined session
+  hosts don't need one.
+- **Outbound only**, no inbound ports. Mostly 443 (the AVD service,
+  Entra sign-in), plus 80 for certificate checks, 1688 to
+  `azkms.core.windows.net` for Windows activation, and UDP 3478 for
+  relayed RDP Shortpath.
+- Direct access to `169.254.169.254` and `168.63.129.16` (Azure's
+  metadata and platform addresses). Don't proxy or redirect them.
+- In hub-spoke they sit in a spoke, with the DCs and firewall in the
+  hub. The firewall has to allow all of the above.

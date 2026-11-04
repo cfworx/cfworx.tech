@@ -1,7 +1,7 @@
 ---
 title: "Az PowerShell module and Connect-AzAccount"
 date: 2026-11-03T05:00:00-08:00
-description: "AZ-140 notes on managing Azure from PowerShell: checking for Az cmdlets, the PowerShell Gallery, installing the Az module, and signing in with Connect-AzAccount."
+description: "AZ-140 notes on managing Azure from PowerShell: checking for Az cmdlets, the PowerShell Gallery, installing Az, and signing in with Connect-AzAccount."
 draft: false
 ---
 
@@ -42,8 +42,10 @@ Which module for what:
 | MicrosoftTeams | Teams |
 
 The course mentions the MSOnline (MSOL) cmdlets for Microsoft 365.
-MSOnline and AzureAD are deprecated; Microsoft Graph PowerShell
-replaces both (`Connect-MgGraph`, `Get-MgUser`).
+MSOnline stopped working in spring 2025, and AzureAD lost support in
+March 2025 (retirement was set for that July). Microsoft Graph
+PowerShell replaces both (`Connect-MgGraph`, `Get-MgUser`), as does
+Microsoft Entra PowerShell, built on top of it.
 
 ## Install the Az module
 
@@ -51,15 +53,17 @@ replaces both (`Connect-MgGraph`, `Get-MgUser`).
 Install-Module -Name Az -Repository PSGallery -Force -AllowClobber
 ```
 
-- `-Force`: no "are you sure" prompts.
+- `-Force`: skips the untrusted-repository prompt and installs even if
+  a version is already there.
 - `-AllowClobber`: lets it overwrite commands with the same names from
   other modules.
 - **NuGet prompt**: the first install on Windows PowerShell 5.1 asks
   to install the NuGet provider (what downloads the packages). Answer
   Y.
-- **Untrusted repository prompt**: answer Y (or Yes to All).
-- It's big: `Az` is a rollup of every Az.* service module. Takes a few
-  minutes.
+- **Untrusted repository prompt** (only without `-Force`): answer Y
+  (or Yes to All).
+- It's big: `Az` is a rollup of every generally available Az.* service
+  module (previews are in `AzPreview`). Takes a few minutes.
 
 [![PowerShell: Install-Module -Name Az -Force -AllowClobber with the NuGet provider prompt answered Y, then Get-Command -Verb connect listing Connect-AzAccount from Az.Accounts](/notes/virtual-desktops/azure/az-140/images/az-module-install.png)](/notes/virtual-desktops/azure/az-140/images/az-module-install.png)
 
@@ -83,8 +87,10 @@ What Microsoft's docs add:
 Connect-AzAccount
 ```
 
-- Signs in this session only. Every new PowerShell window needs it
-  again.
+- The sign-in is saved by default (in `%USERPROFILE%\.Azure`), so new
+  PowerShell windows are already signed in until the token expires.
+  For this window only: `Connect-AzAccount -Scope Process`, or turn
+  saving off with `Disable-AzContextAutosave`.
 - Since Az 12.0.0 on Windows 10+ / Server 2019+, the sign-in pops up
   as a Windows account picker (WAM, Web Account Manager) instead of a
   browser window.

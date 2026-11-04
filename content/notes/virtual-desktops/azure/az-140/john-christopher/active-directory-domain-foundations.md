@@ -18,9 +18,9 @@ traditional on-prem Active Directory domain.
   opening the door to personal computing.
 - **1980s**: PCs show up in offices and get networked together,
   peer-to-peer.
-- **1990s**: Novell NetWare popularizes servers: file servers first,
-  then servers that manage other machines. Microsoft's answer is
-  Windows NT and the domain controller.
+- **1980s-90s**: Novell NetWare (from 1983) popularizes servers: file
+  servers first, then a directory to manage users and machines (NDS,
+  1993). Microsoft's answer is Windows NT and the domain controller.
 - **2000**: Microsoft releases Active Directory.
 
 Peer-to-peer is the problem everything after it solves: no
@@ -48,7 +48,10 @@ Hearing *AD DS* generally means an on-prem domain, as opposed to
 Microsoft Entra ID (formerly Azure AD), the cloud identity service.
 That distinction is AZ-140 material: the exam has you pick an
 identity scenario for AVD, and AD DS is one of them, alongside
-Microsoft Entra ID and Microsoft Entra Domain Services.
+Microsoft Entra ID and Microsoft Entra Domain Services. The trap:
+that choice is what the session hosts join. Users always sign in to
+AVD through Entra ID, so with AD DS their accounts have to be synced
+up to Entra ID (hybrid identities). AD-only accounts don't work.
 [My AVD lab](/homelab/virtual-desktops/avd-fslogix-lab/) went
 cloud-only on Entra ID, with no domain controller at all.
 
@@ -65,8 +68,8 @@ than one of any server:
 DCs replicate: whatever you do on one carries over to the others.
 Create a user account on the first DC and replication copies it to
 the second, so that user can log on at any of the thousand machines
-and authenticate against either DC. Group Policy rides the same
-replication (more below).
+and authenticate against either DC. Group Policy replicates too, in
+two parts (more below).
 
 ## The protocols
 
@@ -120,8 +123,12 @@ asks from the boss: force the firewall on everywhere, keep antivirus
 up to date, stop people setting their own wallpaper. GPOs can even
 deploy software.
 
-GPOs replicate like everything else on a DC, so it doesn't matter
-which DC a machine authenticates against: the policy is the same.
+Every DC ends up with the same GPOs, so it doesn't matter which DC a
+machine authenticates against. A GPO is two halves that replicate
+separately: the container in AD (normal AD replication, usually under
+a minute within a site) and the template files in SYSVOL (DFS
+Replication, every 15 minutes within a site). Right after an edit,
+two DCs can briefly disagree.
 
 ## The internet edge
 

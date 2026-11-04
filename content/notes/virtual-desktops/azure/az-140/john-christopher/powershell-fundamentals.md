@@ -30,7 +30,8 @@ below changed or disappeared there.
   lot of it.
 - From Command Prompt, type `powershell`.
 - Console for running commands; the ISE (Integrated Scripting
-  Environment, type `ise`) for writing scripts. The ISE shows
+  Environment: `ise` inside PowerShell, `powershell_ise` from Command
+  Prompt or Run) for writing scripts. The ISE shows
   parameters and their valid values as you type. Run Script (F5)
   runs the whole thing, Run Selection (F8) just the highlighted lines.
 - The ISE is Windows PowerShell 5.1 only and gets no new features.
@@ -87,7 +88,8 @@ The course also shows `Get-Service -ComputerName client68` and
 comma-separated list hits several machines at once). Those built-in
 `-ComputerName` parameters don't go through WinRM; they use older
 protocols. PowerShell 7 removed `-ComputerName` from the service
-cmdlets, and Microsoft's direction is remoting with `Invoke-Command`.
+cmdlets and from `Get-Process`, so those examples only work in 5.1.
+In 7 it's remoting: `Invoke-Command -ComputerName client10 { Get-Process }`.
 
 ## Piping
 
@@ -99,7 +101,8 @@ notepad C:\securitylog.txt
 ```
 
 - Default output is usually a table, and long values get cut off.
-  `Format-List` puts every property on its own line.
+  `Format-List` puts each property on its own line and shows more of
+  them than the table; `Format-List *` shows all of them.
 - `Out-File` writes the output to a file.
 - Reading the Security log needs an admin session.
 - `Get-EventLog` is gone in PowerShell 7. The replacement works in
@@ -111,8 +114,9 @@ notepad C:\securitylog.txt
   `Update-Help` to download the full help files.
 - `Get-Help Get-EventLog -Examples` for just the examples.
 - `Get-Help Get-EventLog -Online` opens the Microsoft Learn page.
-  Every cmdlet has one, with examples, and searching the cmdlet name
-  finds it too. The course prefers those over the built-in help.
+  Microsoft's own cmdlets all have one, with examples (some
+  third-party modules don't), and searching the cmdlet name finds it
+  too. The course prefers those over the built-in help.
 
 ## Variables
 
@@ -120,7 +124,7 @@ Variables start with `$`:
 
 ```powershell
 $ComputerName = "client10"
-Get-Process -ComputerName $ComputerName
+Get-Process -ComputerName $ComputerName    # Windows PowerShell 5.1 only
 
 $num = 1
 $numb = 2
@@ -133,8 +137,10 @@ $num + $numb    # 3
 - Execution policy controls whether scripts run; commands typed at
   the prompt always work. `Get-ExecutionPolicy` shows the current
   one.
-- Defaults: Restricted (no scripts) on Windows 10 and 11,
-  RemoteSigned on Windows Server.
+- Defaults in Windows PowerShell 5.1: Restricted (no scripts) on
+  Windows 10 and 11, RemoteSigned on Windows Server. PowerShell 7 on
+  Windows defaults to RemoteSigned and keeps its own setting:
+  changing it in `powershell` doesn't change `pwsh`.
 - RemoteSigned: local scripts run, downloaded ones need a signature.
   Unrestricted (what the course sets) runs anything, with a warning
   for downloaded scripts.

@@ -40,8 +40,9 @@ Other limits:
 - The subscription needs the **Microsoft.CloudShell** resource
   provider registered (Subscription → Resource providers).
 - 20 concurrent sessions per tenant.
-- `exit`, or Settings → Reset user settings to pick the storage
-  option again.
+- `exit` ends the session; the storage choice sticks. To change it
+  (ephemeral to mounted storage), Settings → **Reset User Settings**,
+  which reruns the first-launch setup.
 
 [![Cloud Shell PowerShell session: Requesting a Cloud Shell succeeded, ephemeral session warning, authenticating to Azure, and an Az 16.4.0 vs 16.5.0 update notice](/notes/virtual-desktops/azure/az-140/images/cloud-shell-powershell.png)](/notes/virtual-desktops/azure/az-140/images/cloud-shell-powershell.png)
 
@@ -67,13 +68,15 @@ az group list -o table     # Azure CLI
 Get-AzResourceGroup        # Azure PowerShell
 ```
 
-For AZ-140, focus on PowerShell. The exam has a little of it and
-basically no Bash or Azure CLI.
+For AZ-140, focus on PowerShell, but don't skip Azure CLI: the skills
+outline lists automating host pools and session hosts "by using
+PowerShell, Azure CLI, ARM templates, and Bicep files".
 
 ## What's already there
 
 - Az PowerShell and Azure CLI, kept updated. The welcome banner may
-  still nag about a newer Az version: `Update-PSResource Az`.
+  still nag about a newer Az version: `Update-PSResource Az`. In an
+  ephemeral session the update is gone next time.
 - A basic set of Microsoft Graph PowerShell modules, Exchange Online
   PowerShell, AzCopy, Bicep, git, and editors (`code`, `vim`, `nano`).
 - **`Azure:` drive** (PowerShell only): `cd Azure:` browses
@@ -89,4 +92,6 @@ basically no Bash or Azure CLI.
   of the name first.
 - Signed in as the portal user, with that user's permissions. In the
   shell itself it's a regular Linux user (no root).
-- Paste with Ctrl+Shift+V (or right-click) on Windows.
+- Windows: Ctrl+C copies selected text (with nothing selected it
+  sends a break, like stopping a command). Paste is Ctrl+V or
+  Shift+Insert.

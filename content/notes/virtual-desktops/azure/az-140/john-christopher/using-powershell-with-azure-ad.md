@@ -1,7 +1,7 @@
 ---
 title: "Using PowerShell with Azure AD"
 date: 2026-11-03T06:00:00-08:00
-description: "AZ-140 notes on managing Entra ID (Azure AD) users and groups from the Az module: finding cmdlets with Get-Command, Get-AzADUser, Get-AzADGroup, and New-AzADUser."
+description: "AZ-140 notes on managing Entra ID (Azure AD) users and groups with the Az module: Get-Command, Get-AzADUser, Get-AzADGroup, and New-AzADUser."
 draft: false
 ---
 
@@ -63,7 +63,8 @@ New-AzADUser -DisplayName "James Williamson" -Password $password -AccountEnabled
 
 - `ConvertTo-SecureString -AsPlainText -Force` turns the typed
   password into a SecureString, which `-Password` requires. `-Force`
-  is required with `-AsPlainText`, just confirming it's on purpose.
+  confirms the plain text is on purpose: required in Windows
+  PowerShell 5.1, optional since PowerShell 7 but still accepted.
 - Required: `-DisplayName`, `-MailNickname` (the mail alias),
   `-UserPrincipalName`, and a password.
 - The UPN's domain has to be a verified domain in the tenant. No
@@ -92,10 +93,13 @@ Microsoft changes cmdlets faster than the docs and the videos keep
 up, so when an example errors on a parameter, check the cmdlet's page
 or `Get-Help New-AzADUser -Parameter *`.
 
-**Plain-text passwords**: a password typed into a command lands in the
-PowerShell history file
-(`(Get-PSReadLineOption).HistorySavePath`) and in any screenshot.
-`$password = Read-Host -AsSecureString` prompts for it instead.
+**Plain-text passwords**: PSReadLine keeps lines containing
+`password`, `asplaintext`, `token`, `apikey`, or `secret` out of the
+history file (`(Get-PSReadLineOption).HistorySavePath`), so this one
+isn't saved there. It's still in the open session (Up arrow,
+`Get-History`), in transcripts and event logs if PowerShell logging
+is on, and in any screenshot. `$password = Read-Host -AsSecureString`
+prompts for it instead.
 
 ## Check in the portal
 
