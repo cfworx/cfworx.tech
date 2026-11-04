@@ -78,6 +78,12 @@ subnet is a /29: 8 minus 5 = 3 usable.
 Separate VNets (`10.1.0.0/16`, `10.2.0.0/16`, `10.3.0.0/16`...) don't
 route to each other at all until they're **peered**.
 
+[![Whiteboard of a hub and spoke design: hub vNET1 10.1.0.0/16 with Subnet1A (load balancer, VPN gateway) and Subnet1B (Azure Firewall with a public IP to the internet), peered both ways to spoke vNET2, vNET3 and vNET4 (10.2-10.4.0.0/16) each with VMs and vNICs, and on-prem AD DS connected by a VPN connection over the internet or by ExpressRoute](/notes/virtual-desktops/azure/az-140/images/hub-spoke-vnets-whiteboard.png)](/notes/virtual-desktops/azure/az-140/images/hub-spoke-vnets-whiteboard.png)
+
+The course's whiteboard. In a real build the VPN gateway and firewall
+don't share subnets with other things: they get their own
+`GatewaySubnet` and `AzureFirewallSubnet` (below).
+
 - A peering is two links, one from each side (VNet1 → VNet2 and
   VNet2 → VNet1). Each direction can allow or block traffic.
 - Works across regions (global peering) and across subscriptions.
