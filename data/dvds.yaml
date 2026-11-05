@@ -277,7 +277,7 @@
 
 # TV
 - { title: "Arrested Development", year: 2003, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Comedy", added: "2026-11-02" }
-- { title: "Dragon Ball", year: 1986, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Action", added: "2026-11-05" }
+- { title: "Dragon Ball", year: 1986, format: dvd, location: "hdd01", type: tv, seasons: "1", notes: "153 episodes", genre: "Action", added: "2026-11-05" }
 - { title: "Family Guy", year: 1999, format: dvd, location: "hdd01", type: tv, seasons: "1-2", genre: "Comedy", added: "2026-10-20" }
 - { title: "Game of Thrones", year: 2011, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Fantasy", added: "2026-11-02" }
 - { title: "The IT Crowd", year: 2006, format: dvd, location: "hdd01", type: tv, seasons: "1-4", notes: "Plus specials", genre: "Comedy", added: "2026-11-02" }

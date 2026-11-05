@@ -545,3 +545,6 @@
       - "Journeys"
       - "Master Journeys"
       - "Ultimate Journeys"
+
+- name: "Dragon Ball"
+  show: { title: "Dragon Ball", year: 1986, seasons: 1 }
