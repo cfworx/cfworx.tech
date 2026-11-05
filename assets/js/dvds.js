@@ -422,9 +422,12 @@
         if (!st || !(n > 0) || n > 99) { return; }
         tv = true;
         var shows = items.filter(function (it) { return it.tv && it.sortKey === titleKey(st); });
+        var names = Array.isArray(c.show.names) ? c.show.names : [];
         for (var sn = 1; sn <= n; sn++) {
+          var base = st + ' \u2013 Season ' + sn;
           entries.push({
-            title: st + ' \u2013 Season ' + sn,
+            title: names[sn - 1] ? base + ': ' + String(names[sn - 1]) : base,
+            base: base,
             year: null,
             season: sn,
             show: st,
@@ -997,8 +1000,9 @@
 
   /* A season's own poster, else the show's. */
   function entryCover(e, label, extra) {
-    if (e.season && !posterFile(e.title, null) && posterFile(e.show, e.showYear)) {
-      return cover(e.show, e.showYear, label, extra);
+    if (e.season) {
+      if (posterFile(e.base, null)) { return cover(e.base, null, label, extra); }
+      if (posterFile(e.show, e.showYear)) { return cover(e.show, e.showYear, label, extra); }
     }
     return cover(e.title, e.year, label, extra);
   }

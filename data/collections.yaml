@@ -15,6 +15,8 @@
 #   show    for a TV series instead of films:
 #           { title: "...", year: <first aired>, seasons: <how many> }
 #           Seasons owned come from the "seasons" field in dvds.yaml.
+#           Optional names: ["...", ...] gives each season its title
+#           (Season 1: Indigo League). Posters: <show>-season-<n>.jpg
 #
 # Only films that are already out are listed; add new ones as they're
 # released.
@@ -511,3 +513,35 @@
     - { title: "Pokémon 3: The Movie", year: 2000 }
     - { title: "Pokémon 4Ever", year: 2001 }
     - { title: "Pokémon Heroes", year: 2002 }
+
+- name: "Pokémon (TV)"
+  show:
+    title: "Pokémon"
+    year: 1997
+    seasons: 25
+    names:
+      - "Indigo League"
+      - "Adventures in the Orange Islands"
+      - "The Johto Journeys"
+      - "Johto League Champions"
+      - "Master Quest"
+      - "Advanced"
+      - "Advanced Challenge"
+      - "Advanced Battle"
+      - "Battle Frontier"
+      - "Diamond and Pearl"
+      - "DP Battle Dimension"
+      - "DP Galactic Battles"
+      - "DP Sinnoh League Victors"
+      - "Black & White"
+      - "Black & White: Rival Destinies"
+      - "Black & White: Adventures in Unova"
+      - "XY"
+      - "XY: Kalos Quest"
+      - "XYZ"
+      - "Sun & Moon"
+      - "Sun & Moon: Ultra Adventures"
+      - "Sun & Moon: Ultra Legends"
+      - "Journeys"
+      - "Master Journeys"
+      - "Ultimate Journeys"
