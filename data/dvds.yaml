@@ -154,6 +154,9 @@
 - { title: "The Perfect Storm", year: 2000, format: dvd, location: "hdd01", genre: "Drama", added: "2026-10-20" }
 - { title: "Phone Booth", year: 2002, format: dvd, location: "hdd01", genre: "Thriller", added: "2026-10-24" }
 - { title: "Platoon", year: 1986, format: dvd, location: "hdd01", genre: "War", added: "2026-10-24" }
+- { title: "Pokémon 3: The Movie", year: 2000, format: dvd, location: "hdd01", genre: "Family", added: "2026-11-05" }
+- { title: "Pokémon: The First Movie", year: 1998, format: dvd, location: "hdd01", genre: "Family", added: "2026-11-05" }
+- { title: "Pokémon: The Movie 2000", year: 1999, format: dvd, location: "hdd01", genre: "Family", added: "2026-11-05" }
 - { title: "Rainbow Valley", year: 1935, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
 - { title: "Rambo", year: 2008, format: dvd, location: "hdd01", genre: "Action", added: "2026-10-31" }
 - { title: "Randy Rides Alone", year: 1934, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
@@ -274,14 +277,16 @@
 
 # TV
 - { title: "Arrested Development", year: 2003, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Comedy", added: "2026-11-02" }
+- { title: "Dragon Ball", year: 1986, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Action", added: "2026-11-05" }
 - { title: "Family Guy", year: 1999, format: dvd, location: "hdd01", type: tv, seasons: "1-2", genre: "Comedy", added: "2026-10-20" }
 - { title: "Game of Thrones", year: 2011, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Fantasy", added: "2026-11-02" }
 - { title: "The IT Crowd", year: 2006, format: dvd, location: "hdd01", type: tv, seasons: "1-4", notes: "Plus specials", genre: "Comedy", added: "2026-11-02" }
 - { title: "Modern Family", year: 2009, format: dvd, location: "hdd01", type: tv, seasons: "1-3", genre: "Comedy", added: "2026-11-02" }
 - { title: "The Office (US)", year: 2005, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Comedy", added: "2026-11-01" }
 - { title: "One Piece", year: 1999, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Action", added: "2026-10-31" }
+- { title: "Pokémon", year: 1997, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Family", added: "2026-11-05" }
 - { title: "Roseanne", year: 1988, format: dvd, location: "hdd01", type: tv, seasons: "3", genre: "Comedy", added: "2026-11-02" }
-- { title: "That '70s Show", year: 1998, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Comedy", added: "2026-11-02" }
+- { title: "That '70s Show", year: 1998, format: dvd, location: "hdd01", type: tv, seasons: "1-2", genre: "Comedy", added: "2026-11-02" }
 
 # Kids' TV
 - { title: "Garfield and Friends", year: 1988, format: dvd, location: "hdd01", type: tv, kids: true, seasons: "6-7", genre: "Family", added: "2026-11-03" }

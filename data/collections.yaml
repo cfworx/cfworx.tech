@@ -503,3 +503,11 @@
 
 - name: "Garfield and Friends"
   show: { title: "Garfield and Friends", year: 1988, seasons: 7 }
+
+- name: "Pokémon movies (original series)"
+  films:
+    - { title: "Pokémon: The First Movie", year: 1998 }
+    - { title: "Pokémon: The Movie 2000", year: 1999 }
+    - { title: "Pokémon 3: The Movie", year: 2000 }
+    - { title: "Pokémon 4Ever", year: 2001 }
+    - { title: "Pokémon Heroes", year: 2002 }

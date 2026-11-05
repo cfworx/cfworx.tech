@@ -1572,7 +1572,11 @@
     var next = el ? parseJSON(el.textContent) : null;
     var postersFresh = fresh.getElementById('dvd-posters');
     var nextPosters = postersFresh ? parseJSON(postersFresh.textContent) : null;
-    if (Array.isArray(nextPosters)) { posters = new Set(nextPosters); }
+    var postersChanged = false;
+    if (Array.isArray(nextPosters)) {
+      postersChanged = nextPosters.length !== posters.size || nextPosters.some(function (f) { return !posters.has(f); });
+      posters = new Set(nextPosters);
+    }
     var setsFresh = fresh.getElementById('dvd-sets');
     var nextSets = setsFresh ? parseJSON(setsFresh.textContent) : null;
     var changed = false;
@@ -1592,6 +1596,8 @@
       paintTotals();
       render();
       changed = true;
+    } else if (postersChanged) {
+      render();   /* new covers: redraw so they replace the drawn ones */
     }
     var src = function (d) {
       var s = d.querySelector('script[src*="/js/dvds"]');
