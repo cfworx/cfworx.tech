@@ -548,3 +548,33 @@
 
 - name: "Dragon Ball"
   show: { title: "Dragon Ball", year: 1986, seasons: 1 }
+
+- name: "One Piece"
+  show:
+    title: "One Piece"
+    year: 1999
+    seasons: 23
+    names:
+      - "East Blue"
+      - "Whiskey Peak & Little Garden"
+      - "Drum Island"
+      - "Alabasta"
+      - "Post-Alabasta (Dreams!, The Zenny Pirate Crew, Beyond the Rainbow)"
+      - "Skypiea"
+      - "G-8 & Long Ring Long Land"
+      - "Water Seven"
+      - "Enies Lobby"
+      - "Thriller Bark"
+      - "Sabaody Archipelago"
+      - "Amazon Lily"
+      - "Impel Down & Marineford"
+      - "Fishman Island"
+      - "Punk Hazard"
+      - "Dressrosa"
+      - "Dressrosa (Part 2)"
+      - "Zou"
+      - "Whole Cake Island"
+      - "Levely"
+      - "Wano Country"
+      - "Egghead"
+      - "Elbaph"
