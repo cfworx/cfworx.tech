@@ -1,0 +1,175 @@
+{{- /* Planedex, /tools/planedex/. An old-school handheld-style collection
+       game for the planes the home ADS-B receiver catches. Standalone on
+       purpose, like the DVD Tracker: it has its own look
+       (assets/css/planedex.css), so it doesn't use baseof.html or the
+       site stylesheet.
+
+       The game data isn't in the repo: assets/js/planedex.js fetches it
+       from /api/planedex (functions/api/planedex.js, backed by the D1
+       database "planedex"), which the PC that keeps the logs updates
+       every 5 minutes (scripts/planedex/). Pushing to GitHub is only for
+       changes to the page itself. Model photos are in
+       static/tools/planedex/photos/ (scripts/planedex/fetch_photos.py);
+       pixel sprites from assets/js/planedex-sprites.js fill any gaps.
+
+       Privacy: the data never carries positions, distances or exact
+       times, so nothing here can place the antenna. No inline styles or
+       scripts anywhere: the site's CSP blocks them. */ -}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{ .Title }} · {{ site.Title }}</title>
+{{- $desc := partial "meta-desc.html" . }}
+<meta name="description" content="{{ $desc }}">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#1c2b4f">
+<link rel="canonical" href="{{ .Permalink }}">
+<meta property="og:site_name" content="{{ site.Title }}">
+<meta property="og:title" content="{{ .Title }}">
+<meta property="og:description" content="{{ $desc }}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:image" content="{{ "og-card.png" | absURL }}">
+<link rel="manifest" href="/tools/planedex/manifest.webmanifest">
+<link rel="icon" href="/tools/planedex/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/tools/planedex/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Planedex">
+<link rel="preload" href="/fonts/pixelify-sans-wght-5.3.0.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/silkscreen-400-5.3.0.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/silkscreen-700-5.3.0.woff2" as="font" type="font/woff2" crossorigin>
+{{- with resources.Get "js/theme.js" }}
+{{- $js := . | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
+{{- end }}
+{{- with resources.Get "css/planedex.css" }}
+{{- $css := . | fingerprint }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+{{- end }}
+{{- with resources.Get "js/planedex-sprites.js" }}
+{{- $js := . | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- end }}
+{{- with resources.Get "js/planedex.js" }}
+{{- $js := . | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- end }}
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="pdx">
+  <header class="hud">
+    <canvas class="flyby" id="pdx-flyby" width="48" height="24" aria-hidden="true"></canvas>
+    <div class="hud-in">
+      <div class="hud-top">
+        <a class="back" href="{{ .Parent.RelPermalink }}">◀ {{ .Parent.Title }}</a>
+        <div class="hud-btns">
+          <a class="hbtn" href="https://www.liveatc.net/search/?icao=kgeg" target="_blank" rel="noopener noreferrer">Tower audio</a>
+          <button class="hbtn" id="pdx-sound" type="button" aria-pressed="true" hidden><span class="lbl">Sound on</span></button>
+          <button class="hbtn icon" id="pdx-theme" type="button" aria-label="Dark theme" aria-pressed="false" hidden>
+            <svg class="moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" d="M20.4 14.2A8.5 8.5 0 1 1 9.8 3.6a7 7 0 0 0 10.6 10.6z"/></svg>
+            <svg class="sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8"/></g></svg>
+          </button>
+        </div>
+      </div>
+      <div class="hud-main">
+        <div class="logo-wrap">
+          <h1 class="logo">{{ .Title }}</h1>
+          <p class="station" id="pdx-station">Spokane Station</p>
+        </div>
+        <div class="level" id="pdx-level" hidden>
+          <div class="lv-badge"><span class="lv-label">LV</span><span class="lv-num" id="pdx-lv">1</span></div>
+          <div class="lv-meta">
+            <p class="lv-title" id="pdx-lv-title"></p>
+            <progress class="xp" id="pdx-xp" max="100" value="0" aria-labelledby="pdx-xp-text"></progress>
+            <p class="xp-text" id="pdx-xp-text"></p>
+          </div>
+        </div>
+      </div>
+      <dl class="stats" id="pdx-stats" hidden></dl>
+    </div>
+  </header>
+
+  <nav class="menu" aria-label="Planedex screens">
+    <div class="menu-in" role="tablist" id="pdx-tabs">
+      <button class="tab" type="button" role="tab" id="tab-dex" aria-controls="panel-dex" aria-selected="true" data-tab="dex">Dex <span class="n" id="n-dex"></span></button>
+      <button class="tab" type="button" role="tab" id="tab-today" aria-controls="panel-today" aria-selected="false" tabindex="-1" data-tab="today">Today</button>
+      <button class="tab" type="button" role="tab" id="tab-wanted" aria-controls="panel-wanted" aria-selected="false" tabindex="-1" data-tab="wanted">Wanted <span class="n" id="n-wanted"></span></button>
+      <button class="tab" type="button" role="tab" id="tab-families" aria-controls="panel-families" aria-selected="false" tabindex="-1" data-tab="families">Families</button>
+      <button class="tab" type="button" role="tab" id="tab-badges" aria-controls="panel-badges" aria-selected="false" tabindex="-1" data-tab="badges">Badges <span class="n" id="n-badges"></span></button>
+      <button class="tab" type="button" role="tab" id="tab-passport" aria-controls="panel-passport" aria-selected="false" tabindex="-1" data-tab="passport">Passport</button>
+    </div>
+  </nav>
+
+  <main class="screens" id="main">
+    <p class="status-msg" id="pdx-status" role="status">Loading the latest catches…</p>
+    <noscript><p class="status-msg">Turn on JavaScript to play.</p></noscript>
+
+    <section class="screen" id="panel-dex" role="tabpanel" aria-labelledby="tab-dex" hidden>
+      <details class="win report" id="pdx-report" open hidden>
+        <summary class="win-title"><span>Morning report</span><span class="win-sub" id="report-date"></span></summary>
+        <div class="textbox report-text" id="report-text"></div>
+      </details>
+      <div class="dex-screen">
+        <article class="win entry" id="dex-entry" aria-live="polite" aria-labelledby="entry-title"></article>
+        <div class="dex-side">
+          <div class="win dex-tools">
+            <label class="search" for="dex-q"><span class="visually-hidden">Search the dex</span>
+              <input id="dex-q" type="search" placeholder="Search" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="search">
+            </label>
+            <div class="chips" id="dex-rarity" role="group" aria-label="Filter by rarity"></div>
+            <div class="selects">
+              <label class="select" for="dex-show"><span class="visually-hidden">Show</span>
+                <select id="dex-show"><option value="all">Caught + missing</option><option value="caught">Caught only</option><option value="missing">Missing only</option></select>
+              </label>
+              <label class="select" for="dex-type"><span class="visually-hidden">Type</span>
+                <select id="dex-type"><option value="all">All types</option></select>
+              </label>
+              <label class="select" for="dex-sort"><span class="visually-hidden">Sort</span>
+                <select id="dex-sort">
+                  <option value="dex">By number</option>
+                  <option value="rarity">Rarest first</option>
+                  <option value="count">Most caught</option>
+                  <option value="newest">Newest</option>
+                  <option value="name">A–Z</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <ol class="dexlist" id="dex-list" aria-label="Planedex entries"></ol>
+          <p class="dex-count" id="dex-shown"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="panel-today" role="tabpanel" aria-labelledby="tab-today" hidden></section>
+    <section class="screen" id="panel-wanted" role="tabpanel" aria-labelledby="tab-wanted" hidden></section>
+    <section class="screen" id="panel-families" role="tabpanel" aria-labelledby="tab-families" hidden></section>
+    <section class="screen" id="panel-badges" role="tabpanel" aria-labelledby="tab-badges" hidden></section>
+    <section class="screen" id="panel-passport" role="tabpanel" aria-labelledby="tab-passport" hidden></section>
+  </main>
+
+  <footer class="foot">
+    <p id="pdx-updated"></p>
+    <button class="link" type="button" data-credits>Photo credits</button>
+  </footer>
+</div>
+
+<dialog class="sheet" id="pdx-detail" aria-labelledby="pdx-detail-title">
+  <div class="sheet-body entry" id="pdx-detail-body"></div>
+</dialog>
+
+<dialog class="sheet credits" id="pdx-credits" aria-labelledby="credits-title">
+  <div class="sheet-body">
+    <button class="sheet-close" type="button" data-credits="close" aria-label="Close">✕</button>
+    <h2 class="win-title" id="credits-title">Photo credits</h2>
+    <ul class="credit-list" id="pdx-credit-list"></ul>
+  </div>
+</dialog>
+
+<div class="reveal" id="pdx-reveal" role="dialog" aria-modal="true" aria-labelledby="reveal-title" hidden></div>
+</body>
+</html>

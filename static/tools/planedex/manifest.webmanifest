@@ -1,0 +1,16 @@
+{
+  "name": "Planedex",
+  "short_name": "Planedex",
+  "description": "Every plane our ADS-B receiver catches, collected like a game.",
+  "id": "/tools/planedex/",
+  "start_url": "/tools/planedex/",
+  "scope": "/tools/planedex/",
+  "display": "standalone",
+  "background_color": "#e4f1fc",
+  "theme_color": "#13305a",
+  "icons": [
+    { "src": "/tools/planedex/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/tools/planedex/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/tools/planedex/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -46,3 +46,16 @@
   Cache-Control: public, max-age=604800
 /og-card.png
   Cache-Control: public, max-age=86400
+
+# Planedex (/tools/planedex/): an airliner's entry shows a photo of the
+# exact plane, looked up live from Planespotters.net. Their terms say
+# the images must load straight from their servers, so this one page
+# gets a CSP that allows their API and image host, plus its web-app
+# manifest. COEP would block those cross-origin images, so it's dropped
+# here only. Every other photo is served from the site itself.
+/tools/planedex/*
+  ! Content-Security-Policy
+  ! Cross-Origin-Embedder-Policy
+  Content-Security-Policy: default-src 'none'; script-src 'self'; connect-src 'self' https://api.planespotters.net; img-src 'self' https://t.plnspttrs.net; style-src 'self'; font-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+/tools/planedex/photos/*
+  Cache-Control: public, max-age=604800
