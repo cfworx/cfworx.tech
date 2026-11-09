@@ -33,6 +33,7 @@
   var REPORT_READ_KEY = 'planedex-report-read';
   var REPORT_FOLD_KEY = 'planedex-report-folded';
   var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var MONTHS_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   var WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   var TABS = ['dex', 'today', 'wanted', 'families', 'badges', 'passport'];
   var RARITY_XP = [0, 10, 25, 60, 150, 400];
@@ -77,6 +78,13 @@
   function fmtDay(key, withYear) {
     var p = parseKey(key);
     return p ? MONTHS[p.mo - 1] + ' ' + p.d + (withYear ? ', ' + p.y : '') : '';
+  }
+  // "November 8th, 2026"
+  function longDate(key) {
+    var p = parseKey(key);
+    if (!p) return '';
+    var th = (p.d % 100 >= 11 && p.d % 100 <= 13) ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[p.d % 10] || 'th');
+    return MONTHS_LONG[p.mo - 1] + ' ' + p.d + th + ', ' + p.y;
   }
   function weekday(key) {
     var p = parseKey(key);
@@ -283,7 +291,7 @@
   /* ---- header -------------------------------------------------------------- */
 
   function renderHeader(d) {
-    el.station.textContent = d.station + (d.since ? ' · catching since ' + fmtDay(d.since, true) : '');
+    el.station.textContent = 'Catching planes with my 3 boys' + (d.since ? ' since ' + longDate(d.since) : '');
     var L = d.level;
     el.lv.textContent = L.level;
     el.lvTitle.textContent = L.title;
@@ -294,7 +302,7 @@
     var t = d.totals;
     var known = t.known || t.species;
     el.stats.innerHTML = [
-      ['Dex', num(t.species) + '<small>/' + num(known) + '</small>'],
+      ['Species', num(t.species) + '<small>/' + num(known) + '</small>'],
       ['Planes', num(t.planes)],
       ['Airlines', num(t.airlines)],
       ['Countries', num(t.countries)],

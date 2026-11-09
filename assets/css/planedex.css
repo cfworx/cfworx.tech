@@ -4,7 +4,8 @@
 
    - Everything sits in chunky game windows: thick outline, bevel, hard
      drop shadow. Pixel type everywhere (Silkscreen for labels and
-     numbers, Pixelify Sans for reading).
+     numbers, Pixelify Sans for reading, with its digits swapped for
+     clearer ones; see "Planedex Digits" below).
    - The Dex is the main screen: a numbered list with a cursor, and the
      selected plane on a little sky stage beside it, with a dialog-box
      field note. Planes not caught yet are "?????" silhouettes.
@@ -38,6 +39,38 @@
   font-weight: 400 700;
   font-style: normal;
   font-display: swap;
+}
+/* Pixelify Sans's 2, 5 and 8 look alike at reading sizes, and
+   Silkscreen's bold 4 is a blob, so digits come from other pixel fonts:
+   VT323 (regular) and Jersey 10 (bold) in reading text, Press Start 2P
+   in labels. unicode-range limits these faces to 0-9, and size-adjust
+   matches each font's digit height. */
+@font-face {
+  font-family: "Planedex Label Digits";
+  src: url("/fonts/press-start-2p-400-5.3.0.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0030-0039;
+  size-adjust: 71%;
+}
+@font-face {
+  font-family: "Planedex Digits";
+  src: url("/fonts/vt323-400-5.3.0.woff2") format("woff2");
+  font-weight: 100 550;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0030-0039;
+  size-adjust: 120%;
+}
+@font-face {
+  font-family: "Planedex Digits";
+  src: url("/fonts/jersey-10-400-5.3.0.woff2") format("woff2");
+  font-weight: 551 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0030-0039;
+  size-adjust: 120%;
 }
 
 /* Layout: title bar (logo, level, counters), menu row, then one game
@@ -99,8 +132,8 @@
 
   --s1: #1d5cc8; --s2: #b8322a; --s3: #1d7d46; --s4: #6f36c4; --s5: #9a5800;
 
-  --pixel: "Silkscreen", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --text:  "Pixelify Sans", "Trebuchet MS", system-ui, sans-serif;
+  --pixel: "Planedex Label Digits", "Silkscreen", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --text:  "Planedex Digits", "Pixelify Sans", "Trebuchet MS", system-ui, sans-serif;
   --gutter-l: max(16px, env(safe-area-inset-left, 0px));
   --gutter-r: max(16px, env(safe-area-inset-right, 0px));
 }
