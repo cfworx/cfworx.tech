@@ -91,10 +91,12 @@ customers, or Azure NetApp Files for bigger or faster needs
 | --- | --- | --- |
 | Regions | All | Select ones |
 | Identity | AD DS, Entra DS, Entra Kerberos | AD DS, Entra DS |
-| Smallest | 1 GiB share | 1 TiB capacity pool |
-| Limits | 100 TiB, 100K IOPS per share | 100 TiB, 460K IOPS per volume |
+| Smallest | 32 GiB share | 1 TiB capacity pool |
+| Limits | 256 TiB, 102K IOPS per SSD share | 100 TiB, 450K IOPS per volume |
 
-Both are run by Azure. **File server VMs** (Storage Spaces Direct)
+Sizes and limits from Microsoft's
+[Azure Files and NetApp comparison](https://learn.microsoft.com/en-us/azure/storage/files/storage-files-netapp-comparison),
+for provisioned v2 shares. Both are run by Azure. **File server VMs** (Storage Spaces Direct)
 work too, but I'd run them myself: two VMs and a cloud witness at
 minimum, AD DS or Entra DS only.
 
