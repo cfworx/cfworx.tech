@@ -2,6 +2,7 @@
 title: "Scorched Earth"
 date: 2026-11-09
 description: "Scorched Earth 1.5, the mother of all games: tanks, hills, wind and far too many warheads. Playable in the browser."
+keys: "game dos shareware tanks artillery"
 layout: dos
 icon: g-scorch
 filetype: MS-DOS Application

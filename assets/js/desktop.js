@@ -398,7 +398,7 @@
     var byUrl = {}, out = [];
     data.forEach(function (p) {
       if (p.kind === "app") { return; }
-      p.name = p.title.toLowerCase();
+      p.name = p.title.toLowerCase() + (p.keys ? " " + p.keys.toLowerCase() : "");
       p.body = (p.text || "").toLowerCase();
       byUrl[p.url] = p;
       out.push(p);
@@ -669,7 +669,7 @@
 
   var RUN_ALIASES = {
     "winmine": "/games/minesweeper/", "mines": "/games/minesweeper/",
-    "explorer": "/computer/", "my computer": "/computer/", "c:": "/computer/", "c:\\": "/computer/",
+    "explorer": "/explorer/", "my computer": "/computer/", "c:": "/explorer/", "c:\\": "/explorer/",
     "notepad": "/notes/", "command": "/tools/cli/", "cmd": "/tools/cli/", "calc": "/tools/subnetting/",
     "desktop": "/", "help": "cmd:help", "winver": "cmd:about", "find": "cmd:find",
     "display": "cmd:display", "control": "cmd:display", "desk.cpl": "cmd:display", "settings": "cmd:display"
@@ -767,6 +767,103 @@
     doc.getElementById("shutdown-screen").hidden = true;
   });
 
+  /* ---- 7a. desktop icons open on a double-click --------------------------------
+     With a mouse: one click selects an icon, a double-click opens it,
+     as on a real desktop. A tap on a touch screen opens it straight
+     away, and so does Enter from the keyboard. The icons are still
+     ordinary links underneath. */
+
+  var lastPointer = "mouse";
+  on(doc, "pointerdown", function (e) { lastPointer = e.pointerType || "mouse"; }, true);
+  on(doc, "click", function (e) {
+    var icon = e.target.closest ? e.target.closest(".desktop-icons .dicon") : null;
+    $$(".dicon.is-selected").forEach(function (d) { if (d !== icon) { d.classList.remove("is-selected"); } });
+    if (!icon) { return; }
+    icon.classList.add("is-selected");
+    if (e.detail === 0 || e.detail >= 2 || lastPointer === "touch" || small.matches) { return; }   /* keyboard, double-click, tap: open */
+    e.preventDefault();
+    e.stopPropagation();
+  }, true);
+
+  /* ---- 7b. dragging desktop icons into the Recycle Bin ------------------------
+     Mouse only. An icon dropped anywhere else springs back. Nothing is
+     stored: the icons are only hidden, and a reload brings them back. */
+
+  var recycled = [], binCount = 0, swallowClick = false;
+
+  function binAt(ev) {
+    var bin = $('.desktop-icons .dicon[data-cmd="recycle"]');
+    if (!bin || bin.hidden) { return null; }
+    var r = bin.getBoundingClientRect();
+    return ev.clientX >= r.left && ev.clientX <= r.right && ev.clientY >= r.top && ev.clientY <= r.bottom ? bin : null;
+  }
+
+  function renderBin() {
+    var el = $('.window[data-app="recycle"]', desktop);
+    if (!el) { return; }
+    var list = $(".bin-list", el), empty = $(".empty-folder", el), count = $(".bin-count", el);
+    list.innerHTML = "";
+    recycled.forEach(function (icon) {
+      var li = doc.createElement("li"), b = doc.createElement("button");
+      b.type = "button"; b.className = "bin-item";
+      b.innerHTML = '<img src="' + esc(($("img", icon) || {}).src || "") + '" alt="" width="32" height="32"><span>' + esc(icon.textContent.trim()) + "</span>";
+      b.title = "Put " + icon.textContent.trim() + " back on the desktop";
+      on(b, "click", function () {
+        icon.hidden = false;
+        recycled.splice(recycled.indexOf(icon), 1);
+        renderBin();
+      });
+      li.appendChild(b); list.appendChild(li);
+    });
+    list.hidden = recycled.length === 0;
+    empty.hidden = recycled.length !== 0;
+    count.textContent = recycled.length + " object(s)";
+  }
+
+  on(doc, "dragstart", function (e) {
+    if (e.target.closest && e.target.closest(".dicon")) { e.preventDefault(); }
+  });
+  on(doc, "pointerdown", function (e) {
+    var icon = e.target.closest ? e.target.closest(".desktop-icons .dicon") : null;
+    if (!icon || e.button !== 0 || e.pointerType === "touch" || small.matches) { return; }
+    var sx = e.clientX, sy = e.clientY, moved = false, z = scale(), over = null;
+    function move(ev) {
+      var dx = ev.clientX - sx, dy = ev.clientY - sy;
+      if (!moved && Math.abs(dx) + Math.abs(dy) < 6) { return; }
+      if (!moved) { moved = true; icon.classList.add("is-dragging"); }
+      icon.style.transform = "translate(" + dx / z + "px, " + dy / z + "px)";
+      var bin = binAt(ev);
+      if (bin === icon) { bin = null; }
+      if (bin !== over) { if (over) { over.classList.remove("is-drop"); } over = bin; if (over) { over.classList.add("is-drop"); } }
+    }
+    function up(ev) {
+      doc.removeEventListener("pointermove", move);
+      doc.removeEventListener("pointerup", up);
+      doc.removeEventListener("pointercancel", up);
+      if (!moved) { return; }
+      /* the mouse-up after a drag would otherwise count as a click on the icon */
+      swallowClick = true;
+      setTimeout(function () { swallowClick = false; }, 80);
+      icon.classList.remove("is-dragging");
+      icon.style.transform = "";
+      if (over) { over.classList.remove("is-drop"); }
+      if (ev.type === "pointerup" && over) {
+        icon.hidden = true;
+        recycled.push(icon);
+        binCount++;
+        renderBin();
+        var left = $$(".desktop-icons .dicon").filter(function (d) { return !d.hidden && d !== over; }).length;
+        if (window.CFWizard) { window.CFWizard.recycled(binCount, left); }
+      }
+    }
+    doc.addEventListener("pointermove", move);
+    doc.addEventListener("pointerup", up);
+    doc.addEventListener("pointercancel", up);
+  });
+  on(doc, "click", function (e) {
+    if (swallowClick) { swallowClick = false; e.preventDefault(); e.stopPropagation(); }
+  }, true);
+
   /* ---- 8. folder views and sorting ------------------------------------------ */
 
   var pane = $(".file-pane");
@@ -844,7 +941,7 @@
       case "display": openDisplay(); break;
       case "help": closeMenus(); openApp("help"); break;
       case "about": closeMenus(); openApp("about"); break;
-      case "recycle": closeMenus(); openApp("recycle"); break;
+      case "recycle": closeMenus(); openApp("recycle"); renderBin(); break;
       case "print": closeMenus(); window.print(); break;
       case "back": window.history.back(); break;
       case "forward": window.history.forward(); break;

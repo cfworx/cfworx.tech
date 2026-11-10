@@ -2,6 +2,7 @@
 title: "Wolfenstein 3D"
 date: 2026-11-09
 description: "The shareware episode of Wolfenstein 3D, Escape from Castle Wolfenstein, playable in the browser."
+keys: "game dos shareware shooter wolf3d"
 layout: dos
 icon: g-wolf
 filetype: MS-DOS Application

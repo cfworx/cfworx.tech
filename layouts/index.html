@@ -17,7 +17,7 @@
       {{- with .Content }}{{ . }}{{ else }}
       <p>{{ site.Params.description }}</p>
       {{- end }}
-      <p>Open an icon on the desktop, or press <b>Start</b> for everything. My <a href="/notes/">IT notes</a> live in folders, the <a href="/tools/">practice tools</a> and <a href="/games/">games</a> are programs, and the <b>Search</b> box on the taskbar looks through all of it.</p>
+      <p>Double-click an icon on the desktop, or press <b>Start</b> for everything. My <a href="/notes/">IT notes</a> live in folders, the <a href="/tools/">practice tools</a> and <a href="/games/">games</a> are programs, and the <b>Search</b> box on the taskbar looks through all of it.</p>
     </div>
     {{- with first 6 (where site.RegularPages "Section" "in" (slice "notes" "homelab")) }}
     <fieldset class="group-box">
@@ -30,7 +30,7 @@
     </fieldset>
     {{- end }}
     <p class="dialog-buttons">
-      <a class="btn btn-default" href="/computer/">Look around</a>
+      <a class="btn btn-default" href="/explorer/">Look around</a>
       <button type="button" class="btn" data-cmd="find" hidden>Search...</button>
       <button type="button" class="btn" data-win="close" hidden>Close</button>
     </p>

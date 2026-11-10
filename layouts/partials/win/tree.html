@@ -1,4 +1,4 @@
-{{- /* The left pane of a folder window: Desktop > My Computer > every
+{{- /* The left pane of a folder window: Desktop > CFWorx (C:) > every
        top-level folder, in the order set by sectionOrder in hugo.toml. */ -}}
 {{- $cur := . -}}
 <aside class="tree-pane" aria-label="All Folders">
@@ -6,7 +6,7 @@
   <ul class="tree">
     <li class="leaf"><a href="/"><img src="/icons/desktop-16.png" alt="" width="16" height="16">Desktop</a>
       <ul>
-        <li class="leaf"><a href="/computer/"{{ if eq $cur.RelPermalink "/computer/" }} aria-current="page"{{ end }}><img src="/icons/computer-16.png" alt="" width="16" height="16">My Computer</a>
+        <li class="leaf"><a href="/explorer/"{{ if eq $cur.RelPermalink "/explorer/" }} aria-current="page"{{ end }}><img src="/icons/explorer-16.png" alt="" width="16" height="16">CFWorx (C:)</a>
           <ul>
             {{- range $slug := site.Params.sectionOrder }}
             {{- with site.GetPage (printf "/%s" $slug) }}

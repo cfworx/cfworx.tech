@@ -1,13 +1,11 @@
-{{- /* The taskbar: Start, Quick Launch, a button per open window (filled
+{{- /* The taskbar: Start, the Explorer button, a button per open window (filled
        in by desktop.js), the search box and the clock. Without
-       JavaScript, Start is a link to My Computer, which lists
+       JavaScript, Start is a link to Explorer, which lists
        everything. */ -}}
 <footer class="taskbar" id="taskbar">
-  <a class="start-button" id="start-button" href="/computer/" role="button" aria-haspopup="true" aria-expanded="false" aria-controls="start-menu"><img src="/icons/start-16.png" alt="" width="16" height="16"><b>Start</b></a>
+  <a class="start-button" id="start-button" href="/explorer/" role="button" aria-haspopup="true" aria-expanded="false" aria-controls="start-menu"><img src="/icons/start-16.png" alt="" width="16" height="16"><b>Start</b></a>
   <div class="quick-launch">
-    <a class="ql-btn" href="/" title="Show Desktop" data-cmd="show-desktop"><img src="/icons/desktop-16.png" alt="Show Desktop" width="16" height="16"></a>
-    <a class="ql-btn" href="/computer/" title="My Computer"><img src="/icons/computer-16.png" alt="My Computer" width="16" height="16"></a>
-    <a class="ql-btn" href="/notes/" title="IT Notes"><img src="/icons/notes-16.png" alt="IT Notes" width="16" height="16"></a>
+    <a class="ql-btn" href="/explorer/" title="Explorer"><img src="/icons/explorer-16.png" alt="Explorer" width="16" height="16"></a>
   </div>
   <div class="task-buttons" id="task-buttons"></div>
   <form class="task-search" id="task-search" role="search" hidden>

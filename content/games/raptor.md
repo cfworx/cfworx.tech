@@ -2,6 +2,7 @@
 title: "Raptor"
 date: 2026-11-09
 description: "The shareware version of Raptor: Call of the Shadows. This copy is the Windows edition, so it is a download rather than something that plays in the browser."
+keys: "game shareware call of the shadows"
 layout: dos
 icon: g-raptor
 filetype: MS-DOS Application

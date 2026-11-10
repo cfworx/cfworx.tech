@@ -52,6 +52,10 @@
 {{- $js := . | fingerprint }}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
 {{- end }}
+{{- with resources.Get "js/wizard.js" }}
+{{- $js := . | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- end }}
 {{- if .IsPage }}
 {{- with resources.Get "js/lightbox.js" }}
 {{- $js := . | fingerprint }}

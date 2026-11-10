@@ -2,6 +2,7 @@
 title: "Blood"
 date: 2026-11-09
 description: "The shareware episode of Blood, The Way of All Flesh, playable in the browser."
+keys: "game dos shareware shooter monolith"
 layout: dos
 icon: g-blood
 filetype: MS-DOS Application

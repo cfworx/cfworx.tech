@@ -97,6 +97,15 @@ def page(i, x0, y0, x1, y1, lines=True, fold=4):
 
 
 @icon
+def explorer(i):
+    folder_base(i)
+    i.ell(14, 12, 25, 23, fill=SKY, outline=K); i.ell(15, 13, 24, 22, outline=K)
+    i.ell(16, 14, 23, 21, fill=SKY); i.line([(17, 17), (19, 15)], W)
+    for d in (0, 1, 2): i.line([(23 + d, 22), (28 + d, 27)], K)
+    i.line([(24, 22), (29, 27)], BROWN)
+
+
+@icon
 def doc(i):
     page(i, 6, 2, 25, 29)
     i.line([(26, 7), (26, 30), (8, 30)], G)

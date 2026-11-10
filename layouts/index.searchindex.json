@@ -21,6 +21,7 @@
         "kind" (index $kinds .Section | default "note")
         "icon" $icon
         "folder" (delimit $folder "\\")
+        "keys" (.Params.keys | default "")
         "text" (.Plain | htmlUnescape | replaceRE `\s+` " ")) -}}
 {{- end -}}
 {{- range where site.Pages "Kind" "section" -}}
@@ -47,4 +48,5 @@
         "folder" "Desktop"
         "text" .keys) -}}
 {{- end -}}
+{{- $out = $out | append (dict "title" "Help" "url" "" "app" "help" "ext" false "date" "" "kind" "app" "icon" "help" "folder" "Desktop" "text" "about contact how to") -}}
 {{- $out | jsonify -}}

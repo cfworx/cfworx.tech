@@ -1,18 +1,18 @@
-{{- /* My Computer (/computer/): everything on the site in one folder
+{{- /* Explorer (/explorer/): everything on the site in one folder
        window. Top-level folders come from sectionOrder in hugo.toml;
        the programs are the desktop icons that aren't folders. */}}
 {{ define "bodyclass" }}page page-folder{{ end }}
 {{ define "main" }}
-<div class="window win-explorer is-max" id="win-main" data-task="My Computer" data-icon="computer">
-  {{ partial "win/titlebar.html" (dict "title" "My Computer" "icon" "computer") }}
-  {{ partial "win/explorer-bars.html" (dict "page" . "folder" true "icon" "computer") }}
+<div class="window win-explorer is-max" id="win-main" data-task="Exploring - CFWorx (C:)" data-icon="explorer">
+  {{ partial "win/titlebar.html" (dict "title" "Exploring - CFWorx (C:)" "icon" "explorer") }}
+  {{ partial "win/explorer-bars.html" (dict "page" . "folder" true "icon" "explorer") }}
   <div class="win-body folder-view">
     {{ partial "win/tree.html" . }}
     <main id="main" class="file-pane view-large" data-view="large" tabindex="-1">
       <header class="folder-info">
-        <img src="/icons/computer-32.png" alt="" width="32" height="32">
+        <img src="/icons/explorer-32.png" alt="" width="32" height="32">
         <div>
-          <h1>{{ .Title }}</h1>
+          <h1>CFWorx (C:)</h1>
           <p class="blurb">{{ site.Params.description }}</p>
         </div>
       </header>
@@ -29,7 +29,7 @@
           {{- end }}
           {{- end }}
           {{- range partial "desktop-items.html" . }}
-          {{- if and .url (not (in (slice "/computer/" "/notes/" "/homelab/" "/tools/") .url)) (not (strings.HasPrefix .url "/games/")) }}
+          {{- if and .url (not (in (slice "/notes/" "/homelab/" "/tools/") .url)) (ne .url "/games/") }}
           {{- $n = add $n 1 }}
           <tr>
             <td class="f-name"><a href="{{ .url }}"{{ if .ext }} target="_blank" rel="noopener noreferrer"{{ end }}><img class="i16" src="/icons/{{ .icon }}-16.png" alt="" width="16" height="16"><img class="i32" src="/icons/{{ .icon }}-32.png" alt="" width="32" height="32" loading="lazy"><span>{{ .label }}</span></a></td>

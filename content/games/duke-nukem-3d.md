@@ -2,6 +2,7 @@
 title: "Duke Nukem 3D"
 date: 2026-11-09
 description: "The shareware episode of Duke Nukem 3D, L.A. Meltdown, playable in the browser."
+keys: "game dos shareware shooter 3d realms"
 layout: dos
 icon: g-duke
 filetype: MS-DOS Application

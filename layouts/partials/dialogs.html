@@ -53,7 +53,7 @@
       <p class="dialog-buttons">
         <button type="submit" class="btn btn-default">OK</button>
         <button type="button" class="btn" data-win="close">Cancel</button>
-        <a class="btn" href="/computer/">Browse...</a>
+        <a class="btn" href="/explorer/">Browse...</a>
       </p>
     </form>
   </div>
@@ -119,6 +119,7 @@
       <p>{{ site.Params.description }} It's dressed up as a late-90s desktop, but every note is still an ordinary page with its own address.</p>
       <h3>Finding a note</h3>
       <ul>
+        <li><b>Double-click</b> a desktop icon to open it (on a phone, one tap).</li>
         <li><b>Search</b> on the taskbar looks through every note, lab, tool and game as you type. Press <kbd>/</kbd> to jump to it.</li>
         <li><b>Start &gt; Find</b> opens the full search window, where you can search by name, by text inside, or one folder at a time.</li>
         <li><b>IT Notes</b> on the desktop opens the notes as folders: Networking, Security, Cloud and so on. The folder tree is on the left.</li>
@@ -128,6 +129,7 @@
       <ul>
         <li>Drag a window by its title bar. The three buttons minimize, maximize and close it; closing takes you back to the desktop.</li>
         <li><b>Up</b> on the toolbar goes to the folder a note is in.</li>
+        <li>Desktop icons can be dragged into the <b>Recycle Bin</b>. Nothing is really deleted: open the bin to put them back, or just reload.</li>
         <li>In a folder, <b>Views</b> switches between Large Icons, List and Details. Click a column heading to sort.</li>
       </ul>
       <h3>Too small or too big?</h3>
@@ -168,9 +170,10 @@
   <div class="window win-recycle" data-task="Recycle Bin" data-icon="recycle">
     {{ partial "win/titlebar.html" (dict "title" "Recycle Bin" "icon" "recycle" "inpage" true) }}
     <div class="win-body field-box recycle-body">
-      <p class="empty-folder">Nothing in here. Every note made the cut.</p>
+      <p class="empty-folder">Nothing in here. Drag a desktop icon onto the bin if you dare.</p>
+      <ul class="bin-list" hidden></ul>
     </div>
-    <div class="status-bar"><p class="status-field status-grow">0 object(s)</p><p class="status-field">0 bytes</p></div>
+    <div class="status-bar"><p class="status-field status-grow bin-count">0 object(s)</p><p class="status-field">Click an item to put it back</p></div>
   </div>
 </template>
 

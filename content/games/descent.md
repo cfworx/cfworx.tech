@@ -2,6 +2,7 @@
 title: "Descent"
 date: 2026-11-09
 description: "The shareware levels of Descent: six degrees of freedom through the first seven mines, playable in the browser."
+keys: "game dos shareware spaceship"
 layout: dos
 icon: g-descent
 filetype: MS-DOS Application

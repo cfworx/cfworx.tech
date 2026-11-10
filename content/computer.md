@@ -1,5 +1,5 @@
 ---
 title: My Computer
-description: "Everything on CFWorx in one folder: notes, labs, practice tools, games and the rest."
-layout: computer
+description: "The actual computer behind CFWorx: Cory's Fedora Linux desktop, as reported by fastfetch."
+layout: sysinfo
 ---

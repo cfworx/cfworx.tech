@@ -2,6 +2,7 @@
 title: "Heretic"
 date: 2026-11-09
 description: "The shareware episode of Heretic, City of the Damned, playable in the browser."
+keys: "game dos shareware shooter raven"
 layout: dos
 icon: g-heretic
 filetype: MS-DOS Application

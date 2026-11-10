@@ -1,6 +1,6 @@
 {{- /* Where "Up" goes from a page: its parent folder; from a top-level
-       folder, My Computer; from My Computer, the desktop. */ -}}
-{{- $up := "/computer/" -}}
-{{- if eq .RelPermalink "/computer/" }}{{ $up = "/" }}
+       folder, Explorer's root; from there, the desktop. */ -}}
+{{- $up := "/explorer/" -}}
+{{- if eq .RelPermalink "/explorer/" }}{{ $up = "/" }}
 {{- else if and .Parent (not .Parent.IsHome) }}{{ $up = .Parent.RelPermalink }}{{ end -}}
 {{- return $up -}}

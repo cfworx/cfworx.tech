@@ -145,10 +145,15 @@ u { text-decoration: underline; }
   border: 1px dotted transparent;
   line-height: 1.15;
 }
-.dicon:hover span { text-decoration: underline; }   /* "Web style": one click opens */
 .dicon:focus { outline: 0; }
-.dicon:focus span, .dicon:active span { background: var(--navy); border-color: #ffff7f; }
-.dicon:focus img, .dicon:active img { filter: opacity(.6) drop-shadow(0 0 0 var(--navy)); }
+.dicon.is-selected span, .dicon:focus-visible span, .dicon:active span { background: var(--navy); border-color: #ffff7f; }
+.dicon.is-selected img, .dicon:focus-visible img, .dicon:active img { filter: opacity(.6) drop-shadow(0 0 0 var(--navy)); }
+
+/* dragging an icon (desktop.js), and the Recycle Bin lighting up under it */
+.dicon { -webkit-user-drag: none; touch-action: manipulation; }
+.dicon.is-dragging { position: relative; z-index: 5; opacity: .8; }
+.dicon.is-drop span { background: var(--navy); border-color: #ffff7f; }
+.dicon.is-drop img { filter: opacity(.6) drop-shadow(0 0 0 var(--navy)); }
 
 /* ---- windows -------------------------------------------------------------- */
 
@@ -725,6 +730,62 @@ kbd {
 
 .win-recycle { width: 380px; height: 250px; left: calc(50% - 190px); top: 18%; }
 .recycle-body { margin-top: 2px; }
+.bin-list { display: flex; flex-wrap: wrap; gap: 10px 4px; margin: 0; padding: 10px 6px; list-style: none; }
+.bin-item { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 84px; padding: 2px; border: 0; background: none; color: #000; font: inherit; text-align: center; cursor: default; }
+.bin-item img { width: 32px; height: 32px; }
+.bin-item:hover span { color: #00f; text-decoration: underline; }
+.bin-item:focus-visible span { background: var(--navy); color: #fff; outline: 1px dotted #ffff7f; }
+
+/* program windows that just show something */
+.win-sysinfo { width: min(800px, 100% - 16px); }
+.sysinfo .tabs { margin-top: 2px; }
+.sysinfo .tab-panel { padding: 10px; }
+.sysinfo .tab-panel a { display: block; background: #000; box-shadow: var(--sunken); padding: 2px; }
+.sysinfo img { display: block; width: 100%; height: auto; image-rendering: auto; }
+
+/* ---- the wizard (wizard.js) --------------------------------------------------------------------- */
+
+.wizard-tip {
+  position: fixed;
+  z-index: 640;
+  right: 16px;
+  bottom: calc(var(--task-h) + env(safe-area-inset-bottom, 0px) + 8px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  pointer-events: none;
+}
+.wizard-tip > * { pointer-events: auto; }
+.wizard-balloon {
+  position: relative;
+  max-width: 250px;
+  padding: 9px 11px 9px;
+  background: var(--tip);
+  border: 1px solid #000;
+  border-radius: 9px;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, .3);
+  line-height: 1.35;
+}
+/* the balloon's tail, pointing down at him */
+.wizard-balloon::after {
+  content: "";
+  position: absolute;
+  right: 34px;
+  bottom: -8px;
+  width: 14px;
+  height: 14px;
+  background: var(--tip);
+  border-right: 1px solid #000;
+  border-bottom: 1px solid #000;
+  transform: rotate(45deg);
+}
+.wizard-text { margin: 0 0 9px; }
+.wizard-actions { display: flex; justify-content: flex-end; gap: 6px; }
+.wizard-actions .btn { min-width: 0; min-height: 21px; padding: 0 9px; }
+.wizard-guy { padding: 0; border: 0; background: none; cursor: pointer; margin-right: 6px; }
+.wizard-guy img { display: block; width: 80px; height: 72px; }
+.wizard-guy:focus-visible { outline: 1px dotted #fff; outline-offset: 2px; }
 
 /* program windows (the practice tools, the games) */
 .win-app { width: min(620px, 100% - 16px); left: max(8px, calc(50% - 310px)); top: max(8px, 5%); max-height: calc(100% - 16px); }
@@ -802,7 +863,6 @@ kbd {
   .dicon { width: auto; min-height: 0; }
   .dicon img { width: 48px; height: 48px; image-rendering: auto; }
   .dicon span { font-size: 13px; }
-  .dicon:hover span { text-decoration: none; }
 
   .window, .window.is-max { inset: 0; left: 0 !important; top: 0 !important; width: auto !important; height: auto !important; max-height: none; padding: 0; box-shadow: none; }
   .title-bar { padding: 0 4px 0 6px; gap: 6px; font-size: 16px; }
@@ -872,6 +932,10 @@ kbd {
     padding: 3px; box-shadow: var(--window-frame);
   }
   .window.win-recycle { height: 240px !important; }
+  .wizard-tip { right: 8px; }
+  .wizard-balloon { max-width: 230px; font-size: 14px; }
+  .wizard-actions .btn { min-height: 34px; padding: 0 12px; }
+  .wizard-guy img { width: 60px; height: 54px; }
   .btn { min-width: 88px; padding: 0 14px; }
   .field { min-height: 38px; font-size: 16px; padding: 6px 8px; }
   .radio { margin: 0; min-height: 40px; gap: 10px; }
@@ -907,7 +971,7 @@ kbd {
 @media print {
   html, body { height: auto; overflow: visible; background: #fff; display: block; }
   .desktop { overflow: visible; background: none; }
-  .desktop-icons, .taskbar, .start-menu, .search-pop, .title-bar, .menu-bar, .toolbar, .address-bar, .status-bar, .tree-pane, .skip, .post-nav, .term-copy { display: none !important; }
+  .desktop-icons, .taskbar, .start-menu, .search-pop, .wizard-tip, .title-bar, .menu-bar, .toolbar, .address-bar, .status-bar, .tree-pane, .skip, .post-nav, .term-copy { display: none !important; }
   .window, .window.is-max { position: static; display: block; padding: 0; box-shadow: none; background: none; max-height: none; }
   .window:not(#win-main) { display: none; }
   .file-pane, .doc-view, .app-body { overflow: visible; box-shadow: none; background: none; }

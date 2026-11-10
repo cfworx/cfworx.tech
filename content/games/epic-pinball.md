@@ -2,6 +2,7 @@
 title: "Epic Pinball"
 date: 2026-11-09
 description: "The shareware table of Epic Pinball, Super Android, playable in the browser."
+keys: "game dos shareware pinball"
 layout: dos
 icon: g-pinball
 filetype: MS-DOS Application

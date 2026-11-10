@@ -30,6 +30,8 @@ Nothing goes live until it is pushed to `main` on GitHub (see DEPLOY.md).
 | Games | `content/games/` (Minesweeper, Ski Run, the DOS shareware games) |
 | Desktop icons | `layouts/partials/desktop-items.html` (one line per icon; also feeds search) |
 | Start menu | `layouts/partials/start-menu.html` |
+| The wizard's pop-up lines | `assets/js/wizard.js` (the list at the top) |
+| My Computer's picture | `static/images/my-computer.png` |
 | Windows, toolbar, folder tree | `layouts/partials/win/` |
 | Find, Run, Help, Shut Down | `layouts/partials/dialogs.html` |
 | The desktop's look | `assets/css/win98.css` (chrome), `assets/css/content.css` (reading) |
@@ -48,7 +50,7 @@ Nothing goes live until it is pushed to `main` on GitHub (see DEPLOY.md).
   For new art, add a function to `scripts/win98/make_icons.py` and run it.
 - **New DOS game:** install or unzip it into a folder, then
   `python3 scripts/win98/make_jsdos.py <folder> GAME.EXE static/dos/<name>.jsdos`
-  and copy `content/games/doom.md`, then add a desktop icon line.
+  and copy `content/games/doom.md`; it shows up in the Games folder and Start menu by itself.
 - **Desktop size:** the desktop is magnified on big monitors (see "desktop
   size" in `assets/css/win98.css` for the breakpoints); visitors can change it
   in Start > Settings > Display.

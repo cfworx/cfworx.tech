@@ -1,7 +1,7 @@
 {{- /* The folder path to a page, as a list of (title, url) pairs:
        C:\ -> Notes -> Networking -> ... Used by the address bar. */ -}}
-{{- $crumbs := slice (dict "title" "C:" "url" "/computer/") -}}
-{{- if eq .RelPermalink "/computer/" }}{{ $crumbs = slice }}{{ end -}}
+{{- $crumbs := slice (dict "title" "C:" "url" "/explorer/") -}}
+{{- if eq .RelPermalink "/explorer/" }}{{ $crumbs = slice }}{{ end -}}
 {{- range .Ancestors.Reverse -}}
   {{- if not .IsHome }}{{ $crumbs = $crumbs | append (dict "title" .Title "url" .RelPermalink) }}{{ end -}}
 {{- end -}}

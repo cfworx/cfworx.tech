@@ -2,6 +2,7 @@
 title: "DOOM"
 date: 2026-11-09
 description: "The shareware episode of DOOM, Knee-Deep in the Dead: nine levels, playable in the browser."
+keys: "game dos shareware id software shooter"
 layout: dos
 icon: g-doom
 filetype: MS-DOS Application
