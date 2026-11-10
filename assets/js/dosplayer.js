@@ -91,6 +91,17 @@
     });
   }
 
+  /* The screen is 4:3 and as large as fits. How tall that may be depends
+     on the desktop's height in its own pixels (it may be magnified), so
+     it is measured here and handed to the stylesheet. */
+  function fitScreen() {
+    var desk = document.getElementById("desktop");
+    if (desk && window.matchMedia("(min-width: 701px)").matches) { root.style.setProperty("--dos-max", Math.max(200, desk.clientHeight - 190) + "px"); }
+    else { root.style.removeProperty("--dos-max"); }
+  }
+  fitScreen();
+  window.addEventListener("resize", fitScreen);
+
   /* ---- picture ---------------------------------------------------------- */
 
   function setSize(w, h) {

@@ -34,12 +34,15 @@
 
 .doc-view { scroll-padding-top: 1rem; }
 
+/* Reading text grows more gently than the desktop around it: at 150%
+   desktop size the note is about 20px, not 25px. The column is sized in
+   ems so the line length stays comfortable at any size. */
 .doc {
-  max-width: 50rem;
+  max-width: 46em;
   margin: 0 auto;
   padding: 0.4rem 1.6rem 3rem;
   color: var(--ink);
-  font: 17px/1.6 var(--sans);
+  font: calc(17px * (1 + (var(--zoom, 1) - 1) * 0.35) / var(--zoom, 1))/1.6 var(--sans);
 }
 
 .doc h1, .doc h2, .doc h3, .doc h4, .doc h5, .doc h6 {
@@ -318,8 +321,8 @@ pre code {
 }
 
 .lightbox-img {
-  max-width: 96vw;
-  max-height: 92vh;
+  max-width: 96%;
+  max-height: 92%;
   width: auto;
   height: auto;
   border: none;

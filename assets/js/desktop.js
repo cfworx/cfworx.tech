@@ -43,6 +43,15 @@
   }
   function escRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
 
+  /* The desktop may be magnified (CSS `zoom`, see "desktop size" in
+     win98.css). Mouse positions and getBoundingClientRect() are in
+     screen pixels; style.left/top are in the desktop's own pixels.
+     This is the factor between the two. */
+  function scale() {
+    var w = desktop.offsetWidth;
+    return w ? (desktop.getBoundingClientRect().width / w) || 1 : 1;
+  }
+
   /* Controls that need this script ship hidden; show them. */
   function reveal(root) {
     $$("[data-cmd][hidden], [data-win][hidden], .menu-bar[hidden], .task-search[hidden]", root)
@@ -128,12 +137,12 @@
       if (e.button !== 0 || e.target.closest(".title-controls")) { return; }
       if (small.matches || el.classList.contains("is-max")) { return; }
       var r = el.getBoundingClientRect(), d = desktop.getBoundingClientRect();
-      var ox = e.clientX - r.left, oy = e.clientY - r.top;
+      var ox = e.clientX - r.left, oy = e.clientY - r.top, z = scale();
       try { bar.setPointerCapture(e.pointerId); } catch (err) { /* older browsers */ }
       function move(ev) {
-        var x = ev.clientX - d.left - ox, y = ev.clientY - d.top - oy;
-        x = Math.max(60 - r.width, Math.min(d.width - 60, x));
-        y = Math.max(0, Math.min(d.height - 22, y));
+        var x = (ev.clientX - d.left - ox) / z, y = (ev.clientY - d.top - oy) / z;
+        x = Math.max((60 - r.width) / z, Math.min((d.width - 60) / z, x));
+        y = Math.max(0, Math.min((d.height - 22) / z, y));
         el.style.left = x + "px";
         el.style.top = y + "px";
       }
@@ -193,9 +202,9 @@
     register(el);
     /* cascade a little so two windows never sit exactly on top of each other */
     if (!small.matches && wins.length > 2) {
-      var r = el.getBoundingClientRect(), d = desktop.getBoundingClientRect(), n = (wins.length - 2) * 18;
-      el.style.left = Math.min(d.width - 80, r.left - d.left + n) + "px";
-      el.style.top = Math.min(d.height - 60, r.top - d.top + n) + "px";
+      var r = el.getBoundingClientRect(), d = desktop.getBoundingClientRect(), n = (wins.length - 2) * 18, z = scale();
+      el.style.left = Math.min((d.width - 80) / z, (r.left - d.left) / z + n) + "px";
+      el.style.top = Math.min((d.height - 60) / z, (r.top - d.top) / z + n) + "px";
     }
     return el;
   }
@@ -258,7 +267,7 @@
       var r = sub.getBoundingClientRect();
       var floor = (doc.getElementById("taskbar") || desktop).getBoundingClientRect().top;
       if (r.bottom > floor) { sub.classList.add("flip-up"); }
-      if (r.right > window.innerWidth) { sub.style.left = (3 - r.width) + "px"; }
+      if (r.right > window.innerWidth) { sub.style.left = (3 - r.width / scale()) + "px"; }
     } else {
       li.scrollIntoView({ block: "nearest" });
     }
@@ -662,7 +671,8 @@
     "winmine": "/games/minesweeper/", "mines": "/games/minesweeper/",
     "explorer": "/computer/", "my computer": "/computer/", "c:": "/computer/", "c:\\": "/computer/",
     "notepad": "/notes/", "command": "/tools/cli/", "cmd": "/tools/cli/", "calc": "/tools/subnetting/",
-    "desktop": "/", "help": "cmd:help", "winver": "cmd:about", "find": "cmd:find"
+    "desktop": "/", "help": "cmd:help", "winver": "cmd:about", "find": "cmd:find",
+    "display": "cmd:display", "control": "cmd:display", "desk.cpl": "cmd:display", "settings": "cmd:display"
   };
 
   function go(p) {
@@ -727,6 +737,32 @@
       if (wake) { wake.focus(); }
     });
   }
+  /* Display Properties: the size of the whole desktop. The choice is a
+     class on <html> (zoom-125 ... zoom-200) kept in localStorage;
+     display.js re-applies it on every page before anything is drawn. */
+  function setZoom(value) {
+    var root = doc.documentElement;
+    ["100", "125", "150", "175", "200"].forEach(function (v) { root.classList.remove("zoom-" + v); });
+    try {
+      if (value === "auto") { window.localStorage.removeItem("cfw.zoom"); }
+      else { root.classList.add("zoom-" + value); window.localStorage.setItem("cfw.zoom", value); }
+    } catch (e) { if (value !== "auto") { root.classList.add("zoom-" + value); } }
+    window.dispatchEvent(new Event("resize"));     /* games re-measure themselves */
+  }
+  function openDisplay() {
+    closeMenus();
+    var el = openApp("display");
+    if (!el) { return; }
+    var saved = store("local", "cfw.zoom") || "auto";
+    var pick = $('input[name="zoom"][value="' + saved + '"]', el) || $('input[name="zoom"][value="auto"]', el);
+    pick.checked = true;
+    if (el.getAttribute("data-ready")) { return; }
+    el.setAttribute("data-ready", "1");
+    function apply() { var c = $('input[name="zoom"]:checked', el); if (c) { setZoom(c.value); } }
+    on($("#display-form", el), "submit", function (e) { e.preventDefault(); apply(); closeWindow(el); });
+    on($('[data-display="apply"]', el), "click", apply);
+  }
+
   on($("#shutdown-screen .shutdown-wake"), "click", function () {
     doc.getElementById("shutdown-screen").hidden = true;
   });
@@ -805,6 +841,7 @@
       case "find-all": openFind(searchInput ? searchInput.value.trim() : ""); break;
       case "run": openRun(); break;
       case "shutdown": openShutdown(); break;
+      case "display": openDisplay(); break;
       case "help": closeMenus(); openApp("help"); break;
       case "about": closeMenus(); openApp("about"); break;
       case "recycle": closeMenus(); openApp("recycle"); break;

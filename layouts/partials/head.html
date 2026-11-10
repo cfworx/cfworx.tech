@@ -37,6 +37,10 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 {{- /* Guarded with `with`/`if` so a build never dies if an asset file is
        momentarily missing. */ -}}
+{{- with resources.Get "js/display.js" }}
+{{- $js := . | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
+{{- end }}
 {{- $win := resources.Get "css/win98.css" }}
 {{- $content := resources.Get "css/content.css" }}
 {{- $chroma := resources.Get "css/chroma.css" }}

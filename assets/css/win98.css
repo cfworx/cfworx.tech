@@ -36,6 +36,7 @@
   --btn-h:   23px;
   --task-h:  28px;
   --px:      1;           /* icon zoom (2 on phones) */
+  --zoom:    1;           /* whole-desktop magnification, see "desktop size" below */
 
   /* bevels: outer then inner, bottom-right then top-left */
   --raised: inset -1px -1px var(--dkshadow), inset 1px 1px var(--hilight), inset -2px -2px var(--shadow), inset 2px 2px var(--light);
@@ -52,8 +53,8 @@ html { height: 100%; -webkit-text-size-adjust: 100%; background: var(--desk); }
 
 body {
   margin: 0;
-  height: 100vh;
-  height: 100dvh;
+  height: 100%;
+  zoom: var(--zoom);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -64,6 +65,25 @@ body {
 }
 
 img { image-rendering: pixelated; }
+
+/* ---- desktop size -----------------------------------------------------------
+   Everything above is in 1998 pixels: 12px text, 32px icons. On a big
+   modern monitor that is tiny, so the whole desktop is magnified: 125%
+   from a 1080p-wide window, 150% from 1440p, 200% from 4K. Visitors can
+   override it in Start > Settings > Display; display.js puts their
+   choice on <html> as a class before the page is drawn. Browsers that
+   don't know `zoom` simply show the original size. Phones are never
+   magnified (see the end of this file). */
+@supports (zoom: 1) {
+  @media (min-width: 1800px) and (min-height: 860px)  { :root { --zoom: 1.25; } }
+  @media (min-width: 2300px) and (min-height: 1100px) { :root { --zoom: 1.5; } }
+  @media (min-width: 3400px) and (min-height: 1700px) { :root { --zoom: 2; } }
+  :root.zoom-100 { --zoom: 1; }
+  :root.zoom-125 { --zoom: 1.25; }
+  :root.zoom-150 { --zoom: 1.5; }
+  :root.zoom-175 { --zoom: 1.75; }
+  :root.zoom-200 { --zoom: 2; }
+}
 
 .visually-hidden {
   position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
@@ -657,6 +677,8 @@ kbd {
 .run-row { display: flex; align-items: center; gap: 8px; margin: 10px 0 0; }
 .run-row .field { flex: 1 1 auto; min-width: 0; }
 .win-about { width: 380px; }
+.win-display { width: 340px; }
+.win-display .group-box { margin-bottom: 0; }
 .wizard { width: 80px !important; height: 72px !important; }
 
 .win-welcome { width: 470px; left: max(280px, calc(50% - 235px)); top: max(12px, 9%); }
@@ -756,6 +778,9 @@ kbd {
    ========================================================================== */
 
 @media (max-width: 700px) {
+  :root, :root[class] { --zoom: 1 !important; }
+  body { height: 100vh; height: 100dvh; }
+  .start-settings { display: none; }
   :root {
     --ui: 15px;
     --row: 44px;
@@ -915,7 +940,7 @@ kbd {
 .win-dos { width: min(668px, 100% - 16px); left: max(8px, calc(50% - 334px)); top: max(4px, 2%); }
 .win-dos.is-max .dos-body { display: flex; flex-direction: column; }
 .dos-body { overflow: auto; background: var(--face); padding: 0; outline: 0; }
-.dos-screen { position: relative; background: #000; box-shadow: var(--sunken); padding: 2px; margin: 1px 0 0; aspect-ratio: 4 / 3; max-height: calc(100dvh - 190px); margin-inline: auto; width: 100%; }
+.dos-screen { position: relative; background: #000; box-shadow: var(--sunken); padding: 2px; margin: 1px 0 0; aspect-ratio: 4 / 3; max-height: var(--dos-max, calc(100dvh - 190px)); margin-inline: auto; width: 100%; }
 .win-dos.is-max .dos-screen { flex: 1 1 auto; max-height: none; aspect-ratio: auto; min-height: 0; }
 .dos-screen canvas { display: block; width: 100%; height: 100%; object-fit: fill; image-rendering: pixelated; outline: 0; touch-action: none; }
 .dos-screen:fullscreen { padding: 0; box-shadow: none; max-height: none; }

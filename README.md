@@ -49,6 +49,9 @@ Nothing goes live until it is pushed to `main` on GitHub (see DEPLOY.md).
 - **New DOS game:** install or unzip it into a folder, then
   `python3 scripts/win98/make_jsdos.py <folder> GAME.EXE static/dos/<name>.jsdos`
   and copy `content/games/doom.md`, then add a desktop icon line.
+- **Desktop size:** the desktop is magnified on big monitors (see "desktop
+  size" in `assets/css/win98.css` for the breakpoints); visitors can change it
+  in Start > Settings > Display.
 - **Change the wallpaper:** replace `static/images/wallpaper.png` (it is
   centered, not stretched) and set `--desk` in `assets/css/win98.css` to its
   background colour.

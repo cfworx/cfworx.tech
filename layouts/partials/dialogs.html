@@ -82,6 +82,35 @@
   </div>
 </template>
 
+<template id="tpl-display">
+  <div class="window win-dialog win-display" data-task="Display Properties" data-icon="computer">
+    {{ partial "win/titlebar.html" (dict "title" "Display Properties" "icon" "computer" "inpage" true) }}
+    <form class="win-body dialog-body" id="display-form">
+      <p class="tabs"><span class="tab">Settings</span></p>
+      <div class="tab-panel">
+        <div class="msg">
+          <img src="/icons/computer-32.png" alt="" width="32" height="32">
+          <p>Choose how big the desktop is drawn. Auto picks a size to suit your screen.</p>
+        </div>
+        <fieldset class="group-box">
+          <legend>Desktop size</legend>
+          <label class="radio"><input type="radio" name="zoom" value="auto"><span>Auto (fit my screen)</span></label>
+          <label class="radio"><input type="radio" name="zoom" value="100"><span>Original (100%)</span></label>
+          <label class="radio"><input type="radio" name="zoom" value="125"><span>Medium (125%)</span></label>
+          <label class="radio"><input type="radio" name="zoom" value="150"><span>Large (150%)</span></label>
+          <label class="radio"><input type="radio" name="zoom" value="175"><span>Larger (175%)</span></label>
+          <label class="radio"><input type="radio" name="zoom" value="200"><span>Largest (200%)</span></label>
+        </fieldset>
+      </div>
+      <p class="dialog-buttons">
+        <button type="submit" class="btn btn-default">OK</button>
+        <button type="button" class="btn" data-win="close">Cancel</button>
+        <button type="button" class="btn" data-display="apply">Apply</button>
+      </p>
+    </form>
+  </div>
+</template>
+
 <template id="tpl-help">
   <div class="window win-help" data-task="CFWorx Help" data-icon="help">
     {{ partial "win/titlebar.html" (dict "title" "CFWorx Help" "icon" "help" "inpage" true) }}
@@ -100,6 +129,10 @@
         <li>Drag a window by its title bar. The three buttons minimize, maximize and close it; closing takes you back to the desktop.</li>
         <li><b>Up</b> on the toolbar goes to the folder a note is in.</li>
         <li>In a folder, <b>Views</b> switches between Large Icons, List and Details. Click a column heading to sort.</li>
+      </ul>
+      <h3>Too small or too big?</h3>
+      <ul>
+        <li><b>Start &gt; Settings &gt; Display</b> changes the size of the whole desktop. It picks one to suit your screen until you choose.</li>
       </ul>
       <h3>Keyboard</h3>
       <ul>

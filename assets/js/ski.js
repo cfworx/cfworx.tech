@@ -74,9 +74,9 @@
   try { best = Number(localStorage.getItem("cfw.ski.best") || 0); } catch (e) { best = 0; }
 
   function resize() {
-    var r = canvas.parentElement.getBoundingClientRect();
-    W = Math.max(120, Math.floor((r.width - 4) / SCALE));
-    H = Math.max(100, Math.floor((r.height - 4) / SCALE));
+    var box = canvas.parentElement;     /* clientWidth is unaffected by the desktop's magnification */
+    W = Math.max(120, Math.floor((box.clientWidth - 4) / SCALE));
+    H = Math.max(100, Math.floor((box.clientHeight - 4) / SCALE));
     canvas.width = W; canvas.height = H;
     ctx.imageSmoothingEnabled = false;
     draw();
