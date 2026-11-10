@@ -1117,14 +1117,6 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
 .report > summary .win-sub { margin-left: auto; }
 .report[open] > summary { margin-bottom: 10px; }
 .report-text p + p { margin-top: 10px; }
-/* On wide screens the report fills its box in two columns, like a newspaper, so the lines
-   stay a comfortable length (about 65 letters) instead of running the full width. */
-@media (min-width: 900px) {
-  .report-text, .lb-entry .textbox { column-count: 2; column-gap: 36px; }
-  .report-text p, .lb-entry .textbox p { break-inside: avoid; }
-  .report-text p + p, .lb-entry .textbox p + p { margin-top: 0; }
-  .report-text p:not(:last-child), .lb-entry .textbox p:not(:last-child) { margin-bottom: 10px; }
-}
 .report-text.typing { cursor: pointer; }
 .report-text.typing::after { visibility: hidden; }
 
