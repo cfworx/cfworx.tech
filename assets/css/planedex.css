@@ -924,6 +924,23 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
 .pip.on.silver { background: #cdd7e4; }
 .pip.on.gold { background: var(--gold); }
 .pip.on.platinum { background: #8fd0ff; }
+/* section headings get a little plate of their own, so they read over any sky */
+.sec-h { justify-self: start; margin: 8px 0 -4px; padding: 4px 12px; background: var(--win); border: 3px solid var(--edge); border-radius: 4px; box-shadow: 3px 3px 0 var(--drop);
+  font: 700 var(--fs-lg) var(--pixel); letter-spacing: var(--caps); text-transform: uppercase; color: var(--ink); }
+.medal-name { color: var(--muted); }
+.medal.locked .badge-art { opacity: 0.9; }
+.medal.bronze .medal-face { background: #d68c4a; color: #3a1a00; }
+.medal.silver .medal-face { background: #cdd7e4; color: #1f2b45; }
+.medal.gold .medal-face { background: var(--gold); color: var(--gold-ink); }
+.medal.platinum .medal-face { background: linear-gradient(135deg, #f2fbff, #8fd0ff 55%, #f2fbff); color: #10305c; }
+.medal.secret .medal-face { background: var(--edge); color: var(--win); font-size: var(--fs-2xl); }
+.medal.platinum { box-shadow: 5px 5px 0 var(--drop), 0 0 0 3px #8fd0ff; }
+.pips { display: flex; justify-content: center; gap: 5px; margin: 2px 0; }
+.pip { width: 12px; height: 12px; border: 2px solid var(--edge); background: var(--win-2); }
+.pip.on.bronze { background: #d68c4a; }
+.pip.on.silver { background: #cdd7e4; }
+.pip.on.gold { background: var(--gold); }
+.pip.on.platinum { background: #8fd0ff; }
 /* section headings sit straight on the sky: a soft halo keeps them clear of stars and clouds */
 .sec-h { margin: 8px 0 -4px; font: 700 var(--fs-lg) var(--pixel); letter-spacing: var(--caps); text-transform: uppercase; color: var(--ink);
   text-shadow: 0 0 3px var(--halo), 0 0 6px var(--halo), 0 0 10px var(--halo); }
@@ -1017,6 +1034,18 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
 .fp-m.caught .fp-status b { color: var(--ok); }
 .fp-more { text-align: right; }
 .fp-more a { color: inherit; font: 700 var(--fs-sm) var(--pixel); letter-spacing: var(--caps); text-transform: uppercase; text-underline-offset: 3px; }
+
+/* ---- guess the plane (quiz, in the sheet) ------------------------------------------------- */
+
+.quiz-card .btn { margin-top: 12px; }
+.quiz-stage .photo-img { filter: blur(16px) saturate(0.7); transform: scale(1.2); transition: filter 0.6s ease-out, transform 0.6s ease-out; }
+.quiz-stage.shown .photo-img { filter: none; transform: none; }
+.quiz-opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.quiz-opt { min-height: 52px; font: 700 var(--fs-md)/1.2 var(--text); letter-spacing: 0; text-transform: none; text-align: center; }
+.quiz-opt.right { background: var(--ok); color: var(--ok-ink); }
+.quiz-opt.wrong { background: var(--coral); color: var(--coral-ink); }
+.quiz-opt.dim { opacity: 0.6; }
+.quiz-opt[aria-disabled="true"] { cursor: default; }
 
 /* ---- new-catch reveal ----------------------------------------------------------------------- */
 
@@ -1132,9 +1161,10 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
   color: var(--ink);
   font-size: var(--fs-sm);
 }
-/* the footer sits straight on the sky: full-strength ink with a soft halo */
-.foot p, .foot .link { font: 700 var(--fs-sm)/1.5 var(--pixel); letter-spacing: var(--caps); text-transform: uppercase; color: var(--ink);
-  text-shadow: 0 0 3px var(--halo), 0 0 6px var(--halo), 0 0 10px var(--halo); }
+/* the footer's two lines sit on little plates, so they read over the hills and any sky */
+.foot p, .foot .link { justify-self: start; padding: 4px 10px; background: var(--win); border: 2px solid var(--edge); border-radius: 4px;
+  font: 700 var(--fs-sm)/1.5 var(--pixel); letter-spacing: var(--caps); text-transform: uppercase; color: var(--muted); }
+.foot p:empty { display: none; }
 .foot .link { justify-self: start; min-height: 32px; text-decoration-color: currentColor; }
 
 /* ---- small screens ---------------------------------------------------------------------------- */
@@ -1183,6 +1213,7 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
   .radar-name { font-size: var(--fs-sm); }
   .radar-meta .stars { font-size: var(--fs-xs); }
   .radar-n { font-size: var(--fs-xs); }
+  .quiz-opts { grid-template-columns: minmax(0, 1fr); }
   .fp-m { grid-template-columns: 80px minmax(0, 1fr); }
   .fp-status { grid-column: 2; }
   .stats dd { font-size: var(--fs-xl); }
@@ -1195,4 +1226,5 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
   .stage .sprite.big, .tag-new, .photo-img.fade, .tuning, .stats .stat.bump, .row[aria-current="true"] .cur, .textbox::after,
   .reveal, .reveal-rays, .reveal-card, .reveal-kicker, .sparkle { animation: none; }
   .menu-in { scroll-behavior: auto; }
+  .quiz-stage .photo-img { transition: none; }
 }

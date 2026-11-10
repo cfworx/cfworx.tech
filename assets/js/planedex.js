@@ -812,12 +812,88 @@
     el.today.innerHTML = '<div class="today-grid"><div class="today-col">'
       + '<div class="win"><p class="win-title">Daily missions <span class="win-sub">' + done + '/' + t.quests.length + ' done</span></p>'
       + '<ul class="missions">' + missions + '</ul></div>'
-      + cotd
+      + cotd + quizCard()
       + (radar ? '' : '<p class="today-line"><b>' + num(t.planes) + '</b> planes today' + (t.newSpecies ? ' · <b>' + num(t.newSpecies) + '</b> new' : '') + '</p>')
       + '</div>' + radar + radioHTML(d) + '</div>';
     paintSprites(el.today);
     if (BA) el.today.querySelectorAll('canvas.badge-art').forEach(function (c) { BA.paint(c); });
     if (s) settleCotd(s);
+  }
+
+  /* ---- guess the plane: a quiz made from our own catches ------------------------------- */
+  /* A blurred photo of a model we've caught and four names to pick from (the wrong ones are
+     the same kind of plane when there are enough, so it's a fair test). The photo clears on
+     the answer, with the plane's fact. The best streak is kept in this browser. */
+
+  var QUIZ_KEY = 'planedex-quiz-best';
+  var quiz = { streak: 0, best: 0, q: null, last: null };
+  try { quiz.best = +localStorage.getItem(QUIZ_KEY) || 0; } catch (e) { /* storage off */ }
+
+  function quizPool() { return state.data.species.filter(function (s) { return photoOf(s.code); }); }
+  function quizCard() {
+    if (quizPool().length < 4) return '';
+    return '<div class="win quiz-card"><p class="win-title">Guess the plane <span class="win-sub">Best streak: ' + quiz.best + '</span></p>'
+      + '<p class="intro-tip">A blurry photo of a plane we\u2019ve caught. Can you name it?</p>'
+      + '<button class="btn primary" type="button" data-quiz="next">Play ▶</button></div>';
+  }
+  function pickFrom(list) { return list[Math.floor(Math.random() * list.length)]; }
+  function nextQuestion() {
+    var pool = quizPool();
+    if (pool.length < 4) return;
+    var answer;
+    do { answer = pickFrom(pool); } while (answer.code === quiz.last);
+    quiz.last = answer.code;
+    var kin = pool.filter(function (s) { return s.code !== answer.code && s.name !== answer.name && s.types[0] === answer.types[0]; });
+    var rest = pool.filter(function (s) { return s.code !== answer.code && s.name !== answer.name && s.types[0] !== answer.types[0]; });
+    var opts = [answer];
+    while (opts.length < 4) {
+      var from = kin.length ? kin : rest;
+      opts.push(from.splice(Math.floor(Math.random() * from.length), 1)[0]);
+    }
+    opts.sort(function () { return Math.random() - 0.5; });
+    quiz.q = { answer: answer, opts: opts, picked: null };
+    renderQuiz();
+  }
+  function answerQuiz(i) {
+    var q = quiz.q;
+    if (!q || q.picked != null || !q.opts[i]) return;
+    q.picked = i;
+    if (q.opts[i] === q.answer) {
+      quiz.streak++;
+      if (quiz.streak > quiz.best) {
+        quiz.best = quiz.streak;
+        try { localStorage.setItem(QUIZ_KEY, String(quiz.best)); } catch (e) { /* storage off */ }
+      }
+      Sound.jingle();
+    } else {
+      quiz.streak = 0;
+      Sound.blip();
+    }
+    renderQuiz();
+  }
+  function renderQuiz() {
+    var q = quiz.q, done = q.picked != null, right = done && q.opts[q.picked] === q.answer;
+    var fact = (lookup(q.answer.code) || {}).fact;
+    el.sheetBody.innerHTML = '<button class="sheet-close" type="button" data-close aria-label="Close">✕</button>'
+      + '<div class="fam-page quiz"><p class="mini-h">Guess the plane · streak ' + quiz.streak + ' · best ' + quiz.best + '</p>'
+      + '<h2 class="fp-title" id="pdx-detail-title" aria-live="polite">' + (done ? (right ? 'Correct!' : 'Not quite!') : 'Which plane is this?') + '</h2>'
+      + '<div class="stage photo-stage quiz-stage' + (done ? ' shown' : '') + '">' + photoImg(q.answer.code, done ? q.answer.name : 'A mystery plane') + '</div>'
+      + '<div class="quiz-opts">' + q.opts.map(function (o, i) {
+        var cls = done ? (o === q.answer ? ' right' : i === q.picked ? ' wrong' : ' dim') : '';
+        return '<button class="btn quiz-opt' + cls + '" type="button" data-quiz="pick" data-i="' + i + '"' + (done ? ' aria-disabled="true"' : '') + '>'
+          + (done && o === q.answer ? '✓ ' : done && i === q.picked ? '✗ ' : '') + esc(o.name) + '</button>';
+      }).join('') + '</div>'
+      + (done ? '<div class="textbox"><p><b>' + no(q.answer.dex) + ' ' + esc(q.answer.name) + '.</b> ' + esc(fact || '') + '</p></div>'
+        + '<div class="reveal-btns"><button class="btn" type="button" data-goto="' + esc(q.answer.code) + '">See its entry</button>'
+        + '<button class="btn primary" type="button" data-quiz="next">Next ▶</button></div>' : '')
+      + '</div>';
+    if (!el.sheet.open) {
+      if (typeof el.sheet.showModal === 'function') el.sheet.showModal();
+      else el.sheet.setAttribute('open', '');
+    }
+    el.sheetBody.scrollTop = 0;
+    var focus = el.sheetBody.querySelector(done ? '[data-quiz="next"]' : '.quiz-opt');
+    if (focus) focus.focus();
   }
 
   /* ---- wanted posters ------------------------------------------------------------ */
@@ -1274,6 +1350,9 @@
      the title bar changes, so the art never covers text. Where there isn't room, parts drop
      out: the speech bubble, then the desk, then the whole scene (the plane still flies).
      Drawn at the screen's own resolution, so the pixels and the bubble's words stay crisp.
+     Between flights the scene has a little life of its own: the radar sweeps, keys light up
+     as he types in bursts, and he blinks. He looks up as a plane comes near, and the cheer
+     has a hop and a few sparkles. Planes come in four tail colors.
      With reduced motion the scene stays put and nothing moves. */
 
   var Banner = (function () {
@@ -1294,6 +1373,14 @@
     var CHEER = ['ks..keeeek.sk', 'kh.kennnnekhk', '.hkdnnnnnndh.', '.hkdssssssdhc', '.hkdskssksdhc', '.hkdssssssdhc',
       '..kkssrrssCac', '...hkkssk.Cac', '...khhhhhkCac', '...khhhhhkCCc', '...khhhhHkCCc', '...khhhHHkcCc',
       '...kjjjjjjjjc', '..kjjjjjjjJJc', '..kj.cccccccc', '.kwk....M....', 'krrk.MMMMMMM.'];
+    // He looks up as the plane comes near; the cheer's second beat has the arms out wide.
+    var LOOK = TYPE.slice();
+    LOOK[3] = '..ksksnnddk..'; LOOK[4] = '.kssSsnnddkc.'; LOOK[5] = '..ksssnnddkCc';
+    var CHEER2 = CHEER.slice();
+    CHEER2[0] = '....keeeek...'; CHEER2[1] = 'sk.kennnnek.ks'.slice(0, 13); CHEER2[2] = 'khkdnnnnnndhk';
+    var RING = [[6, 1], [7, 2], [8, 3], [7, 4], [6, 5], [5, 4], [4, 3], [5, 2]];   // the radar's ring, clockwise
+    var SPARKS = [[-3, 2], [15, 0], [-5, 9], [17, 8], [6, -4]];                     // around the cheering kid
+    var TAILS = [null, { a: 'r' }, { a: 'G' }, { a: 'y' }];
     // 7x19: the ADS-B antenna on its stand; the little box has a light (l) that blinks on a catch
     var ANT = ['...w...', '...o...', '...o...', '..xox..', '...o...', '...o...', '..xox..', '...o...', '...o...',
       '..MMM..', '...m...', '...m...', '...m...', '...m...', '...m...', '..kfk..', '..klk..', '.m.m.m.', 'm..m..m'];
@@ -1410,13 +1497,22 @@
           for (var cx = sc.deskX + 13; cx <= sc.antX + 3; cx++) dot(cx, gr, PAL.M);   // the antenna's cable to the computer
           var deskTop = gr - DESK.length + 1;
           sprite(DESK, sc.deskX, deskTop);
+          if (f && f.sweep != null) dot(sc.deskX + RING[f.sweep][0], deskTop + RING[f.sweep][1], '#c9ffe0');
+          if (f && f.key != null) dot(sc.deskX + 10 + f.key, deskTop + 8, PAL.w);
           if (f && f.blip) dot(sc.deskX + 8, deskTop + 2, PAL.y);
         }
-        sprite(f && f.cheer ? CHEER : TYPE, sc.kidX, gr - KID_H + 1);
+        var kidTop = gr - KID_H + 1 - (f && f.hop ? 1 : 0);
+        sprite(f && f.cheer ? (f.cheer === 2 ? CHEER2 : CHEER) : f && f.look ? LOOK : TYPE, sc.kidX, kidTop);
+        if (f && f.blink && !f.cheer) dot(sc.kidX + 4, kidTop + (f.look ? 3 : 4), PAL.S);
+        if (f && f.sparks) SPARKS.forEach(function (sp, i) {
+          if ((i + f.sparks) % 2) return;
+          var x = sc.kidX + sp[0], y = kidTop + sp[1], c = i % 2 ? PAL.w : PAL.y;
+          dot(x, y, c); dot(x - 1, y, c); dot(x + 1, y, c); dot(x, y - 1, c); dot(x, y + 1, c);
+        });
         sprite(ANT, sc.antX, gr - ANT_H + 1, f && f.led ? null : { l: 'f' });
         if (f && f.waves) waves(sc.antX + 3, gr - ANT_H + 1, f.waves);
       }
-      if (planeX != null && lay.planeY != null) plane(planeX, lay.planeY);
+      if (planeX != null && lay.planeY != null) plane(planeX, lay.planeY, run && run.tail);
       if (f && f.bubble && sc && sc.bubble) bubble(sc.bubble);
     }
 
@@ -1434,7 +1530,7 @@
       });
     }
 
-    function plane(x, y) {
+    function plane(x, y, tail) {
       x = Math.round(x);
       if (document.documentElement.getAttribute('data-theme') === 'dark') {
         if (Math.floor(performance.now() / 600) % 2) dot(x + 9, y + 2, PAL.r);   // the beacon blinks at night
@@ -1442,7 +1538,7 @@
         for (var i = 1; i <= 14; i += 2) { ctx.globalAlpha = 0.5 * (1 - i / 15); dot(x - i, y + 3, PAL.w); }   // a short contrail by day
         ctx.globalAlpha = 1;
       }
-      sprite(PLANE, x, y);
+      sprite(PLANE, x, y, tail);
     }
 
     // A comic speech bubble with a pixel outline; the words in the page's own type.
@@ -1476,7 +1572,8 @@
       var sc = lay.scene;
       var px = run.x0 + t * run.v;                                    // the plane's left edge
       var at = sc && lay.planeY != null ? (sc.antX + 3 - PLANE_W / 2 - run.x0) / run.v : run.fallback;
-      var dt = t - at, f = null;
+      var dt = t - at, f = idle(now);
+      if (f && sc && dt > -2.6 && dt <= -0.4 && lay.planeY != null) f.look = true;
       if (sc && dt > -0.4) {
         var ages = [-0.4, 0, 0.4].map(function (s) { return dt - s; }).filter(function (a) { return a >= 0 && a < WAVE; });
         var blink = Math.floor(dt * 4) % 2 === 0;
@@ -1485,22 +1582,34 @@
           waves: ages,
           led: dt < CHEER_FOR && blink,
           blip: dt >= 0 && dt < CHEER_FOR && blink,
-          cheer: dt >= 0.3 && dt < CHEER_FOR,
+          cheer: dt >= 0.3 && dt < CHEER_FOR ? (dt < 1.9 && Math.floor(dt * 3.3) % 2 ? 2 : 1) : 0,
+          hop: dt >= 0.3 && dt < 1.5 && Math.floor(dt * 3.3) % 2 === 0,
+          sparks: dt >= 0.3 && dt < 2.1 ? 1 + Math.floor(dt * 4) % 2 : 0,
+          look: dt < 0.3,
+          sweep: Math.floor(now / 250) % 8,
           bubble: dt >= 0.5 && dt < CHEER_FOR && clear
         };
       }
       var flying = lay.planeY != null && px <= lay.AW + 2;
       paint(f, flying ? px : null);
-      if (!flying && (!sc || dt >= CHEER_FOR)) { run = null; paint(null); schedule(30000 + Math.random() * 20000); return; }
+      if (!flying && (!sc || dt >= CHEER_FOR)) { run = null; paint(idle(now)); schedule(30000 + Math.random() * 20000); return; }
       requestAnimationFrame(frame);
     }
 
     function go() {
       if (document.hidden || !lay) { schedule(5000); return; }
-      run = { t0: performance.now(), v: unit === 3 ? 28 : 22, x0: -PLANE_W - 2, fallback: 1.5 };   // art pixels a second
+      run = { t0: performance.now(), v: unit === 3 ? 28 : 22, x0: -PLANE_W - 2, fallback: 1.5,   // art pixels a second
+        tail: TAILS[Math.floor(Math.random() * TAILS.length)] };
       requestAnimationFrame(frame);
     }
     function schedule(ms) { clearTimeout(timer); timer = setTimeout(go, ms); }
+
+    // Between flights: the radar sweeps, he types in bursts (keys light up) and blinks now and then.
+    function idle(now) {
+      if (still) return null;
+      var typing = now % 7000 < 3200;
+      return { sweep: Math.floor(now / 250) % 8, key: typing && Math.floor(now / 200) % 3 ? Math.floor(now / 200) * 7 % 4 : null, blink: now % 4300 < 160 };
+    }
 
     // Re-measure whenever the title bar changes (data arriving, the weather line, fonts, resizing).
     function relayout() {
@@ -1508,7 +1617,7 @@
       pending = requestAnimationFrame(function () {
         pending = 0;
         lay = measure();
-        if (!run && lay) paint(null);
+        if (!run && lay) paint(idle(performance.now()));
       });
     }
 
@@ -1526,7 +1635,10 @@
         window.addEventListener('resize', relayout);
         if (document.fonts && document.fonts.ready) document.fonts.ready.then(relayout);
         relayout();
-        if (!still) schedule(3500);
+        if (!still) {
+          schedule(3500);
+          setInterval(function () { if (!run && lay && !document.hidden) paint(idle(performance.now())); }, 200);
+        }
       }
     };
   })();
@@ -1568,8 +1680,13 @@
     document.addEventListener('click', function (e) {
       var v = e.target.closest('.voice-btn');
       if (v) { Voice.play(v); return; }
-      var t = e.target.closest('[data-code], [data-goto], [data-tab], [data-close], [data-rarity], [data-credits], [data-family], [data-more], [data-home]');
+      var t = e.target.closest('[data-code], [data-goto], [data-tab], [data-close], [data-rarity], [data-credits], [data-family], [data-more], [data-home], [data-quiz]');
       if (!t) return;
+      if (t.hasAttribute('data-quiz')) {
+        if (t.getAttribute('data-quiz') === 'pick') answerQuiz(+t.getAttribute('data-i'));
+        else { Sound.select(); nextQuestion(); }
+        return;
+      }
       if (t.hasAttribute('data-home')) {  // the PLANEDEX title: back to the Dex
         e.preventDefault();
         closeSheet();

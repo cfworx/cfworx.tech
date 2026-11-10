@@ -8,8 +8,12 @@
      minutes): clouds from the cloud cover, rain, snow, fog, storms and
      wildfire smoke, plus the temperature and air quality shown in the
      header. Without it the sky is simply clear.
-   - Clouds drift with the wind. By day a little plane crosses now and
-     then; at night stars twinkle and a plane's lights blink across.
+   - Clouds drift with the wind. By day the sun sits over a line of
+     pine-covered hills and a little plane crosses now and then; at night
+     there's the moon in its real phase, stars that twinkle, a rare
+     shooting star and a few lit windows in the hills.
+   - The still parts (sky, sun or moon, hills) are painted once into a
+     hidden canvas and reused, so each frame only draws what moves.
    - One low-resolution canvas behind the page (4 screen pixels per sky
      pixel, so it matches the sprites), about 20 frames a second, paused
      while the tab is hidden. With reduced motion it's a still picture.
@@ -168,6 +172,7 @@
   var canvas, ctx, W = 0, H = 0, seed = 1;
   var stars = [], clouds = [], drops = [], plane = null, nextPlane = 0, flashUntil = 0, nextFlash = 0;
   var last = 0, raf = 0, lastShown = null;
+  var bg = null, shoot = null, nextShoot = 0;
 
   function rand() {  // small, repeatable random numbers (mulberry32)
     seed = (seed + 0x6d2b79f5) | 0;
@@ -197,7 +202,9 @@
       for (x = 0; x < w; x++) {
         if (!m[y * w + x]) continue;
         if (y >= h - 2) m[y * w + x] = 2;
+        else if (y === h - 3 && (x & 1)) m[y * w + x] = 2;       // a dithered row: soft shading
         else if (y === 0 || !m[(y - 1) * w + x]) m[y * w + x] = 3;
+        else if (y > 0 && y < h - 4 && m[(y - 1) * w + x] && (y === 1 || !m[(y - 2) * w + x]) && (x & 1)) m[y * w + x] = 3;
       }
     }
     return m;
@@ -242,6 +249,7 @@
   function recolor() {
     var colors = cloudColors();
     clouds.forEach(function (cl) { paintCloud(cl, colors); });
+    paintBack();
     lastShown = Math.round(sun * 2) + '|' + wx.kind + '|' + wx.cover;
   }
 
@@ -252,7 +260,9 @@
     stars = [];
     n = Math.round(W * H / 130);
     for (i = 0; i < n; i++) {
-      stars.push({ x: rand(), y: rand() * 0.78, big: rand() < 0.1, tw: rand() < 0.35, ph: rand() * 20 });
+      var hue = rand();
+      stars.push({ x: rand(), y: rand() * 0.74, big: rand() < 0.08, tw: rand() < 0.3, ph: rand() * 20, mag: rand(),
+        tint: hue < 0.15 ? [190, 215, 255] : hue < 0.27 ? [255, 226, 180] : [255, 250, 232] });
     }
     clouds = [];
     var per = Math.min(9, W / 100 * (0.8 + wx.cover / 100 * 1.4));   // a few clouds, not a blanket
@@ -281,6 +291,132 @@
         ph: rand() * 6.28, big: rand() < 0.15 });
     }
     recolor();
+  }
+
+  /* ---- the still parts: sky, stars, sun or moon, hills ---- */
+
+  function tones() {
+    var sky = skyColors(sun);
+    var grey = clamp((wx.cover - 55) / 45, 0, 1) * 0.6 + (wx.kind === 'rain' || wx.kind === 'storm' ? 0.2 : 0) + (wx.kind === 'fog' ? 0.35 : 0);
+    var day = clamp((sun + 6) / 12, 0, 1);
+    var top = mix(sky[0], mix(hex('#06080d'), hex('#9fb0c2'), day), clamp(grey, 0, 0.85));
+    var low = mix(sky[1], mix(hex('#0c1017'), hex('#d6dee6'), day), clamp(grey, 0, 0.85));
+    if (wx.aqi != null && wx.aqi > 100) {  // wildfire smoke turns the sky brown
+      var smoke = clamp((wx.aqi - 100) / 250, 0, 0.6);
+      top = mix(top, mix(hex('#3a2a1c'), hex('#c79a62'), day), smoke);
+      low = mix(low, mix(hex('#5a4028'), hex('#e8c08a'), day), smoke);
+    }
+    return { top: top, low: low, day: day, grey: clamp(grey, 0, 1), dusk: clamp(1 - Math.abs(sun - 1) / 6, 0, 1) };
+  }
+  function starVis() { return clamp((NIGHT_BELOW - sun) / 7, 0, 1) * (1 - Math.min(wx.cover, 96) / 100); }
+  function disc(g, cx, cy, r) {
+    for (var dy = -r; dy <= r; dy++) {
+      var w = Math.floor(Math.sqrt(r * r - dy * dy) + 0.35);
+      g.fillRect(cx - w, cy + dy, 2 * w + 1, 1);
+    }
+  }
+  // The hills' ridge lines: the same gentle shapes every visit.
+  function ridge(x, base, amp, f, ph) {
+    return Math.round(base - amp * (0.6 * Math.sin(x * f + ph) + 0.4 * Math.sin(x * f * 2.7 + ph * 2.3)));
+  }
+
+  function paintBack() {
+    if (!W || !H) return;
+    if (!bg) bg = document.createElement('canvas');
+    bg.width = W;
+    bg.height = H;
+    var g = bg.getContext('2d'), t = tones(), i, x, y;
+    // the sky, in bands like an old game, with dithered edges so they melt into each other
+    var n = 18, cols = [];
+    for (i = 0; i <= n; i++) cols.push(css(mix(t.top, t.low, Math.min(1, i / (n - 1)))));
+    for (i = 0; i < n; i++) {
+      var y0 = Math.floor(H * i / n), y1 = Math.floor(H * (i + 1) / n);
+      g.fillStyle = cols[i];
+      g.fillRect(0, y0, W, y1 - y0 + 1);
+      if (i === n - 1) break;
+      g.fillStyle = cols[i + 1];
+      for (x = 0; x < W; x++) {
+        if ((x + y1) & 1) g.fillRect(x, y1 - 1, 1, 1);
+        if (x % 4 === (y1 & 3)) g.fillRect(x, y1 - 2, 1, 1);
+      }
+    }
+    // the stars that hold steady (the twinklers are drawn each frame)
+    var vis = starVis();
+    if (vis > 0.02) {
+      for (i = 0; i < stars.length; i++) {
+        var s = stars[i];
+        if (s.tw) continue;
+        g.fillStyle = css(s.tint, vis * (0.45 + s.mag * 0.5));
+        g.fillRect(Math.floor(s.x * W), Math.floor(s.y * H), 1, 1);
+      }
+    }
+    var open = 1 - clamp((wx.cover - 30) / 60, 0, 1) * 0.85 - (wx.kind === 'fog' ? 0.1 : 0);
+    // in the open sky beside the page when the window is wide enough, else near the right edge
+    var side = (W - 1140 / PX) / 2, r = W < 140 ? 4 : 5;
+    var cx = Math.round(side > 26 ? W - side / 2 : W * 0.86);
+    if (sun > -2 && open > 0.1) {
+      // the sun: lower and more orange toward sunset
+      var cy = Math.round(H * clamp(0.6 - sun / 60 * 0.5, 0.12, 0.64));
+      var warm = mix(hex('#ff8a4a'), hex('#fff3b8'), clamp(sun / 12, 0, 1));
+      g.fillStyle = css(warm, 0.1 * open); disc(g, cx, cy, r + 7);
+      g.fillStyle = css(warm, 0.16 * open); disc(g, cx, cy, r + 4);
+      g.fillStyle = css(warm, 0.3 * open); disc(g, cx, cy, r + 2);
+      g.fillStyle = css(mix(warm, hex('#ffffff'), 0.35), 0.55 + 0.45 * open); disc(g, cx, cy, r);
+    } else if (sun <= NIGHT_BELOW && vis > 0.08) {
+      // the moon in tonight's phase: a lit disc with the sky's own color covering the dark part
+      var days = Date.now() / 86400000 - 10957.5;
+      var phase = (((days - 5.26) / 29.530588) % 1 + 1) % 1;
+      var lit = phase < 0.5 ? phase * 2 : (1 - phase) * 2;
+      if (lit > 0.06) {
+        var my = Math.round(H * 0.2);
+        g.fillStyle = css([244, 241, 220], 0.07 * vis); disc(g, cx, my, r + 6);
+        g.fillStyle = css([244, 241, 220], 0.12 * vis); disc(g, cx, my, r + 3);
+        g.fillStyle = css([244, 241, 220], 0.4 + 0.6 * vis); disc(g, cx, my, r);
+        g.fillStyle = css([205, 203, 186], 0.4 + 0.6 * vis);
+        g.fillRect(cx - 2, my - 2, 2, 1); g.fillRect(cx + 1, my + 1, 2, 2); g.fillRect(cx - 3, my + 2, 1, 1);
+        if (lit < 0.94) {
+          g.fillStyle = css(mix(t.top, t.low, 0.2));
+          disc(g, cx + (phase < 0.5 ? -1 : 1) * Math.round(2 * r * lit + 1), my, r + 1);
+        }
+      }
+    }
+    // three rows of hills along the bottom, hazier the farther away, with pines on the ridges
+    var snowy = wx.kind === 'snow';
+    var layers = [
+      [0.8, 0.035, 0.045, 1.3, mix(hex('#0e1626'), hex('#7ba7c4'), t.day), 0.5, hex('#6a5a8c')],
+      [0.87, 0.03, 0.07, 4.1, mix(hex('#0a111d'), hex('#4f9070'), t.day), 0.22, hex('#4a3d6e')],
+      [0.94, 0.022, 0.1, 2.2, mix(hex('#070c16'), hex('#2f7048'), t.day), 0, hex('#2b2450')]
+    ];
+    var ps = 7;
+    function prand() { ps = (ps * 1103515245 + 12345) & 0x7fffffff; return ps / 0x7fffffff; }
+    layers.forEach(function (L, li) {
+      var col = mix(L[4], L[6], t.dusk * 0.55 * (t.grey < 0.8 ? 1 : 0.3));
+      col = mix(col, mix(hex('#141a24'), hex('#8e9aa6'), t.day), t.grey * 0.45);
+      if (snowy) col = mix(col, mix(hex('#3a4660'), hex('#eef4fa'), t.day), 0.7);
+      col = mix(col, t.low, L[5]);                         // haze
+      var edge = mix(col, snowy ? hex('#ffffff') : t.low, snowy ? 0.6 : 0.25);
+      var tree = mix(col, hex('#05080f'), 0.3);
+      var nextTree = 2 + Math.floor(prand() * 5);
+      for (x = 0; x < W; x++) {
+        y = ridge(x, H * L[0], H * L[1], L[2], L[3]);
+        g.fillStyle = css(col); g.fillRect(x, y, 1, H - y);
+        g.fillStyle = css(edge); g.fillRect(x, y, 1, 1);
+        if (li > 0 && x === nextTree) {                    // a pine
+          var th = li === 2 ? 6 : 4;
+          g.fillStyle = css(tree);
+          g.fillRect(x, y - th, 1, 2); g.fillRect(x - 1, y - th + 2, 3, th - 3); g.fillRect(x - (li === 2 ? 2 : 1), y - 1, li === 2 ? 5 : 3, 2);
+          if (snowy) { g.fillStyle = css(edge); g.fillRect(x, y - th, 1, 1); g.fillRect(x - 1, y - th + 2, 1, 1); }
+          nextTree += (li === 2 ? 5 : 4) + Math.floor(prand() * 9);
+        }
+      }
+      if (li === 2 && sun <= NIGHT_BELOW) {                // a few lit windows at night
+        g.fillStyle = 'rgba(255,214,130,0.9)';
+        for (i = 0; i < Math.max(3, W / 28); i++) {
+          x = Math.floor(prand() * W);
+          g.fillRect(x, ridge(x, H * L[0], H * L[1], L[2], L[3]) + 3 + Math.floor(prand() * 5), 1, 1);
+        }
+      }
+    });
   }
 
   function resize() {
@@ -357,6 +493,10 @@
       if (plane.trail.length > 46) plane.trail.length = 46;
       if (plane.x < -60 || plane.x > W + 60) plane = null;
     }
+    if (!shoot && !still && sun <= NIGHT_BELOW && wx.cover < 60 && now > nextShoot) {
+      if (nextShoot) shoot = { x: (0.1 + rand() * 0.8) * W, y: (0.04 + rand() * 0.2) * H, dir: rand() < 0.5 ? 1 : -1, t0: now };
+      nextShoot = now + 90000 + rand() * 150000;
+    }
     if (k === 'storm' && !still && now > nextFlash) {
       flashUntil = now + 140;
       nextFlash = now + 20000 + rand() * 25000;
@@ -366,42 +506,32 @@
   function draw(now) {
     if (!ctx) return;
     var night = sun <= NIGHT_BELOW, i;
-    var sky = skyColors(sun);
-    var grey = clamp((wx.cover - 55) / 45, 0, 1) * 0.6 + (wx.kind === 'rain' || wx.kind === 'storm' ? 0.2 : 0) + (wx.kind === 'fog' ? 0.35 : 0);
     var day = clamp((sun + 6) / 12, 0, 1);
-    var top = mix(sky[0], mix(hex('#06080d'), hex('#9fb0c2'), day), clamp(grey, 0, 0.85));
-    var low = mix(sky[1], mix(hex('#0c1017'), hex('#d6dee6'), day), clamp(grey, 0, 0.85));
-    if (wx.aqi != null && wx.aqi > 100) {  // wildfire smoke turns the sky brown
-      var smoke = clamp((wx.aqi - 100) / 250, 0, 0.6);
-      top = mix(top, mix(hex('#3a2a1c'), hex('#c79a62'), day), smoke);
-      low = mix(low, mix(hex('#5a4028'), hex('#e8c08a'), day), smoke);
-    }
-    // the sky, in bands like an old game
-    var bands = 14;
-    for (i = 0; i < bands; i++) {
-      ctx.fillStyle = css(mix(top, low, i / (bands - 1)));
-      ctx.fillRect(0, Math.floor(H * i / bands), W, Math.ceil(H / bands) + 1);
-    }
-    // stars
-    var vis = clamp((NIGHT_BELOW - sun) / 7, 0, 1) * (1 - Math.min(wx.cover, 96) / 100);
+    if (!bg || bg.width !== W || bg.height !== H) paintBack();
+    ctx.drawImage(bg, 0, 0);
+    // the twinkling stars: a slow shimmer, a soft cross of light on the bright ones
+    var vis = starVis();
     if (vis > 0.02) {
-      // three brightness levels, so it's a handful of color changes a frame, not hundreds
-      var levels = [0.8, 0.95, 0.35];
-      for (var lv = 0; lv < 3; lv++) {
-        ctx.fillStyle = css([255, 250, 225], vis * levels[lv]);
-        for (i = 0; i < stars.length; i++) {
-          var s = stars[i];
-          var on = Math.sin(now / 700 + s.ph) > -0.2;
-          if ((s.tw ? (on ? 1 : 2) : 0) !== lv) continue;
-          ctx.fillRect(Math.floor(s.x * W), Math.floor(s.y * H), 1, 1);
+      for (i = 0; i < stars.length; i++) {
+        var s = stars[i];
+        if (!s.tw) continue;
+        var glow = 0.55 + 0.45 * Math.sin(now / 1300 + s.ph);
+        var sx = Math.floor(s.x * W), sy = Math.floor(s.y * H);
+        ctx.fillStyle = css(s.tint, vis * (0.3 + 0.7 * glow));
+        ctx.fillRect(sx, sy, 1, 1);
+        if (s.big && glow > 0.6) {
+          ctx.fillStyle = css(s.tint, vis * 0.35 * glow);
+          ctx.fillRect(sx - 1, sy, 1, 1); ctx.fillRect(sx + 1, sy, 1, 1);
+          ctx.fillRect(sx, sy - 1, 1, 1); ctx.fillRect(sx, sy + 1, 1, 1);
         }
       }
-      ctx.fillStyle = css([255, 250, 225], vis * 0.4);
-      for (i = 0; i < stars.length; i++) {  // a little cross of light around the bright ones
-        if (!stars[i].big) continue;
-        var sx = Math.floor(stars[i].x * W), sy = Math.floor(stars[i].y * H);
-        ctx.fillRect(sx - 1, sy, 1, 1); ctx.fillRect(sx + 1, sy, 1, 1);
-        ctx.fillRect(sx, sy - 1, 1, 1); ctx.fillRect(sx, sy + 1, 1, 1);
+      if (shoot) {  // a shooting star: a short streak that fades as it goes
+        var k2 = (now - shoot.t0) / 700;
+        if (k2 >= 1) shoot = null;
+        else for (i = 0; i < 7; i++) {
+          ctx.fillStyle = css([255, 250, 232], vis * (1 - k2) * (1 - i / 7));
+          ctx.fillRect(Math.round(shoot.x + (k2 * 26 - i) * shoot.dir), Math.round(shoot.y + (k2 * 26 - i) * 0.5), 1, 1);
+        }
       }
     }
     // a gray cloud deck when it's overcast

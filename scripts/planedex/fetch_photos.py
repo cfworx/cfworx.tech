@@ -47,6 +47,7 @@ SMALL = (192, 96)    # 2:1, list rows and family chains
 # specific Commons file (hand-picked after eyeballing the contact sheet).
 # Anything not listed is found by searching for its catalog name.
 ARTICLES = {
+    "P32T": ("File:Piper PA-32RT-300T Turbo Lance II (N39639, cn 32R-7887130) (4-13-2024).jpg", None),
     "A319": ("Airbus A320 family", r"A319(?![-_ ]?neo)"),
     "A320": ("Airbus A320 family", r"A320-2\d\d(?!N)"),
     "A20N": ("Airbus A320neo family", r"A320[-_ ]?neo|A320-2\d\dN"),
