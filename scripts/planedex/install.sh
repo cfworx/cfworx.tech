@@ -36,6 +36,6 @@ fi
 
 echo
 echo "First push:"
-python3 "$here/planedex_push.py" || echo "The first push didn't go through; the timer will retry every 5 minutes."
+python3 "$here/planedex_push.py" || echo "The first push didn't go through; the timer will retry every 2 minutes."
 echo
 systemctl --user list-timers planedex-push.timer --no-pager

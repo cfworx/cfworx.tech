@@ -1,0 +1,498 @@
+{
+ "_about": "Planedex family pages: what each family is, how to spot one, and a fun fact. Keys match the family names in scripts/planedex/catalog.json. \"wiki\" is the English Wikipedia article for further reading.",
+ "Airbus A320 family": {
+  "about": "Airbus's single-aisle jets and the Boeing 737's biggest rival. The A320 first flew in 1987, followed by the longer A321 and the shorter A319 and A318. Airlines all over the world fly them on short and medium trips.",
+  "spot": "A rounded nose, round engines hanging below the wings, and on older ones, small arrow-shaped fences sticking up and down at each wingtip.",
+  "fact": "The A320 was the first airliner flown with a small side-stick, like a video game joystick, instead of a big control wheel.",
+  "wiki": "Airbus A320 family"
+ },
+ "Airbus A320neo family": {
+  "about": "The newer A320s, with a New Engine Option (that's what \"neo\" means). Their bigger engines burn less fuel and make less noise. The A321neo is the most popular one, and long-range versions can fly all the way across the Atlantic.",
+  "spot": "Engines that look huge for the plane, and tall, curved wingtips called Sharklets on every one.",
+  "fact": "A320neos first flew in 2014. Airbus says they burn about 20 percent less fuel per seat than the planes they replaced.",
+  "wiki": "Airbus A320neo family"
+ },
+ "Airbus A220": {
+  "about": "This jet began life in Canada as the Bombardier CSeries and first flew in 2013. In 2018 Airbus took it over and renamed it the A220. It's built near Montreal and in Mobile, Alabama.",
+  "spot": "Big engines for a small jet, a sleek pointed nose, and inside, seats two on one side of the aisle and three on the other.",
+  "fact": "Airbus says the A220's windows are the biggest of any jet its size.",
+  "wiki": "Airbus A220"
+ },
+ "Airbus A300 family": {
+  "about": "The A300 was the very first Airbus, flying in 1972, and the world's first twin-engine widebody airliner. The shorter A310 followed ten years later. Most of the ones still flying carry packages.",
+  "spot": "A wide body with just two engines and a rounded nose. The freighters have no passenger windows at all.",
+  "fact": "Airbus built its parts in different countries and flew them to the factory in a bulgy plane called the Super Guppy, the grandparent of today's Beluga.",
+  "wiki": "Airbus A300"
+ },
+ "Airbus A330 family": {
+  "about": "A twin-engine widebody built for long trips, first flown in 1992. The A330neo versions (the -800 and -900) first flew in 2017, with new Rolls-Royce engines and longer wings.",
+  "spot": "Two big engines, two aisles inside, and a nose like a bigger A320's. The neo has long, curved wingtips.",
+  "fact": "The A330 was designed alongside the four-engine A340. They share the same wing and almost the same cockpit.",
+  "wiki": "Airbus A330"
+ },
+ "Airbus A340 family": {
+  "about": "The A330's four-engine sibling, built for long flights over oceans back when airlines liked having four engines. It first flew in 1991, and Airbus stopped building it in 2011.",
+  "spot": "A twin-aisle jet with four fairly small engines. The A340-600 is extra long and skinny-looking.",
+  "fact": "The A340-600 is longer than the famous Boeing 747-400.",
+  "wiki": "Airbus A340"
+ },
+ "Airbus A350 family": {
+  "about": "Airbus's newest long-haul jet, first flown in 2013. More than half of it is made of light, strong carbon fiber instead of aluminum, which helps it fly far on less fuel.",
+  "spot": "Most A350s have black paint around the cockpit windows, like a raccoon mask or sunglasses, and wingtips that curve smoothly up.",
+  "fact": "The top skin of each wing is a single piece of carbon fiber longer than a basketball court.",
+  "wiki": "Airbus A350"
+ },
+ "Airbus giants": {
+  "about": "Airbus's biggest planes. The A380 is the largest passenger airliner ever built, with two full-length decks. The Beluga and BelugaXL are whale-shaped cargo planes that fly airplane parts between Airbus factories in Europe.",
+  "spot": "A380: four engines and two full rows of windows, one above the other. Belugas: a giant bubble on top, with the cockpit tucked down low in front.",
+  "fact": "Airbus workers voted to give the BelugaXL eyes and a smile. Airbus built 251 A380s before it stopped making them in 2021.",
+  "wiki": "Airbus A380"
+ },
+ "Boeing 737 Classic": {
+  "about": "The early 737s. The original 737-200 first flew in 1967. In the 1980s Boeing added the \"Classic\" 737-300, -400 and -500, with bigger, quieter engines.",
+  "spot": "The -200 has long, skinny engines tucked up under the wing. The Classics have round engines with flat bottoms, nicknamed \"hamster pouches\".",
+  "fact": "The 737 sits so close to the ground that Boeing had to flatten the bottom of the Classic's bigger engines to make them fit.",
+  "wiki": "Boeing 737 Classic"
+ },
+ "Boeing 737 Next Gen": {
+  "about": "The 737 Next Generation arrived in 1997 with a new, longer wing and a modern cockpit. The -800 became one of the most common jetliners in the world.",
+  "spot": "Most have tall, curved winglets at the wingtips. Like every 737, it has a pointy nose and engines with flattened bottoms.",
+  "fact": "The Navy's P-8 Poseidon sub hunter is built from a 737-800, and many private \"Boeing Business Jets\" are 737s too.",
+  "wiki": "Boeing 737 Next Generation"
+ },
+ "Boeing 737 MAX": {
+  "about": "The newest 737, first flown in 2016. Its bigger LEAP engines burn less fuel, and it comes in four sizes: the MAX 7, 8, 9 and 10.",
+  "spot": "Zig-zag \"sawtooth\" edges at the back of the engines, and split winglets that point both up and down.",
+  "fact": "Its engines are so big that Boeing made the nose landing gear about 8 inches taller to make room under the wings.",
+  "wiki": "Boeing 737 MAX"
+ },
+ "Boeing 757": {
+  "about": "A long, skinny single-aisle jet built from 1982 to 2004. Its powerful engines let it take off from short runways and climb like a rocket.",
+  "spot": "A long, narrow body standing on tall landing gear, a nose that slopes down, and big engines for its size.",
+  "fact": "It's nicknamed the \"Flying Pencil\". It was designed alongside the 767, so pilots can fly both with the same license.",
+  "wiki": "Boeing 757"
+ },
+ "Boeing 767": {
+  "about": "Boeing's first twin-aisle jet with just two engines, first flown in 1981. Today most 767s fly packages at night for FedEx, UPS and Amazon, and the Air Force's KC-46 tanker is built from one.",
+  "spot": "Two aisles inside but a slimmer body than other widebodies, with seats in a 2-3-2 pattern. The freighters have no windows.",
+  "fact": "In 1985 a 767 became one of the first twin-engine jets allowed to fly long routes across the ocean, far from any airport.",
+  "wiki": "Boeing 767"
+ },
+ "Boeing 777": {
+  "about": "The largest twin-engine jetliner family, first flown in 1994. It was the first airliner designed entirely on computers. The newest, the 777-9, is the biggest of them all.",
+  "spot": "Six wheels on each main landing gear leg, huge round engines, and a tail cone that ends in a flat, knife-like edge.",
+  "fact": "Its giant engines are nearly as wide as the body of a 737.",
+  "wiki": "Boeing 777"
+ },
+ "Boeing 787 Dreamliner": {
+  "about": "Boeing's newest widebody, first flown in 2009. About half of it is carbon fiber, which is lighter than metal, so it can fly long routes on less fuel.",
+  "spot": "Wings that bend way up in flight, zig-zag edges on the back of the engines, a smooth rounded nose, and just four cockpit windows.",
+  "fact": "Inside, the air feels like being 6,000 feet up instead of the usual 8,000, so passengers feel less tired after long flights.",
+  "wiki": "Boeing 787 Dreamliner"
+ },
+ "Queen of the Skies": {
+  "about": "The Boeing 747, the original \"jumbo jet\", first flew in 1969 and could carry more people than any plane before it. Boeing built 1,574 of them before the last one was delivered in 2023.",
+  "spot": "The hump! The upper deck makes a bump on top of the front of the plane. Plus four engines.",
+  "fact": "The 747's cockpit sits up top so the freighter version could have a nose that swings open to load cargo.",
+  "wiki": "Boeing 747"
+ },
+ "Jet Age legends": {
+  "about": "Planes that changed how people travel. The DC-3 made airlines successful in the 1930s, the four-engine DC-6 carried families across the country after World War II, and the Boeing 707 and 727 made jet travel an everyday thing.",
+  "spot": "The 727 has three engines clustered at its tail. The 707 has four engines under swept-back wings. The DC-3 sits nose-up on a tail wheel.",
+  "fact": "Some DC-3s built in the 1940s are still flying more than 80 years later.",
+  "wiki": "Jet Age"
+ },
+ "McDonnell Douglas": {
+  "about": "McDonnell Douglas was a big American planemaker that joined Boeing in 1997. Its jets are easy to spot because their engines are on the tail.",
+  "spot": "MD-80s and the 717 have two engines on the back of the body and a T-shaped tail. The MD-11 has a third engine built into the base of its tail.",
+  "fact": "The Boeing 717 started out as the MD-95 and got its Boeing name after the two companies joined.",
+  "wiki": "McDonnell Douglas"
+ },
+ "Embraer E-Jets": {
+  "about": "Comfy regional jets from Embraer in Brazil, first flown in 2002. There are no middle seats, just two on each side of the aisle.",
+  "spot": "Engines under the wings (not on the tail), a rounded body and a pointy nose. Horizon and SkyWest E175s are all over the Northwest.",
+  "fact": "Embraer is Brazil's biggest planemaker and the third-biggest builder of airliners in the world, after Airbus and Boeing.",
+  "wiki": "Embraer E-Jet family"
+ },
+ "Embraer E2": {
+  "about": "The second generation of E-Jets, first flown in 2016. New wings and quieter, more efficient engines let them fly farther on less fuel.",
+  "spot": "Long, skinny wings, big engines, and taller landing gear than the first E-Jets.",
+  "fact": "Embraer painted its E2 test planes with giant animal faces, including a shark and an eagle.",
+  "wiki": "Embraer E-Jet E2 family"
+ },
+ "Embraer ERJ": {
+  "about": "Embraer's first family of jets: slim regional jets from Brazil that seat about 37 to 50 people. The ERJ 145 first flew in 1995.",
+  "spot": "A long, thin body with two engines on the tail and a T-shaped tail on top.",
+  "fact": "The cabin is so narrow there are only three seats across: one on one side of the aisle and two on the other.",
+  "wiki": "Embraer ERJ family"
+ },
+ "Bombardier CRJ": {
+  "about": "Canada's Bombardier stretched its Challenger business jet into the CRJ, which first flew in 1991 and started the regional jet boom. Production ended in 2020.",
+  "spot": "Two engines on the back of the body, a T-tail, and a skinny body with seats two and two.",
+  "fact": "The CRJ began as a business jet stretched to carry 50 people.",
+  "wiki": "Bombardier CRJ"
+ },
+ "Dash 8": {
+  "about": "Twin turboprop airliners first built by de Havilland Canada in Toronto. The Dash 8 first flew in 1983, and the biggest, the Dash 8-400 (or Q400), is one of the fastest propeller airliners.",
+  "spot": "A high wing, a T-shaped tail, and long engine pods where the wheels fold up.",
+  "fact": "The Q in Q400 stands for quiet: special systems cancel out much of the propeller noise inside the cabin.",
+  "wiki": "De Havilland Canada Dash 8"
+ },
+ "ATR": {
+  "about": "French and Italian turboprops built in Toulouse, France, since the 1980s. The ATR 42 seats about 48 people and the stretched ATR 72 about 70.",
+  "spot": "A high wing, a T-tail, and wheels that fold into bumps on the sides of the body instead of into the engines.",
+  "fact": "FedEx flies cargo ATRs to smaller cities. Here in the Inland Northwest, Empire Airlines flies them for FedEx.",
+  "wiki": "ATR (aircraft manufacturer)"
+ },
+ "De Havilland Canada": {
+  "about": "Canada's legendary builder of bush planes. Its tough, simple planes fly on wheels, skis or floats into places with no runways at all.",
+  "spot": "High wings, chunky bodies and big propellers. In summer, many wear floats.",
+  "fact": "In 2019 a Harbour Air Beaver in Vancouver became the first all-electric commercial airplane to fly.",
+  "wiki": "De Havilland Canada"
+ },
+ "Commuter turboprops": {
+  "about": "Small airliners for short hops between little cities. Many now carry packages at night instead of passengers.",
+  "spot": "Two turboprop engines and a narrow body with small windows. Most have a low wing; the Dornier 328 has a high one.",
+  "fact": "Many of them seat 19 passengers, because planes with more seats need a flight attendant."
+ },
+ "King Air": {
+  "about": "Beechcraft's twin turboprops from Wichita, Kansas, built since the 1960s. They're the most popular business turboprops ever, used for charters, air ambulances and the military.",
+  "spot": "Two turboprop engines on a low wing. The bigger King Air 200, 300 and 350 have a T-tail; the King Air 90 and 100 have a regular tail.",
+  "fact": "More than 7,000 King Airs have been built, and the military flies them as the C-12 Huron.",
+  "wiki": "Beechcraft King Air"
+ },
+ "Cessna turboprops": {
+  "about": "Cessna's turbine-powered workhorses. The single-engine Caravan and the boxy twin SkyCourier haul packages to small towns, and the Conquests are speedy twins.",
+  "spot": "Caravan: one engine, a high wing, and often a cargo pod under the belly. SkyCourier: two engines on a high wing and a square body.",
+  "fact": "FedEx helped design the SkyCourier. Its square body holds the same cargo containers that bigger planes use."
+ },
+ "Speedy singles": {
+  "about": "Single-engine planes built for speed. The TBM from France and the Epic from Bend, Oregon, are turboprops that cruise faster than 300 miles per hour.",
+  "spot": "A sleek low wing, wheels that fold away, and a long nose. The turboprops have exhaust pipes sticking out near the nose.",
+  "fact": "A TBM 900 can fly about as fast as some small business jets."
+ },
+ "Pilatus": {
+  "about": "Pilatus builds planes near the Swiss Alps. The Porter can land on glaciers, the PC-12 is one of the most popular single-engine turboprops ever, and the PC-24 is a business jet that can land on grass and gravel.",
+  "spot": "PC-12: one big turboprop engine, a T-tail and a long, smooth body. PC-24: two jet engines on the back.",
+  "fact": "Life Flight Network flies PC-12 air ambulances all over the Northwest.",
+  "wiki": "Pilatus Aircraft"
+ },
+ "Piper Malibu": {
+  "about": "Piper's pressurized six-seaters, built to fly high above the weather. The M500 is the turboprop version.",
+  "spot": "A low wing, a sleek body with its door near the back, and on the turboprop, a long, slim nose.",
+  "fact": "Its pressurized cabin keeps the air comfortable, so nobody needs an oxygen mask even when flying far above the clouds.",
+  "wiki": "Piper PA-46"
+ },
+ "Citation jets": {
+  "about": "Cessna's small jets, many of them flown by just one pilot. \"CJ\" stands for CitationJet, which first flew in 1991.",
+  "spot": "Small jets with two engines on the back of the body, a pointy nose, and room for about four to nine people.",
+  "fact": "Lots of owners fly their own CJs, with no second pilot needed.",
+  "wiki": "Cessna CitationJet/M2"
+ },
+ "Big Citations": {
+  "about": "Cessna's Citation line started in 1969 and grew into the biggest family of business jets ever, from small jets to the speedy Citation X.",
+  "spot": "Two engines on the back of the body. The Citation X has sharply swept-back wings built for speed.",
+  "fact": "The Citation X flies at 92 percent of the speed of sound, faster than most airliners.",
+  "wiki": "Cessna Citation family"
+ },
+ "Learjet": {
+  "about": "Bill Lear's sporty jets from Wichita, Kansas. The first one flew in 1963, and Learjets got so famous that people called any private jet a \"Learjet\".",
+  "spot": "A sleek, pointed body and a T-tail. Older ones like the Learjet 35 carry fuel tanks on their wingtips.",
+  "fact": "The last new Learjets were built in the early 2020s, almost 60 years after the first.",
+  "wiki": "Learjet"
+ },
+ "Hawker and Beechjet": {
+  "about": "Business jets with British roots. The Hawker began as the de Havilland DH.125 in 1962 and was later built in Wichita, Kansas. The Beechjet and Premier were Beechcraft's small jets.",
+  "spot": "Engines on the back of the body. Hawkers have their tail wings partway up the fin; the Beechjet has a T-tail.",
+  "fact": "The Air Force trained pilots in a version of the Beechjet called the T-1 Jayhawk.",
+  "wiki": "Hawker 800"
+ },
+ "Dassault Falcon": {
+  "about": "Business jets from Dassault in France, the same company that builds Rafale fighter jets. Many Falcons have three engines.",
+  "spot": "Three-engine Falcons have their third engine in the base of the tail, fed by an S-shaped air intake on top.",
+  "fact": "Dassault designed the Falcon 7X entirely on computers, without building a full-size model first.",
+  "wiki": "Dassault Aviation"
+ },
+ "Gulfstream": {
+  "about": "Gulfstream, based in Savannah, Georgia, builds some of the fastest, longest-range business jets in the world, flown by companies, governments and the military.",
+  "spot": "Big oval windows down the side, two engines on the tail, and long, swept wings.",
+  "fact": "The G650 can fly at 92.5 percent of the speed of sound.",
+  "wiki": "Gulfstream Aerospace"
+ },
+ "Bombardier business jets": {
+  "about": "Canada's Bombardier builds two families of business jets: the Challengers, and the big, long-range Globals that fly across oceans nonstop.",
+  "spot": "Two engines on the back and a T-tail. Globals are much longer, with big swept wings.",
+  "fact": "In a 2024 test flight, a Bombardier Global went faster than the speed of sound."
+ },
+ "Embraer business jets": {
+  "about": "Embraer of Brazil builds business jets too, from the little Phenom 100 to Praetors that can cross an ocean. The Phenom 300 has been the best-selling light business jet for more than a decade.",
+  "spot": "Sleek bodies with two engines on the back, and most have a T-tail.",
+  "fact": "The Legacy 600 was built from the ERJ 135 regional airliner."
+ },
+ "Tiny jets": {
+  "about": "The smallest jets in the sky, for a pilot and a few passengers. Each one is different: the HondaJet's engines sit on top of its wings, and the Cirrus Vision Jet has one engine on its back.",
+  "spot": "HondaJet: engines on posts above the wings. Vision Jet: one engine on top and a V-shaped tail. Eclipse: two engines on the back of a tiny body.",
+  "fact": "Honda, the car company, designed the HondaJet and builds it in North Carolina.",
+  "wiki": "Very light jet"
+ },
+ "Cessna trainers": {
+  "about": "The planes most pilots learn in. The Cessna 172 Skyhawk is the most-produced airplane in history, with more than 45,000 built since 1956.",
+  "spot": "A high wing held up by a strut, fixed wheels with a nose wheel, and usually white with colored stripes.",
+  "fact": "In 1958, two pilots kept a Cessna 172 flying for more than 64 days without landing, refueling from a speeding truck!",
+  "wiki": "Cessna 172"
+ },
+ "Cessna haulers": {
+  "about": "Cessna's bigger, stronger high-wing singles that carry more people and gear. Bush pilots in Alaska and Idaho count on them.",
+  "spot": "A high wing with a strut, like a big 172. The 180 and 185 sit on a tail wheel, and the 206 and 207 have double cargo doors.",
+  "fact": "The 182 Skylane is like a 172 with a bigger engine, and it has been built since 1956.",
+  "wiki": "Cessna 182 Skylane"
+ },
+ "Cessna classics": {
+  "about": "Cessna's planes from the 1940s and 1950s, before the 172 took over. Most sit on a tail wheel.",
+  "spot": "Shiny metal bodies and tail wheels on most. The 195 has a big round radial engine.",
+  "fact": "The famous 172 started out as a Cessna 170 with a nose wheel added.",
+  "wiki": "Cessna 170"
+ },
+ "Cessna speedsters": {
+  "about": "Cessna's faster singles, most with wheels that fold up. The sleek Corvalis began life as the Columbia, built in Bend, Oregon.",
+  "spot": "Most Centurions and every Cardinal have a high wing with no strut. The Corvalis has a low wing and a smooth composite body.",
+  "fact": "The Cardinal was supposed to replace the 172, but pilots liked the 172 so much it outlasted the Cardinal.",
+  "wiki": "Cessna 210 Centurion"
+ },
+ "Cessna twins": {
+  "about": "Cessna's twin-engine piston planes for business trips, charters and small airlines, built from the 1950s to the 1980s.",
+  "spot": "Two engines on the wings, except the Skymaster: one engine in front, one in back, and two tail booms.",
+  "fact": "The Skymaster's push-pull engines mean it flies straight even if one engine stops.",
+  "wiki": "Cessna 310"
+ },
+ "Cubs": {
+  "about": "The Piper Cub is America's classic little yellow airplane, first built in the late 1930s. Today CubCrafters in Yakima, Washington, builds modern Cubs.",
+  "spot": "Seats one behind the other, a high wing, a tail wheel, and often bright Cub Yellow paint.",
+  "fact": "Thousands of pilots learned to fly in Cubs during World War II, and the Army used them as scout planes called Grasshoppers.",
+  "wiki": "Piper J-3 Cub"
+ },
+ "Piper Cherokee": {
+  "about": "Piper's low-wing family, built since 1960 for training and family trips. Today's Piper Archer is still a Cherokee at heart.",
+  "spot": "A low wing (unlike most Cessnas), a single door on the right side, and a tail wing that moves as one piece.",
+  "fact": "Many Arrows can lower their landing gear by themselves if the plane flies too slowly with the wheels up.",
+  "wiki": "Piper PA-28 Cherokee"
+ },
+ "Piper classics": {
+  "about": "Older Pipers from the 1940s to the 1970s: stubby Pacers, the sleek Comanche, the Tomahawk trainer and the Pawnee crop duster.",
+  "spot": "Short, chubby bodies on the Pacers and Tri-Pacer, and a T-tail on the Tomahawk.",
+  "fact": "Gliding clubs often use Pawnees to tow gliders up into the sky."
+ },
+ "Piper twins": {
+  "about": "Piper's twin-engine planes, from the 1950s Apache to the turboprop Cheyennes. Many pilots train in Senecas and Seminoles to learn to fly with two engines.",
+  "spot": "Two engines on a low wing. The Seminole and the Cheyenne III have a T-tail.",
+  "fact": "The Cheyenne turboprops grew out of the piston-engine Navajo."
+ },
+ "Bonanza": {
+  "about": "The Beechcraft Bonanza has been built since 1947, longer than any other airplane in history.",
+  "spot": "A low wing and wheels that fold up. Early ones have a V-shaped tail with two fins instead of three.",
+  "fact": "More than 17,000 Bonanzas have been built.",
+  "wiki": "Beechcraft Bonanza"
+ },
+ "Beechcraft Musketeer": {
+  "about": "Beech's friendly four-seat trainers and family planes, built from the 1960s to the 1980s.",
+  "spot": "A low wing and a wide cabin. The Sundowner and Sierra have doors on both sides, which is rare for small planes.",
+  "fact": "The Sierra is a Sundowner whose wheels fold up, which makes it a little faster.",
+  "wiki": "Beechcraft Musketeer"
+ },
+ "Beechcraft twins": {
+  "about": "Beech's twin-engine piston planes. The Model 18 \"Twin Beech\" was built from 1937 to 1970, and the Baron is still built today.",
+  "spot": "Two engines on a low wing. The Twin Beech has two tail fins and sits on a tail wheel; the Duchess has a T-tail.",
+  "fact": "During World War II, Twin Beeches trained thousands of navigators and bombardiers.",
+  "wiki": "Beechcraft Baron"
+ },
+ "Mooney": {
+  "about": "Mooneys are four-seaters known for flying fast on not much power, built in Kerrville, Texas.",
+  "spot": "The front edge of the tail fin goes straight up and down, so the tail looks like it was put on backward.",
+  "fact": "Mooney's very first plane, the M-18 Mite, was a tiny one-seater.",
+  "wiki": "Mooney M20"
+ },
+ "Diamond": {
+  "about": "Diamond Aircraft, from Austria and Canada, builds smooth composite planes with long, glider-like wings.",
+  "spot": "A T-tail, a big bubble canopy, and long, slender wings.",
+  "fact": "The DA42 and DA62 run on jet fuel, using engines related to car diesel engines.",
+  "wiki": "Diamond Aircraft Industries"
+ },
+ "Cirrus": {
+  "about": "Cirrus planes from Duluth, Minnesota, have been the best-selling piston airplanes in the world for years, and every one carries a parachute for the whole plane.",
+  "spot": "A smooth composite body, a low wing, and a panel behind the cabin that hides the parachute.",
+  "fact": "In an emergency, a rocket pulls the parachute out and the whole airplane floats down to the ground.",
+  "wiki": "Cirrus SR22"
+ },
+ "Van's RVs": {
+  "about": "Planes people build themselves from kits made by Van's Aircraft in Oregon. More than 10,000 have been finished and flown.",
+  "spot": "Small, shiny metal planes with low wings and bubble canopies. The RV-4 and RV-8 seat two, one behind the other.",
+  "fact": "RVs are the most popular kit planes in the world.",
+  "wiki": "Van's Aircraft"
+ },
+ "Aerobatic stars": {
+  "about": "Planes built for loops, rolls and airshow stunts, strong enough to fly upside down.",
+  "spot": "Small and colorful, and often biplanes, like the Pitts and the Christen Eagle.",
+  "fact": "In tight loops, aerobatic pilots can feel six times heavier than normal.",
+  "wiki": "Aerobatics"
+ },
+ "Backcountry": {
+  "about": "Planes made to land on short, rough dirt strips in the mountains. Idaho is famous for its backcountry airstrips.",
+  "spot": "Big, fat \"tundra tires\", high wings, and often a tail wheel.",
+  "fact": "Those big balloon tires roll right over rocks and bumps that would stop a normal plane.",
+  "wiki": "Bush plane"
+ },
+ "Golden age": {
+  "about": "Planes from the 1930s and 1940s, when flying was new and exciting. Collectors keep them flying today.",
+  "spot": "Biplanes with two wings, shiny metal or fabric-covered bodies, and big round engines.",
+  "fact": "The Staggerwing's lower wing sits ahead of its upper wing, the opposite of most biplanes.",
+  "wiki": "Aviation in the interwar period"
+ },
+ "Grumman and Commander": {
+  "about": "A mix of sporty Grumman singles and Commander planes, from four-seaters to the fast Aerostar twin.",
+  "spot": "Grumman singles have a canopy that slides back. Aero Commanders have a high wing with an engine on each side.",
+  "fact": "Airshow legend Bob Hoover used to shut off both engines of his Commander and still finish his routine with a perfect landing."
+ },
+ "Splashdown": {
+  "about": "Amphibians: planes that can take off and land on water or on a runway.",
+  "spot": "A boat-shaped belly, little floats under the wings, and an engine mounted up high, away from the spray.",
+  "fact": "The Icon A5's wings fold back so it can be towed home on a trailer.",
+  "wiki": "Amphibious aircraft"
+ },
+ "Warbirds": {
+  "about": "Military planes from World War II and later, kept flying by museums and collectors. You're most likely to catch them going to and from airshows.",
+  "spot": "Propellers, big engines, and military paint or shiny bare metal.",
+  "fact": "P-51 Mustangs could fly all the way from England to Berlin and back, protecting bombers."
+ },
+ "Robinson": {
+  "about": "Small, affordable helicopters from Torrance, California, used for training, tours, news and ranch work.",
+  "spot": "A bubble cabin, a skinny tail boom, and a two-blade rotor.",
+  "fact": "The R44 is one of the best-selling helicopters in the world.",
+  "wiki": "Robinson Helicopter Company"
+ },
+ "Bell helicopters": {
+  "about": "Bell, from Texas, built the Huey and the JetRanger, two of the most famous helicopters ever.",
+  "spot": "Older Bells have two big blades that go whup-whup. Newer ones like the 407 and 429 have four.",
+  "fact": "The Bell 47 was the first helicopter approved for regular civilian use, in 1946.",
+  "wiki": "Bell Textron"
+ },
+ "Airbus helicopters": {
+  "about": "Helicopters from Airbus, once called Eurocopter, flown by air ambulances, police, tour companies and news crews.",
+  "spot": "Many hide their tail rotor inside a round fan in the tail, called a Fenestron.",
+  "fact": "In 2005 a test pilot landed one of these on the very top of Mount Everest.",
+  "wiki": "Airbus Helicopters"
+ },
+ "Sikorsky": {
+  "about": "Igor Sikorsky built the first practical helicopter in 1939, and his company still builds big helicopters today.",
+  "spot": "Big, smooth bodies, four or five rotor blades, and wheels that fold up on many.",
+  "fact": "Marine One, the President's helicopter, is a Sikorsky.",
+  "wiki": "Sikorsky Aircraft"
+ },
+ "AgustaWestland": {
+  "about": "Helicopters from Italy and Britain, now built by Leonardo. The AW139 is a favorite for search and rescue.",
+  "spot": "Sleek, pointed noses, and wheels that tuck away on the AW109 and AW139.",
+  "fact": "The AW119 Koala is built in Philadelphia.",
+  "wiki": "AgustaWestland"
+ },
+ "Little choppers": {
+  "about": "Small helicopters for training, spraying crops, police work and lifting heavy loads.",
+  "spot": "Bubble or egg-shaped cabins. The MD 520N has no tail rotor at all, and the K-MAX has two rotors that mesh like an eggbeater.",
+  "fact": "The K-MAX can lift more than its own weight."
+ },
+ "Army helicopters": {
+  "about": "Military helicopters that carry soldiers, cargo and rescue crews, plus the Osprey, which is half helicopter and half airplane.",
+  "spot": "The Chinook has two big rotors, one at each end. The Osprey tilts its rotors forward to fly like an airplane.",
+  "fact": "The Black Hawk first flew in 1974, and versions of it now fight wildfires."
+ },
+ "Military haulers": {
+  "about": "Big military cargo planes that carry tanks, trucks, helicopters and supplies all over the world.",
+  "spot": "A high wing, a tall tail with a loading ramp underneath, and a chunky body sitting low to the ground.",
+  "fact": "The C-130 Hercules has been built since the 1950s, longer than any other military airplane.",
+  "wiki": "Military transport aircraft"
+ },
+ "Tankers": {
+  "about": "Flying gas stations that refuel other planes in midair through a long pole called a boom.",
+  "spot": "Look under the tail for the refueling boom. The KC-135 has four engines; the KC-46 has two.",
+  "fact": "Fairchild Air Force Base, just west of Spokane, is home to one of the biggest tanker fleets in the Air Force.",
+  "wiki": "Aerial refueling"
+ },
+ "VIP flight": {
+  "about": "Military planes that carry the President, the Vice President, generals and other officials.",
+  "spot": "Many wear white and blue paint with \"United States of America\" on the side.",
+  "fact": "Any Air Force plane carrying the President uses the call sign \"Air Force One\".",
+  "wiki": "Air Force One"
+ },
+ "Spy and radar planes": {
+  "about": "Planes that watch, listen and search using radar and other sensors, from flying radar stations to sub hunters and high-flying spy planes.",
+  "spot": "Giant radar dishes on top (E-3, E-2), bulging noses (RC-135), or extremely long wings (U-2, Global Hawk).",
+  "fact": "U-2 pilots wear space suits because they fly so high.",
+  "wiki": "Airborne early warning and control"
+ },
+ "Bombers": {
+  "about": "The Air Force's big long-range bombers, which can fly around the world with help from tankers.",
+  "spot": "B-52: eight engines in four pairs. B-1: wings that swing back. B-2: a flying wing with no tail at all.",
+  "fact": "The B-52 first flew in 1952, and the Air Force plans to keep flying it past 2050.",
+  "wiki": "Bomber"
+ },
+ "Fighters": {
+  "about": "Fast, agile military jets. Most can fly faster than the speed of sound.",
+  "spot": "Pointy noses, bubble canopies and sharply swept wings. They often fly in pairs.",
+  "fact": "The Navy's Blue Angels fly F/A-18 Super Hornets, and the Air Force's Thunderbirds fly F-16s.",
+  "wiki": "Fighter aircraft"
+ },
+ "Military trainers": {
+  "about": "The planes that teach new military pilots to fly.",
+  "spot": "Two seats, one behind the other, under a long bubble canopy.",
+  "fact": "The T-38 has trained Air Force pilots since 1961, and NASA astronauts fly them too.",
+  "wiki": "Trainer aircraft"
+ },
+ "Classic taildraggers": {
+  "about": "Simple, friendly little planes from the 1930s and 1940s that sit on a tail wheel.",
+  "spot": "Nose up and tail down when parked, fabric-covered wings, and small engines.",
+  "fact": "Taildragger pilots can't see straight ahead on the ground, so they taxi in zig-zags to see where they're going.",
+  "wiki": "Conventional landing gear"
+ },
+ "Crop dusters": {
+  "about": "Planes built to spray crops, flying just a few feet above the fields.",
+  "spot": "A tall, hunched cockpit set far back, a big tank in front of the pilot, and spray bars along the back of the wings.",
+  "fact": "Some crop dusters also fight wildfires, dropping water instead of spray.",
+  "wiki": "Aerial application"
+ },
+ "Kitplanes": {
+  "about": "Planes people build at home from kits. Some, like the Rutan EZs and the Velocity, put a little wing up front and the engine in back.",
+  "spot": "Little front wings called canards and pusher propellers on the EZs; very sleek, smooth bodies on Lancairs and Glasairs.",
+  "fact": "Burt Rutan, who designed the VariEze, later designed SpaceShipOne, which flew to space in 2004.",
+  "wiki": "Homebuilt aircraft"
+ },
+ "Speedy twins": {
+  "about": "Fast twin turboprops with unusual designs.",
+  "spot": "MU-2: a high wing with fuel tanks on the tips. Avanti: propellers that push from behind the wings, and a little extra wing at the nose.",
+  "fact": "The MU-2 has no ailerons. It turns using small spoilers that pop up from the top of its wings."
+ },
+ "Light sport planes": {
+  "about": "Small, simple two-seaters that are easy and affordable to fly. Many are built from kits.",
+  "spot": "Small and light, often with bubble canopies and fixed wheels.",
+  "fact": "Zenith's STOL kit planes can take off in less than half the length of a football field.",
+  "wiki": "Light-sport aircraft"
+ },
+ "Military classics": {
+  "about": "Old military scout planes and trainers, now flown by private owners.",
+  "spot": "Seats one behind the other under long canopies, military paint, and often big round engines.",
+  "fact": "The T-34 Mentor trainer was built from the Beechcraft Bonanza."
+ },
+ "Fire fleet": {
+  "about": "Aircraft that fight wildfires: water scoopers, air tankers that drop red retardant, spotter planes, and helicopters that carry water.",
+  "spot": "Bright red, yellow or white paint, and big tanks or tank doors under the belly.",
+  "fact": "Super Scoopers skim across a lake and fill up with about 1,600 gallons of water in around 12 seconds.",
+  "wiki": "Aerial firefighting"
+ },
+ "Oddballs": {
+  "about": "Things that fly but aren't regular airplanes: gliders, balloons, gyroplanes and airships.",
+  "spot": "No engine noise from gliders and balloons, a free-spinning rotor on gyroplanes, and a giant floating body on airships.",
+  "fact": "Gliders can stay up for hours by circling in rising columns of warm air called thermals."
+ },
+ "Super haulers": {
+  "about": "The giants of cargo, built to carry loads too big for any other plane.",
+  "spot": "Enormous bodies, and noses or tails that open up so cargo can drive right in.",
+  "fact": "The An-124 and the C-5 can both lift their whole nose to load cargo straight in."
+ }
+}

@@ -19,15 +19,16 @@
      with a mute button.
    - localStorage keeps small conveniences: the highest dex number this
      browser has seen (for NEW tags and the catch reveal), the sound
-     setting, the site-wide theme, and whether today's report was read
-     or folded away.
+     setting, and whether today's report was read or folded away.
+   - Day or night follows the real sun in Spokane, with a live weather
+     sky behind the page: that's planedex-sky.js, loaded first.
    - No inline styles: colors come from classes, bars are <progress>. */
 (function () {
   'use strict';
 
   var API = '/api/planedex';
   var PHOTOS = '/tools/planedex/photos/';
-  var REFRESH_MS = 5 * 60 * 1000;
+  var REFRESH_MS = 60 * 1000;   // the PC pushes every 2 minutes; check every minute so the counts keep up
   var SEEN_KEY = 'planedex-seen';
   var SOUND_KEY = 'planedex-sound';
   var REPORT_READ_KEY = 'planedex-report-read';
@@ -141,7 +142,8 @@
 
   /* ---- real photos ------------------------------------------------------------ */
   /* Model photos live in /tools/planedex/photos/ (CODE.webp is 900x600,
-     CODE-s.webp is 192x96), listed with their credits in index.json.
+     CODE-m.webp 360x240, CODE-s.webp 192x96), listed with their credits
+     in index.json.
      Airliners also get a live lookup of the exact plane first caught
      (by registration) from Planespotters.net. Their rules: the
      photographer is credited right beside the photo, the photo links to
@@ -149,9 +151,10 @@
      anywhere, so it's asked for again on the next visit. */
 
   function photoOf(code) { return state.photos[code] || null; }
-  function photoSrc(code, small) { return PHOTOS + encodeURIComponent(code) + (small ? '-s' : '') + '.webp'; }
-  function photoImg(code, alt, lazy) {
-    return '<img class="photo-img" src="' + photoSrc(code) + '" width="900" height="600" alt="' + esc(alt || '') + '"'
+  // size: nothing for 900x600, 'm' for 360x240, anything else truthy for the 192x96 thumbnail
+  function photoSrc(code, size) { return PHOTOS + encodeURIComponent(code) + (size === 'm' ? '-m' : size ? '-s' : '') + '.webp'; }
+  function photoImg(code, alt, lazy, cls) {
+    return '<img class="photo-img' + (cls ? ' ' + cls : '') + '" src="' + photoSrc(code) + '" width="900" height="600" alt="' + esc(alt || '') + '"'
       + (lazy ? ' loading="lazy"' : '') + ' decoding="async">';
   }
   // List rows and family chains: a small photo once caught, else the sprite or silhouette.
@@ -167,15 +170,38 @@
       : esc(p.license);
   }
 
-  // The big picture at the top of an entry: photo if there is one, else the sprite on its sky stage.
-  function stageHTML(item, caught, inSheet) {
+  // Airframe photos looked up this visit: registration -> photo info, or null if there isn't one.
+  var frames = {};
+
+  // The big picture at the top of an entry. For an airliner, the exact plane first caught
+  // when Planespotters has it (opts.frame); else the model's photo; else the sprite on its
+  // sky stage. opts.pending draws an empty frame while that lookup is out, so the picture
+  // never switches from one photo to another in front of you.
+  function stageHTML(item, caught, inSheet, opts) {
+    opts = opts || {};
     var close = inSheet ? '<button class="sheet-close" type="button" data-close aria-label="Close">✕</button>' : '';
     var fresh = caught && isNew(item) ? '<span class="tag-new">NEW!</span>' : '';
+    var fade = opts.fade ? 'fade' : '';
+    if (opts.pending) {
+      return '<div class="stage photo-stage is-pending" data-stage="' + esc(item.code) + '">' + close
+        + '<span class="tuning">Finding <b>' + esc(regOf(item)) + '</b>…</span>' + fresh + '</div>';
+    }
+    var ph = opts.frame;
+    if (ph) {
+      var reg = item.first.reg;
+      return '<div class="stage photo-stage is-airframe" data-stage="' + esc(item.code) + '">' + close
+        + '<a class="photo-link" href="' + esc(ph.link) + '" target="_blank" rel="noopener">'
+        + '<img class="photo-img ' + fade + '" src="' + esc(ph.src) + '"' + (ph.w && ph.h ? ' width="' + ph.w + '" height="' + ph.h + '"' : '')
+        + ' alt="' + esc('The actual plane, ' + item.first.by + ' ' + reg) + '" decoding="async"></a>'
+        + realTag(reg) + fresh + '</div>'
+        + '<p class="credit" data-credit="' + esc(item.code) + '"><b>' + esc(reg) + '</b>, the actual plane we caught · <span aria-hidden="true">📷</span> '
+        + '<a href="' + esc(ph.link) + '" target="_blank" rel="noopener">' + esc(ph.by) + '</a> · Planespotters.net</p>';
+    }
     var p = caught && photoOf(item.code);
     if (p) {
       return '<div class="stage photo-stage" data-stage="' + esc(item.code) + '">' + close
-        + '<a class="photo-link" href="' + esc(p.source) + '" target="_blank" rel="noopener">' + photoImg(item.code, item.name) + '</a>'
-        + fresh + '</div>'
+        + '<a class="photo-link" href="' + esc(p.source) + '" target="_blank" rel="noopener">' + photoImg(item.code, item.name, false, fade) + '</a>'
+        + modelTag() + fresh + '</div>'
         + '<p class="credit" data-credit="' + esc(item.code) + '"><span aria-hidden="true">📷</span> <a href="' + esc(p.source) + '" target="_blank" rel="noopener">'
         + esc(p.by) + '</a> · ' + licenseHTML(p) + '</p>';
     }
@@ -183,6 +209,19 @@
       + '<span class="cloud c1"></span><span class="cloud c2"></span>'
       + spriteTag(item.code, item.types, !caught, 'big')
       + '<span class="ground"></span>' + fresh + '</div>';
+  }
+
+  function regOf(item) { return (item && item.dex && item.first && item.first.reg) || null; }
+  // Labels on the picture: the exact plane we caught, or just a plane of the same model.
+  function realTag(reg) { return '<span class="photo-tag real"><span aria-hidden="true">★</span> The actual plane · ' + esc(reg) + '</span>'; }
+  function modelTag() { return '<span class="photo-tag">Same model</span>'; }
+
+  // What to draw first: the known answer, or an empty frame while we ask.
+  function entryStage(item, inSheet) {
+    var reg = regOf(item);
+    if (!reg) return stageHTML(item, !!item.dex, inSheet);
+    if (reg in frames) return stageHTML(item, true, inSheet, { frame: frames[reg] });
+    return stageHTML(item, true, inSheet, { pending: true });
   }
 
   function airframe(reg) {
@@ -200,51 +239,67 @@
     return state.airframes[reg];
   }
 
-  // Swap in the photo of the exact plane, once it has loaded, if the entry is still on screen.
-  function upgradePhoto(item, root, inSheet) {
-    var reg = item.dex && item.first && item.first.reg;
-    if (!reg) return;
+  // Ask Planespotters for the exact plane (waiting a moment at most, image loaded and all),
+  // then hand the answer to done(frame or null). Answers are remembered for the visit.
+  function lookupFrame(reg, done) {
+    var settled = false;
+    var timer = setTimeout(function () { settled = true; done(null); }, 4000);  // most answers take under a second
     airframe(reg).then(function (ph) {
-      if (!ph) return;
+      function finish(frame) {
+        frames[reg] = frame;              // a late answer still shows next time
+        clearTimeout(timer);
+        if (!settled) { settled = true; done(frame); }
+      }
+      if (!ph) { finish(null); return; }
       var probe = new Image();
-      probe.onload = function () {
-        var stage = root.querySelector('[data-stage="' + item.code + '"]');
-        if (!stage) return;
-        var old = root.querySelector('[data-credit="' + item.code + '"]');
-        if (old) old.remove();
-        var close = inSheet ? '<button class="sheet-close" type="button" data-close aria-label="Close">✕</button>' : '';
-        var label = item.first.by + ' ' + reg;
-        var tpl = document.createElement('template');
-        tpl.innerHTML = '<div class="stage photo-stage is-airframe" data-stage="' + esc(item.code) + '">' + close
-          + '<a class="photo-link" href="' + esc(ph.link) + '" target="_blank" rel="noopener">'
-          + '<img class="photo-img" src="' + esc(ph.src) + '"' + (ph.w && ph.h ? ' width="' + ph.w + '" height="' + ph.h + '"' : '')
-          + ' alt="' + esc(label) + '" decoding="async"></a>'
-          + (isNew(item) ? '<span class="tag-new">NEW!</span>' : '') + '</div>'
-          + '<p class="credit" data-credit="' + esc(item.code) + '"><b>' + esc(reg) + '</b> · <span aria-hidden="true">📷</span> '
-          + '<a href="' + esc(ph.link) + '" target="_blank" rel="noopener">' + esc(ph.by) + '</a> · Planespotters.net</p>';
-        stage.replaceWith(tpl.content);
-      };
+      probe.onload = function () { finish(ph); };
+      probe.onerror = function () { finish(null); };
       probe.src = ph.src;
     });
   }
 
-  // Catch of the day: swap in the photo of the exact plane, like its entry does.
-  function upgradeCotd(item) {
-    airframe(item.first.reg).then(function (ph) {
-      if (!ph) return;
-      var probe = new Image();
-      probe.onload = function () {
-        var card = el.today.querySelector('[data-cotd="' + item.code + '"]');
-        var stage = card && card.querySelector('.cotd-btn .stage');
-        if (!stage || card.querySelector('.credit')) return;
-        var tpl = document.createElement('template');
-        tpl.innerHTML = '<span class="stage small photo-stage is-airframe"><img class="photo-img" src="' + esc(ph.src) + '"'
-          + (ph.w && ph.h ? ' width="' + ph.w + '" height="' + ph.h + '"' : '') + ' alt="" decoding="async"></span>';
-        stage.replaceWith(tpl.content);
-        card.insertAdjacentHTML('beforeend', '<p class="credit"><b>' + esc(item.first.reg) + '</b> · <span aria-hidden="true">📷</span> '
-          + '<a href="' + esc(ph.link) + '" target="_blank" rel="noopener">' + esc(ph.by) + '</a> · Planespotters.net</p>');
-      };
-      probe.src = ph.src;
+  // Fill in an entry's empty frame once the lookup is back, if that entry is still on screen.
+  function settleStage(item, root, inSheet) {
+    var reg = regOf(item);
+    if (!reg || reg in frames) return;
+    lookupFrame(reg, function (frame) {
+      var stage = root.querySelector('[data-stage="' + item.code + '"].is-pending');
+      if (!stage) return;
+      var tpl = document.createElement('template');
+      tpl.innerHTML = stageHTML(item, true, inSheet, { frame: frame, fade: true });
+      stage.replaceWith(tpl.content);
+    });
+  }
+
+  // Catch of the day's picture: the exact plane when we have it, like its entry.
+  function cotdPic(s, opts) {
+    opts = opts || {};
+    if (opts.pending) return '<span class="stage small photo-stage is-pending"><span class="tuning">Finding <b>' + esc(regOf(s)) + '</b>…</span></span>';
+    var ph = opts.frame;
+    if (ph) {
+      return '<span class="stage small photo-stage is-airframe"><img class="photo-img ' + (opts.fade ? 'fade' : '') + '" src="' + esc(ph.src) + '"'
+        + (ph.w && ph.h ? ' width="' + ph.w + '" height="' + ph.h + '"' : '') + ' alt="" decoding="async">' + realTag(s.first.reg) + '</span>';
+    }
+    return photoOf(s.code)
+      ? '<span class="stage small photo-stage">' + photoImg(s.code, '', true, opts.fade ? 'fade' : '') + modelTag() + '</span>'
+      : '<span class="stage small t-' + esc(s.types[0]) + '"><span class="cloud c1"></span>' + spriteTag(s.code, s.types, false, 'big') + '<span class="ground"></span></span>';
+  }
+  function cotdCredit(s, ph) {
+    return '<p class="credit"><b>' + esc(s.first.reg) + '</b>, the actual plane we caught · <span aria-hidden="true">📷</span> '
+      + '<a href="' + esc(ph.link) + '" target="_blank" rel="noopener">' + esc(ph.by) + '</a> · Planespotters.net</p>';
+  }
+  function settleCotd(s) {
+    var reg = regOf(s);
+    if (!reg || reg in frames) return;
+    lookupFrame(reg, function (frame) {
+      var card = el.today.querySelector('[data-cotd="' + s.code + '"]');
+      var stage = card && card.querySelector('.cotd-btn .stage.is-pending');
+      if (!stage) return;
+      var tpl = document.createElement('template');
+      tpl.innerHTML = cotdPic(s, { frame: frame, fade: true });
+      stage.replaceWith(tpl.content);
+      paintSprites(card);
+      if (frame) card.insertAdjacentHTML('beforeend', cotdCredit(s, frame));
     });
   }
 
@@ -396,20 +451,50 @@
     el.xp.value = maxed ? 1 : Math.max(0, L.xp - L.prev);
     el.xpText.textContent = maxed ? num(L.xp) + ' XP · MAX LEVEL!' : num(L.xp) + ' XP · ' + num(L.next - L.xp) + ' to LV ' + (L.level + 1);
     el.level.hidden = false;
-    var t = d.totals;
-    var known = t.known || t.species;
-    el.stats.innerHTML = [
-      ['Species', num(t.species) + '<small>/' + num(known) + '</small>'],
-      ['Planes', num(t.planes)],
-      ['Airlines', num(t.airlines)],
-      ['Countries', num(t.countries)],
-      ['Badges', num(t.badges) + '<small>/' + num(t.badgesTotal) + '</small>']
-    ].map(function (c) { return '<div><dt>' + c[0] + '</dt><dd>' + c[1] + '</dd></div>'; }).join('');
+    var t = d.totals, td = d.today || {}, prev = state.shownTotals;
+    // Our own counts, said plainly ("509 planes spotted"), with today's firsts underneath.
+    // When a refresh brings bigger numbers, they count up and the box flashes.
+    var stats = [
+      ['species', 'plane models caught', t.known || t.species, td.newSpecies, 'Different kinds of plane we have caught, out of all the ones in the catalog'],
+      ['planes', 'planes spotted', null, td.newPlanes, 'Different airplanes, each one counted once'],
+      ['airlines', 'airlines spotted', null, td.newAirlines, 'Airlines whose planes we have spotted'],
+      ['countries', 'countries spotted', null, td.newCountries, 'Countries the planes we spotted come from'],
+      ['badges', 'badges earned', t.badgesTotal, null, 'Badge levels earned so far']
+    ];
+    el.stats.innerHTML = stats.map(function (c) {
+      var v = t[c[0]] || 0;
+      var from = prev && typeof prev[c[0]] === 'number' && prev[c[0]] < v ? prev[c[0]] : v;
+      return '<div class="stat' + (from !== v ? ' bump' : '') + '" title="' + esc(c[4]) + '"><dt>' + c[1] + '</dt>'
+        + '<dd><b class="count" data-to="' + v + '">' + num(from) + '</b>' + (c[2] ? '<small> of ' + num(c[2]) + '</small>' : '') + '</dd>'
+        + (c[3] ? '<dd class="stat-today">+' + num(c[3]) + ' today</dd>' : '') + '</div>';
+    }).join('');
+    state.shownTotals = { species: t.species, planes: t.planes, airlines: t.airlines, countries: t.countries, badges: t.badges };
+    countUp(el.stats);
     el.stats.hidden = false;
     $('n-dex').textContent = t.species;
     $('n-wanted').textContent = d.wanted.filter(function (w) { return !w.caught; }).length;
     $('n-badges').textContent = t.badges + '/' + t.badgesTotal;
     updateClock();
+  }
+
+  // Numbers that went up since the last refresh tick up to their new value.
+  function countUp(root) {
+    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var any = false;
+    root.querySelectorAll('.count[data-to]').forEach(function (n) {
+      var to = +n.getAttribute('data-to');
+      var from = +String(n.textContent).replace(/[^0-9]/g, '');
+      if (from === to) return;
+      any = true;
+      if (still) { n.textContent = num(to); return; }
+      var t0 = performance.now(), ms = 900;
+      (function step(now) {
+        var k = Math.min(1, (now - t0) / ms);
+        n.textContent = num(Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3))));
+        if (k < 1) requestAnimationFrame(step);
+      })(t0);
+    });
+    if (any) Sound.blip();
   }
 
   function updateClock() {
@@ -485,7 +570,7 @@
       return f.members.some(function (m) { return m.code === item.code; });
     })[0];
     var name = caught ? item.name : '?????';
-    var html = stageHTML(item, caught, inSheet)
+    var html = entryStage(item, inSheet)
       + '<div class="plate"><span class="plate-no">' + no(item.dex) + '</span>'
       + '<h2 class="plate-name" id="' + (inSheet ? 'pdx-detail-title' : 'entry-title') + '">' + esc(name) + '</h2></div>'
       + '<div class="entry-meta">' + typeChips(item.types) + stars(item.rarity) + '</div>';
@@ -500,8 +585,9 @@
     } else {
       html += '<div class="textbox"><p><b>Hint:</b> ' + esc(item.fact || 'Keep watching the sky.') + '</p></div>';
     }
-    if (fam) html += '<div class="entry-fam"><p class="mini-h">' + esc(fam.name.replace(/ family$/i, '')) + ' family · '
-      + fam.members.filter(function (m) { return m.caught; }).length + '/' + fam.members.length + '</p>' + chain(fam.members, item.code) + '</div>';
+    if (fam) html += '<div class="entry-fam"><button class="mini-h fam-link" type="button" data-family="' + esc(fam.name) + '">'
+      + esc(fam.name.replace(/ family$/i, '')) + ' family · ' + fam.members.filter(function (m) { return m.caught; }).length + '/' + fam.members.length
+      + ' <span aria-hidden="true">▶</span></button>' + chain(fam.members, item.code) + '</div>';
     return html;
   }
 
@@ -517,7 +603,7 @@
     } else {
       el.entry.innerHTML = entryHTML(item, false);
       paintSprites(el.entry);
-      upgradePhoto(item, el.entry, false);
+      settleStage(item, el.entry, false);
     }
     if (fromUser) Sound.blip();
   }
@@ -525,7 +611,7 @@
   function openSheet(item) {
     el.sheetBody.innerHTML = entryHTML(item, true);
     paintSprites(el.sheetBody);
-    upgradePhoto(item, el.sheetBody, true);
+    settleStage(item, el.sheetBody, true);
     if (!el.sheet.open) {
       if (typeof el.sheet.showModal === 'function') el.sheet.showModal();
       else el.sheet.setAttribute('open', '');
@@ -594,7 +680,10 @@
     }));
     el.list.innerHTML = rows.length ? rows.join('') : '<li class="empty">No match.</li>';
     paintSprites(el.list);
-    el.shown.textContent = num(d.species.length) + ' caught · ' + num((d.missing || []).length) + ' still out there';
+    var caughtN = d.species.length, leftN = (d.missing || []).length;
+    el.shown.innerHTML = '<span class="dc-caught"><b>' + num(caughtN) + '</b> models caught</span>'
+      + '<progress max="' + Math.max(1, caughtN + leftN) + '" value="' + caughtN + '" aria-hidden="true"></progress>'
+      + '<span class="dc-left"><b>' + num(leftN) + '</b> still out there</span>';
     var target = state.sel && el.list.querySelector('.row[data-code="' + state.sel + '"]');
     if (!target) {
       var first = el.list.querySelector('.row');
@@ -605,6 +694,90 @@
   }
 
   /* ---- today ------------------------------------------------------------------- */
+
+  var RADAR_FIRST = 12;   // cards shown before "Show all"
+  var LOG_FIRST = 30;     // radio log lines shown before "Show more"
+  var MEDALS = ['bronze', 'silver', 'gold', 'platinum', 'platinum'];
+
+  // A badge's little medal for the radio log, painted by planedex-badges.js.
+  function badgeMini(id) {
+    var d = state.data, b = null, tier = 0;
+    d.badges.forEach(function (x) { if (x.id === id) b = x; });
+    if (!b) {
+      var m = /^(.*)-(\d+)$/.exec(id || '');
+      if (m) d.badges.forEach(function (x) { if (x.id === m[1]) { b = x; tier = +m[2]; } });
+    }
+    if (!b || !BA) return '<span class="log-pic blank"></span>';
+    var a = BA.art(b.id);
+    var look = b.kind === 'ladder' ? 'medal' : (b.secret ? 'star' : 'wings');
+    var metal = b.kind === 'ladder' ? MEDALS[Math.max(0, tier - 1)] : (b.medal || 'gold');
+    return '<canvas class="badge-art log-pic" width="40" height="34" aria-hidden="true" data-look="' + look + '" data-icon="' + esc(a[0]) + '"'
+      + (a[1] ? ' data-tint="' + esc(a[1]) + '"' : '') + ' data-metal="' + esc(metal) + '"'
+      + (b.kind === 'ladder' ? ' data-ribbon="' + (Math.max(0, d.badges.indexOf(b)) % 8) + '"' : '') + '></canvas>';
+  }
+
+  // Every type that showed up today, rarest first, each with its photo.
+  function radarHTML(d) {
+    var seen = d.species.filter(function (s) { return s.today; });
+    if (!seen.length) return '';
+    var today = d.today.date;
+    seen.sort(function (a, b) {
+      return b.rarity - a.rarity || (b.todayCount || 0) - (a.todayCount || 0) || a.dex - b.dex;
+    });
+    var all = state.radarAll || seen.length <= RADAR_FIRST + 2;
+    var shown = all ? seen : seen.slice(0, RADAR_FIRST);
+    return '<div class="win radar"><p class="win-title">On our radar today <span class="win-sub">'
+      + plural(d.today.planes, 'plane', 'planes') + ' · ' + plural(seen.length, 'model', 'models') + '</span></p>'
+      + '<ul class="radar-grid">' + shown.map(function (s) {
+        var first = parseKey(s.first && s.first.when);
+        var fresh = first && first.day === today;
+        var pic = photoOf(s.code)
+          ? '<img src="' + photoSrc(s.code, 'm') + '" width="360" height="240" alt="" loading="lazy" decoding="async">'
+          : spriteTag(s.code, s.types, false, 'radar-sprite');
+        return '<li><button class="radar-card r' + s.rarity + '" type="button" data-goto="' + esc(s.code) + '">'
+          + '<span class="radar-pic">' + pic + (fresh ? '<span class="tag-new">NEW</span>' : '') + '</span>'
+          + '<span class="radar-name">' + esc(s.name) + '</span>'
+          + '<span class="radar-meta">' + stars(s.rarity)
+          + (s.todayCount ? '<span class="radar-n" title="Different planes of this type today">×' + num(s.todayCount) + '</span>' : '')
+          + '</span></button></li>';
+      }).join('') + '</ul>'
+      + (all ? '' : '<button class="more-btn" type="button" data-more="radar">Show all ' + num(seen.length) + ' ▼</button>')
+      + '</div>';
+  }
+
+  // The radio log: newest first, one block per hour, each line with a picture
+  // (the plane, the badge, or the country's flag) so it scans at a glance.
+  function radioHTML(d) {
+    var rows = [];
+    var lastDay = null, lastHour = null, shown = 0;
+    var limit = state.logAll ? d.log.length : LOG_FIRST;
+    d.log.forEach(function (e) {
+      if (shown >= limit) return;
+      var p = parseKey(e.when);
+      if (!p) return;
+      var line;
+      if (e.kind === 'species') {
+        var sp = state.byCode[e.code];
+        if (!sp) return;
+        line = '<li class="log-line k-new">' + thumb(sp, true, 'log-pic')
+          + '<span class="lt lt-new">NEW</span><span class="log-x"><button class="link" type="button" data-goto="' + esc(sp.code) + '">'
+          + '<span class="log-no">' + no(sp.dex) + '</span> ' + esc(sp.name) + '</button> ' + stars(sp.rarity) + '</span></li>';
+      } else if (e.kind === 'badge') {
+        line = '<li class="log-line k-badge">' + badgeMini(e.id)
+          + '<span class="lt lt-badge">BADGE</span><span class="log-x"><button class="link" type="button" data-tab="badges">' + esc(e.name) + '</button></span></li>';
+      } else {
+        line = '<li class="log-line k-stamp"><span class="log-pic flag-pic">' + flag(e.code, true) + '</span>'
+          + '<span class="lt lt-stamp">STAMP</span><span class="log-x"><button class="link" type="button" data-tab="passport">' + esc(e.name) + '</button></span></li>';
+      }
+      if (p.day !== lastDay) { rows.push('<li class="log-day">' + esc(dayLabel(p.day)) + '</li>'); lastDay = p.day; lastHour = null; }
+      if (p.h !== lastHour) { rows.push('<li class="log-hour"><span>' + esc(p.h == null ? '' : fmtHour(p.h)) + '</span></li>'); lastHour = p.h; }
+      rows.push(line);
+      shown++;
+    });
+    var more = !state.logAll && d.log.length > LOG_FIRST;
+    return '<div class="win radio"><p class="win-title">Radio log</p><ul class="log">' + rows.join('') + '</ul>'
+      + (more ? '<button class="more-btn" type="button" data-more="log">Show more ▼</button>' : '') + '</div>';
+  }
 
   function renderToday(d) {
     var t = d.today;
@@ -621,45 +794,26 @@
     var cotd = '';
     var s = t.catch && state.byCode[t.catch.code];
     if (s) {
-      var pic = photoOf(s.code)
-        ? '<span class="stage small photo-stage">' + photoImg(s.code, '', true) + '</span>'
-        : '<span class="stage small t-' + esc(s.types[0]) + '"><span class="cloud c1"></span>' + spriteTag(s.code, s.types, false, 'big') + '<span class="ground"></span></span>';
+      var reg = regOf(s);
+      var known = reg && (reg in frames) ? frames[reg] : null;
+      var pic = cotdPic(s, reg && !(reg in frames) ? { pending: true } : { frame: known });
       cotd = '<div class="win cotd" data-cotd="' + esc(s.code) + '"><p class="win-title">Catch of the day' + (t.catch.isNew ? ' <span class="tag-new">NEW!</span>' : '') + '</p>'
         + '<button class="cotd-btn" type="button" data-goto="' + esc(s.code) + '">' + pic
         + '<span class="cotd-name"><span class="plate-no">' + no(s.dex) + '</span> ' + esc(s.name) + '</span>'
-        + '<span class="cotd-meta">' + typeChips(s.types) + stars(s.rarity) + '</span></button></div>';
+        + '<span class="cotd-meta">' + typeChips(s.types) + stars(s.rarity) + '</span></button>'
+        + (known ? cotdCredit(s, known) : '') + '</div>';
     }
-
-    var log = [];
-    var lastDay = null;
-    d.log.slice(0, 18).forEach(function (e) {
-      var p = parseKey(e.when);
-      if (!p) return;
-      if (p.day !== lastDay) { log.push('<li class="log-day">' + esc(dayLabel(p.day)) + '</li>'); lastDay = p.day; }
-      var tag, text;
-      if (e.kind === 'species') {
-        var sp = state.byCode[e.code];
-        if (!sp) return;
-        tag = '<span class="lt lt-new">NEW</span>';
-        text = '<button class="link" type="button" data-goto="' + esc(sp.code) + '">' + no(sp.dex) + ' ' + esc(sp.name) + '</button>';
-      } else if (e.kind === 'badge') {
-        tag = '<span class="lt lt-badge">BADGE</span>';
-        text = '<button class="link" type="button" data-tab="badges">' + esc(e.name) + '</button>';
-      } else {
-        tag = '<span class="lt lt-stamp">STAMP</span>';
-        text = '<button class="link" type="button" data-tab="passport">' + esc(e.name) + '</button>';
-      }
-      log.push('<li class="log-line"><span class="log-t">' + esc(p.h == null ? '' : fmtHour(p.h)) + '</span>' + tag + '<span class="log-x">' + text + '</span></li>');
-    });
+    var radar = radarHTML(d);
 
     el.today.innerHTML = '<div class="today-grid"><div class="today-col">'
       + '<div class="win"><p class="win-title">Daily missions <span class="win-sub">' + done + '/' + t.quests.length + ' done</span></p>'
       + '<ul class="missions">' + missions + '</ul></div>'
       + cotd
-      + '<p class="today-line"><b>' + num(t.planes) + '</b> planes today' + (t.newSpecies ? ' · <b>' + num(t.newSpecies) + '</b> new' : '') + '</p>'
-      + '</div><div class="win radio"><p class="win-title">Radio log</p><ul class="log">' + log.join('') + '</ul></div></div>';
+      + (radar ? '' : '<p class="today-line"><b>' + num(t.planes) + '</b> planes today' + (t.newSpecies ? ' · <b>' + num(t.newSpecies) + '</b> new' : '') + '</p>')
+      + '</div>' + radar + radioHTML(d) + '</div>';
     paintSprites(el.today);
-    if (s && s.first && s.first.reg) upgradeCotd(s);
+    if (BA) el.today.querySelectorAll('canvas.badge-art').forEach(function (c) { BA.paint(c); });
+    if (s) settleCotd(s);
   }
 
   /* ---- wanted posters ------------------------------------------------------------ */
@@ -697,20 +851,93 @@
     }).join('') + '</ol>';
   }
 
+  // Family pages (what each family is, how to spot one, a fun fact) come
+  // from families.json, loaded once alongside the photo and logo lists.
+  function loadFamilyInfo() {
+    return fetch('/tools/planedex/families.json', { cache: 'no-cache' })
+      .then(function (r) { return r.ok ? r.json() : {}; })
+      .catch(function () { return {}; })
+      .then(function (j) {
+        state.famInfo = j || {};
+        if (state.data) renderFamilies(state.data);
+      });
+  }
+  function icon(name, cls) {
+    return '<canvas class="pix-ico ' + (cls || '') + '" width="12" height="12" data-icon="' + esc(name) + '" aria-hidden="true"></canvas>';
+  }
+  function paintIcons(root) {
+    if (BA && BA.paintIcon) root.querySelectorAll('canvas.pix-ico').forEach(function (c) { BA.paintIcon(c); });
+  }
+  function familyOf(name) {
+    return (state.data.families || []).filter(function (f) { return f.name === name; })[0] || null;
+  }
+
   function renderFamilies(d) {
+    var info = state.famInfo || {};
     var done = d.families.filter(function (f) { return f.done; }).length;
     var order = d.families.slice().sort(function (a, b) {
       function frac(f) { return f.members.filter(function (m) { return m.caught; }).length / f.members.length; }
       return (b.done - a.done) || (frac(b) - frac(a)) || a.name.localeCompare(b.name);
     });
-    el.families.innerHTML = '<div class="win intro"><p class="win-title">Families <span class="win-sub">' + done + '/' + d.families.length + ' complete</span></p></div>'
+    el.families.innerHTML = '<div class="win intro"><p class="win-title">Families <span class="win-sub">' + done + '/' + d.families.length + ' complete</span></p>'
+      + '<p class="intro-tip">Tap a family to learn what makes it special and how to spot one.</p></div>'
       + '<div class="fam-grid">' + order.map(function (f) {
         var have = f.members.filter(function (m) { return m.caught; }).length;
-        return '<div class="win fam' + (f.done ? ' done' : '') + '"><p class="fam-h"><span>' + esc(f.name) + '</span>'
-          + (f.done ? '<span class="done-tag">COMPLETE</span>' : '<span class="fam-n">' + have + '/' + f.members.length + '</span>') + '</p>'
+        var about = info[f.name] && info[f.name].about;
+        return '<div class="win fam' + (f.done ? ' done' : '') + '">'
+          + '<button class="fam-open" type="button" data-family="' + esc(f.name) + '">'
+          + '<span class="fam-h"><span class="fam-name">' + esc(f.name) + '</span>'
+          + (f.done ? '<span class="done-tag">COMPLETE</span>' : '<span class="fam-n">' + have + '/' + f.members.length + '</span>') + '</span>'
+          + (about ? '<span class="fam-teaser">' + esc(about) + '</span>' : '')
+          + '<span class="fam-go">Learn more ▶</span></button>'
           + chain(f.members) + '</div>';
       }).join('') + '</div>';
     paintSprites(el.families);
+  }
+
+  // A family's page, in the sheet: what it is, how to spot one, a fun fact, and its members.
+  function openFamily(name) {
+    var f = familyOf(name);
+    if (!f) return;
+    var info = (state.famInfo || {})[name] || {};
+    var have = f.members.filter(function (m) { return m.caught; }).length;
+    var star = f.members.filter(function (m) { return m.caught && photoOf(m.code); })[0]
+      || f.members.filter(function (m) { return photoOf(m.code); })[0];
+    var hero = star
+      ? '<div class="stage photo-stage fp-hero' + (star.caught ? '' : ' not-yet') + '">' + photoImg(star.code, star.name) + '</div>'
+      : '';
+    var members = f.members.map(function (m) {
+      var item = lookup(m.code) || { code: m.code, types: ['jet'] };
+      var sp = m.caught && state.byCode[m.code];
+      var pic = photoOf(m.code)
+        ? '<img src="' + photoSrc(m.code, 'm') + '" width="360" height="240" alt="" loading="lazy" decoding="async">'
+        : spriteTag(m.code, item.types, !sp, 'fp-sprite');
+      return '<li><button class="fp-m' + (sp ? ' caught' : '') + '" type="button" data-goto="' + esc(m.code) + '">'
+        + '<span class="fp-pic">' + pic + '</span>'
+        + '<span class="fp-text"><span class="fp-name">' + esc(m.name) + '</span>'
+        + (item.fact ? '<span class="fp-fact">' + esc(item.fact) + '</span>' : '') + '</span>'
+        + '<span class="fp-status">' + (sp ? no(sp.dex) + ' <b>✓</b>' : 'Not yet') + '</span></button></li>';
+    }).join('');
+    el.sheetBody.innerHTML = '<button class="sheet-close" type="button" data-close aria-label="Close">✕</button>'
+      + '<div class="fam-page"><p class="mini-h">Plane family</p>'
+      + '<h2 class="fp-title" id="pdx-detail-title">' + esc(f.name) + '</h2>'
+      + '<div class="fp-prog"><progress max="' + f.members.length + '" value="' + have + '" aria-label="Caught ' + have + ' of ' + f.members.length + '"></progress>'
+      + '<span>' + have + '/' + f.members.length + ' caught</span>' + (f.done ? '<span class="done-tag">COMPLETE</span>' : '') + '</div>'
+      + hero
+      + (info.about ? '<div class="textbox fp-about"><p>' + esc(info.about) + '</p></div>' : '')
+      + (info.spot ? '<div class="fp-box spot"><p class="fp-h">' + icon('binoculars') + 'How to spot one</p><p>' + esc(info.spot) + '</p></div>' : '')
+      + (info.fact ? '<div class="fp-box fact"><p class="fp-h">' + icon('star') + 'Fun fact</p><p>' + esc(info.fact) + '</p></div>' : '')
+      + '<p class="fp-h members-h">' + icon('familytree') + 'In this family</p><ul class="fp-members">' + members + '</ul>'
+      + (info.wiki ? '<p class="fp-more"><a href="https://en.wikipedia.org/wiki/' + encodeURIComponent(info.wiki.replace(/ /g, '_')) + '" target="_blank" rel="noopener">Read more on Wikipedia ↗</a></p>' : '')
+      + '</div>';
+    paintSprites(el.sheetBody);
+    paintIcons(el.sheetBody);
+    if (!el.sheet.open) {
+      if (typeof el.sheet.showModal === 'function') el.sheet.showModal();
+      else el.sheet.setAttribute('open', '');
+    }
+    el.sheetBody.scrollTop = 0;
+    Sound.blip();
   }
 
   /* ---- badges ---------------------------------------------------------------------------- */
@@ -719,7 +946,6 @@
     var ladders = d.badges.filter(function (b) { return b.kind === 'ladder'; });
     var singles = d.badges.filter(function (b) { return b.kind !== 'ladder' && !b.secret; });
     var secrets = d.badges.filter(function (b) { return b.kind !== 'ladder' && b.secret; });
-    var MEDALS = ['bronze', 'silver', 'gold', 'platinum', 'platinum'];
     function amount(b, n) { return b.unit === 'ft' ? num(n) + ' ft' : (b.lower ? String(n) : num(n)); }
 
     function artTag(b, look, metal, ribbon) {
@@ -845,11 +1071,22 @@
     var s = state.reveal[state.revealAt];
     if (!s) { closeReveal(); return; }
     var last = state.revealAt === state.reveal.length - 1;
-    var more = last && state.revealExtra > 0 ? ' And ' + plural(state.revealExtra, 'more new species', 'more new species') + ' in the Dex.' : '';
+    var more = last && state.revealExtra > 0 ? ' And ' + plural(state.revealExtra, 'more new plane model', 'more new plane models') + ' in the Dex.' : '';
     var sparkles = '<span class="sparkle s1"></span><span class="sparkle s2"></span><span class="sparkle s3"></span>';
-    var pic = photoOf(s.code)
-      ? '<div class="stage reveal-stage photo-stage">' + photoImg(s.code, s.name) + sparkles + '</div>'
-      : '<div class="stage reveal-stage t-' + esc(s.types[0]) + '"><span class="cloud c1"></span><span class="cloud c2"></span>' + spriteTag(s.code, s.types, false, 'big') + '<span class="ground"></span>' + sparkles + '</div>';
+    var reg = regOf(s);
+    function revealPic(opts) {
+      opts = opts || {};
+      if (opts.pending) return '<div class="stage reveal-stage photo-stage is-pending"><span class="tuning">Finding <b>' + esc(reg) + '</b>…</span>' + sparkles + '</div>';
+      if (opts.frame) {
+        return '<div class="stage reveal-stage photo-stage is-airframe"><img class="photo-img' + (opts.fade ? ' fade' : '') + '" src="' + esc(opts.frame.src) + '"'
+          + (opts.frame.w && opts.frame.h ? ' width="' + opts.frame.w + '" height="' + opts.frame.h + '"' : '') + ' alt="" decoding="async">'
+          + realTag(reg) + sparkles + '</div>';
+      }
+      return photoOf(s.code)
+        ? '<div class="stage reveal-stage photo-stage">' + photoImg(s.code, s.name, false, opts.fade ? 'fade' : '') + modelTag() + sparkles + '</div>'
+        : '<div class="stage reveal-stage t-' + esc(s.types[0]) + '"><span class="cloud c1"></span><span class="cloud c2"></span>' + spriteTag(s.code, s.types, false, 'big') + '<span class="ground"></span>' + sparkles + '</div>';
+    }
+    var pic = revealPic(reg && !(reg in frames) ? { pending: true } : { frame: reg ? frames[reg] : null });
     el.reveal.innerHTML = '<div class="reveal-rays" aria-hidden="true"></div>'
       + '<div class="reveal-card">'
       + '<p class="reveal-kicker" id="reveal-title">NEW CATCH!</p>'
@@ -863,6 +1100,16 @@
     el.reveal.hidden = false;
     document.body.classList.add('no-scroll');
     paintSprites(el.reveal);
+    if (reg && !(reg in frames)) {
+      lookupFrame(reg, function (frame) {
+        var stage = el.reveal.querySelector('.reveal-stage.is-pending');
+        if (!stage || state.reveal[state.revealAt] !== s) return;
+        var tpl = document.createElement('template');
+        tpl.innerHTML = revealPic({ frame: frame, fade: true });
+        stage.replaceWith(tpl.content);
+        paintSprites(el.reveal);
+      });
+    }
     var next = $('reveal-next');
     next.focus();
     next.addEventListener('click', function () {
@@ -993,28 +1240,156 @@
       });
   }
 
-  /* ---- theme & sound buttons ------------------------------------------------------------------------- */
+  /* ---- the banner: our kid spotter snaps the flyby plane ----------------------------------- */
+  /* A plane flies across the title bar; a kid with a big aviation headset
+     pops up beside the PLANEDEX title, snaps its picture, the plane zips
+     into the camera and an instant photo pops out. Original pixel art, on
+     a canvas behind the title (so the plane passes behind the letters).
+     Every half minute or so; nothing moves with reduced motion. */
+
+  var Banner = (function () {
+    var KID_PAL = { k: '#0b1022', n: '#7a4a2a', N: '#a26a3e', s: '#f0c39b', S: '#d99b74', h: '#ff9a3d', H: '#d9731f',
+      e: '#d5dce6', d: '#6b7686', r: '#e2402f', g: '#b8c1ce', G: '#7d8796', w: '#ffffff', b: '#20304f' };
+    // 16x20, facing left. AIM: camera up to the eye. CHEER: photo held high.
+    var AIM = ['......kk.kk.....', '.....knnknnk....', '....knNnnnnnk...', '...kdeeeeeeedk..', '...dnnnnnnnnnd..',
+      '..kddnnsssnnddk.', '.kkkkkksskssddk.', 'kGgggggksssskdk.', 'kgkbbkgksSssk.r.', 'kgbwbbgkssssrk..',
+      'kgkbbkgkkkkkk...', 'kggggggkhhhhhk..', '.kkkkkksshhhhhk.', '....khsshhhhHhk.', '....khhhhhhhHhk.',
+      '....khhhhhhhHhk.', '....khhhhhhhHhk.', '....khhhhhhhHhk.', '....khhhhhhhHhk.', '....khhhhhhhHhk.'];
+    var CHEER = ['.kkk............', '.kssk..kk.kk....', '.kssk.knnknnk...', '..khkknNnnnnnk..', '..khkdeeeeeeedk.',
+      '..khkdnnnnnnnnd.', '..khkddssssssddk', '..khkdsskssksddk', '..khhkssssssssk.', '...khkssSssSsrk.',
+      '...khkkssrrssk..', '...khhkkssssk...', '....khhhkkkkhk..', '....khhhhhhhhhk.', '....khhhhhhhHhgk',
+      '....khhhhhhhHgGk', '....khhhhhhhHhk.', '....khhhhhhhHhk.', '....khhhhhhhHhk.', '....khhhhhhhHhk.'];
+    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var cv, ctx, hud, planeImg, scale = 2, W = 0, H = 0, run = null, timer = 0;
+
+    function sprite(rows, x, y, clipY) {
+      for (var r = 0; r < rows.length; r++) {
+        if (y + r >= clipY) break;
+        for (var c = 0; c < 16; c++) {
+          var ch = rows[r].charAt(c);
+          if (ch === '.') continue;
+          ctx.fillStyle = KID_PAL[ch];
+          ctx.fillRect(x + c, y + r, 1, 1);
+        }
+      }
+    }
+    // A little instant photo with a plane in a blue sky.
+    function photo(x, y) {
+      ctx.fillStyle = '#0b1022'; ctx.fillRect(x - 1, y - 1, 16, 14);
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(x, y, 14, 12);
+      ctx.fillStyle = '#7cc8ff'; ctx.fillRect(x + 1, y + 1, 12, 8);
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(x + 4, y + 5, 6, 1); ctx.fillRect(x + 6, y + 3, 2, 4);
+      ctx.fillStyle = '#e2402f'; ctx.fillRect(x + 3, y + 4, 1, 2);
+    }
+
+    function measure() {
+      var r = hud.getBoundingClientRect();
+      var logo = document.querySelector('.logo-link');
+      if (!logo || !r.width) return null;
+      var range = document.createRange();
+      range.selectNodeContents(logo);
+      var t = range.getBoundingClientRect();
+      scale = r.width >= 900 ? 3 : 2;
+      var w = Math.ceil(r.width / scale), h = Math.ceil(r.height / scale);
+      if (w !== W || h !== H) { W = cv.width = w; H = cv.height = h; }
+      var kx = Math.round((t.right - r.left) / scale) + (scale === 3 ? 14 : 8);
+      var bar = document.querySelector('.hud-top');
+      return {
+        kidX: kx + 16 <= W - 4 ? kx : null,                    // no room beside the title: just the flyby
+        ground: Math.round((t.bottom - r.top) / scale) - 2,    // the kid hides below the title's baseline
+        top: bar ? Math.ceil((bar.getBoundingClientRect().bottom - r.top) / scale) + 1 : 0,  // stay clear of the buttons
+        planeY: Math.round((t.top - r.top) / scale) - (scale === 3 ? 6 : 4)
+      };
+    }
+
+    function frame(now) {
+      var m = run.m, t = (now - run.t0) / 1000;
+      ctx.clearRect(0, 0, W, H);
+      var px = -52 + t * run.v;                     // plane's left edge
+      var kid = m.kidX;
+      var snapAt = kid == null ? Infinity : (kid - 26 - 48 + 52) / run.v;   // nose about 26px from the kid
+      var risen = 0, pose = AIM, done = false;
+      if (kid != null) {
+        var popAt = snapAt - 1.1;
+        if (t > popAt) risen = Math.min(1, (t - popAt) / 0.25);
+        if (t > snapAt + 2.6) risen = Math.max(0, 1 - (t - snapAt - 2.6) / 0.3);
+      }
+      // the plane, then the capture
+      if (t < snapAt) {
+        ctx.drawImage(planeImg, Math.round(px), m.planeY);
+      } else if (t < snapAt + 0.4) {
+        var k = (t - snapAt) / 0.4;                 // shrink into the lens
+        var sx = -52 + snapAt * run.v, lens = [kid + 1, m.ground - 20 * risen + 9];
+        var w = Math.max(2, Math.round(48 * (1 - k))), hh = Math.max(1, Math.round(24 * (1 - k)));
+        var x = Math.round(sx + (lens[0] - sx - 24) * k + 24 - w / 2), y = Math.round(m.planeY + (lens[1] - m.planeY - 12) * k + 12 - hh / 2);
+        ctx.globalAlpha = (Math.floor(k * 8) % 2) ? 0.55 : 1;
+        ctx.drawImage(planeImg, x, y, w, hh);
+        ctx.globalAlpha = 1;
+      }
+      if (kid != null && risen > 0) {
+        var ky = Math.round(m.ground - 20 * risen);
+        if (t > snapAt + 0.75) pose = CHEER;
+        sprite(pose, kid, ky, m.ground);
+        if (t >= snapAt && t < snapAt + 0.22) {      // the flash: bright white, then fading
+          var f = (t - snapAt) / 0.22;
+          ctx.fillStyle = 'rgba(255,255,240,' + (f < 0.5 ? 1 : 2 - 2 * f) + ')';
+          var rr = Math.round(2 + f * 7);
+          ctx.fillRect(kid + 1 - rr, ky + 9 - Math.round(rr / 2), rr * 2, rr);
+          ctx.fillRect(kid + 1 - Math.round(rr / 2), ky + 9 - rr, rr, rr * 2);
+        }
+        // the instant photo slides out of the bottom of the camera
+        if (t > snapAt + 0.4 && t <= snapAt + 0.75) photo(kid - 5, Math.round(ky + 9 + 6 * ((t - snapAt - 0.4) / 0.35)));
+        if (t > snapAt + 0.75 && ky < m.ground - 4) {
+          // the photo held up high when there's room above, else held out to the side
+          var above = ky - 13 >= m.top;
+          if (above || kid + 33 <= W) photo(above ? kid - 4 : kid + 17, above ? ky - 12 : ky + 3);
+          var tx = above ? kid + 12 : kid + 35, ty = above ? Math.max(m.top, ky - 12) : ky + 4;
+          if (t < snapAt + 2.4 && tx + 43 <= W) {
+            ctx.font = '700 8px Silkscreen, monospace';
+            ctx.textBaseline = 'top';
+            ctx.fillStyle = '#0b1022'; ctx.fillText('CAUGHT!', tx + 1, ty + 1);
+            ctx.fillStyle = '#ffd84d'; ctx.fillText('CAUGHT!', tx, ty);
+          }
+        }
+        done = t > snapAt + 3;
+      } else if (kid == null) {
+        done = px > W + 4;
+      } else if (t > snapAt + 3) {
+        done = true;
+      }
+      if (done) { ctx.clearRect(0, 0, W, H); run = null; schedule(22000 + Math.random() * 16000); return; }
+      requestAnimationFrame(frame);
+    }
+
+    function go() {
+      if (document.hidden) { schedule(5000); return; }
+      var m = measure();
+      if (!m) { schedule(5000); return; }
+      run = { m: m, t0: performance.now(), v: scale === 3 ? 95 : 70 };
+      requestAnimationFrame(frame);
+    }
+    function schedule(ms) { clearTimeout(timer); timer = setTimeout(go, ms); }
+
+    return {
+      start: function () {
+        cv = $('pdx-banner');
+        hud = document.querySelector('.hud');
+        if (!cv || !hud || !S || still) return;
+        ctx = cv.getContext('2d');
+        if (!ctx) return;
+        planeImg = document.createElement('canvas');
+        planeImg.width = 48;
+        planeImg.height = 24;
+        S.paint(planeImg, 'B738', ['jet'], false);
+        var ready = document.fonts && document.fonts.load ? document.fonts.load('700 8px Silkscreen') : Promise.resolve();
+        ready.then(function () { schedule(1500); }, function () { schedule(1500); });
+      }
+    };
+  })();
+
+  /* ---- sound button (day and night come from the real sun: planedex-sky.js) ---- */
 
   function setupButtons() {
-    var root = document.documentElement;
-    var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
-    var theme = $('pdx-theme');
-    function current() {
-      var t = root.dataset.theme;
-      if (t === 'dark' || t === 'light') return t;
-      return mq && mq.matches ? 'dark' : 'light';
-    }
-    function syncTheme() { theme.setAttribute('aria-pressed', current() === 'dark' ? 'true' : 'false'); }
-    theme.hidden = false;
-    syncTheme();
-    theme.addEventListener('click', function () {
-      var next = current() === 'dark' ? 'light' : 'dark';
-      root.dataset.theme = next;
-      try { localStorage.setItem('theme', next); } catch (e) { /* storage off */ }
-      syncTheme();
-    });
-    if (mq && mq.addEventListener) mq.addEventListener('change', syncTheme);
-
     var sound = $('pdx-sound');
     function syncSound() {
       sound.setAttribute('aria-pressed', Sound.on ? 'true' : 'false');
@@ -1039,14 +1414,33 @@
       report: $('pdx-report'), reportText: $('report-text'), logbook: $('panel-logbook')
     };
     setupButtons();
-    if (S) S.paint($('pdx-flyby'), 'B738', ['jet'], false);
+    loadFamilyInfo();
+    Banner.start();
     if (TABS.indexOf(location.hash.slice(1)) >= 0) state.tab = location.hash.slice(1);
 
     document.addEventListener('click', function (e) {
       var v = e.target.closest('.voice-btn');
       if (v) { Voice.play(v); return; }
-      var t = e.target.closest('[data-code], [data-goto], [data-tab], [data-close], [data-rarity], [data-credits]');
+      var t = e.target.closest('[data-code], [data-goto], [data-tab], [data-close], [data-rarity], [data-credits], [data-family], [data-more], [data-home]');
       if (!t) return;
+      if (t.hasAttribute('data-home')) {  // the PLANEDEX title: back to the Dex
+        e.preventDefault();
+        closeSheet();
+        Sound.select();
+        selectTab('dex');
+        window.scrollTo({ top: 0 });
+        return;
+      }
+      if (t.hasAttribute('data-family')) { openFamily(t.getAttribute('data-family')); return; }
+      if (t.hasAttribute('data-more')) {
+        var which = t.getAttribute('data-more');
+        if (which === 'radar') state.radarAll = true; else state.logAll = true;
+        Sound.blip();
+        renderToday(state.data);
+        var next = which === 'radar' ? el.today.querySelectorAll('.radar-card')[RADAR_FIRST] : el.today.querySelectorAll('.log-line .link')[LOG_FIRST];
+        if (next) next.focus({ preventScroll: true });
+        return;
+      }
       if (t.hasAttribute('data-close')) { closeSheet(); return; }
       if (t.hasAttribute('data-credits')) {
         if (t.getAttribute('data-credits') === 'close') $('pdx-credits').close(); else openCredits();

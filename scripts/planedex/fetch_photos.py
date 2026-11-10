@@ -39,6 +39,7 @@ API = "https://en.wikipedia.org/w/api.php"
 COMMONS = "https://commons.wikimedia.org/w/api.php"
 UA = "PlanedexPhotoFetcher/1.0 (+https://cfworx.tech/tools/planedex/)"
 BIG = (900, 600)     # 3:2, the entry screen
+MEDIUM = (360, 240)  # 3:2, the Today radar grid and family pages
 SMALL = (192, 96)    # 2:1, list rows and family chains
 
 # Wikipedia article for each model, plus a pattern that picks the right
@@ -624,6 +625,7 @@ def save(code, raw):
     from PIL import Image
     img = Image.open(io.BytesIO(raw)).convert("RGB")
     crop_to(img, BIG).save(OUT / f"{code}.webp", "WEBP", quality=80, method=6)
+    crop_to(img, MEDIUM).save(OUT / f"{code}-m.webp", "WEBP", quality=78, method=6)
     crop_to(img, SMALL).save(OUT / f"{code}-s.webp", "WEBP", quality=78, method=6)
 
 

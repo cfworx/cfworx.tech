@@ -158,6 +158,16 @@
   "source": "https://commons.wikimedia.org/wiki/File:MesaAirlinesLogo2.jpg",
   "title": "MesaAirlinesLogo2.jpg"
  },
+ "ATN": {
+  "by": "Jskoker",
+  "file": "ATN.webp",
+  "item": "Q407859",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "name": "Air Transport International",
+  "source": "https://commons.wikimedia.org/wiki/File:ATI-LOGO.png",
+  "title": "ATI-LOGO.png"
+ },
  "AUA": {
   "by": "Austrian Airlines AG",
   "file": "AUA.webp",
@@ -198,6 +208,16 @@
   "source": "https://commons.wikimedia.org/wiki/File:Logo_wordmark_British_Airways.png",
   "title": "Logo wordmark British Airways.png"
  },
+ "BCS": {
+  "by": "Presumably DHL",
+  "file": "BCS.webp",
+  "item": "Q479159",
+  "license": "Public domain",
+  "licenseUrl": null,
+  "name": "European Air Transport",
+  "source": "https://commons.wikimedia.org/wiki/File:DHL_Logo.svg",
+  "title": "DHL Logo.svg"
+ },
  "BOE": {
   "by": "Boeing, Richard Burch Eiber",
   "file": "BOE.webp",
@@ -218,6 +238,16 @@
   "source": "https://commons.wikimedia.org/wiki/File:Logo_AeroLogic.svg",
   "title": "Logo AeroLogic.svg"
  },
+ "CAL": {
+  "by": "China Airlines",
+  "file": "CAL.webp",
+  "item": "Q51756",
+  "license": "Public domain",
+  "licenseUrl": null,
+  "name": "China Airlines",
+  "source": "https://commons.wikimedia.org/wiki/File:China_Airlines_wordmark.svg",
+  "title": "China Airlines wordmark.svg"
+ },
  "CCA": {
   "by": "Air China Limited",
   "file": "CCA.webp",
@@ -237,6 +267,16 @@
   "name": "Condor",
   "source": "https://commons.wikimedia.org/wiki/File:Condor_logo_2022.svg",
   "title": "Condor logo 2022.svg"
+ },
+ "CFS": {
+  "by": "Empire Airlines",
+  "file": "CFS.webp",
+  "item": "Q5374027",
+  "license": "Public domain",
+  "licenseUrl": null,
+  "name": "Empire Airlines",
+  "source": "https://commons.wikimedia.org/wiki/File:Empire_Airlines.svg",
+  "title": "Empire Airlines.svg"
  },
  "CKS": {
   "by": "Kalitta Air",
@@ -477,6 +517,16 @@
   "source": "https://commons.wikimedia.org/wiki/File:LCAG_LOGO_2010.svg",
   "title": "LCAG LOGO 2010.svg"
  },
+ "GJS": {
+  "by": "GoJet Airlines",
+  "file": "GJS.webp",
+  "item": "Q1533365",
+  "license": "Public domain",
+  "licenseUrl": null,
+  "name": "GoJet Airlines",
+  "source": "https://commons.wikimedia.org/wiki/File:GoJet_logo.gif",
+  "title": "GoJet logo.gif"
+ },
  "GTI": {
   "by": "Atlas Air Worldwide Holdings, Inc.",
   "file": "GTI.webp",
@@ -576,6 +626,24 @@
   "name": "Jazz",
   "source": "https://commons.wikimedia.org/wiki/File:Jazz_Aviation_logo.svg",
   "title": "Jazz Aviation logo.svg"
+ },
+ "KAL": {
+  "by": "Korean Air (designed by Lippincott)",
+  "file": "KAL.webp",
+  "license": "Public domain",
+  "licenseUrl": null,
+  "name": "Korean Air",
+  "source": "https://commons.wikimedia.org/wiki/File:Korean_Air_2025.svg",
+  "title": "Korean Air 2025.svg"
+ },
+ "KFA": {
+  "by": "KF Aerospace",
+  "file": "KFA.webp",
+  "license": "Public domain",
+  "licenseUrl": null,
+  "name": "KF Cargo",
+  "source": "https://commons.wikimedia.org/wiki/File:KF_Aerospace_logo.png",
+  "title": "KF Aerospace logo.png"
  },
  "KLM": {
   "by": "Wikimedia Commons",
@@ -1003,6 +1071,16 @@
   "name": "Virgin Atlantic",
   "source": "https://commons.wikimedia.org/wiki/File:Virgin_Atlantic_logo_2018.svg",
   "title": "Virgin Atlantic logo 2018.svg"
+ },
+ "VIV": {
+  "by": "Viva (airline)",
+  "file": "VIV.webp",
+  "item": "Q795990",
+  "license": "Public domain",
+  "licenseUrl": null,
+  "name": "Viva Aerobus",
+  "source": "https://commons.wikimedia.org/wiki/File:Viva_Logo.svg",
+  "title": "Viva Logo.svg"
  },
  "VJT": {
   "by": "VistaJet",

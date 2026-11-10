@@ -18,6 +18,10 @@
                         make a missing readout itself the first time it's
                         played (PLANEDEX_VOICE_ID / PLANEDEX_VOICE_MODEL
                         swap the voice or model).
+   GET  /api/planedex?sky
+                        Spokane's weather and air quality right now, for the
+                        page's live sky (Open-Meteo, cached for 10 minutes).
+                        It's for the city, never the station's spot.
    POST /api/planedex   Replace the game data. Needs "Authorization:
                         Bearer <key>". Only the key's SHA-256 is stored
                         (ingest_keys table), never the key itself.
@@ -254,6 +258,58 @@ async function voiceUpload(request, env, day) {
   return reply(200, { ok: true, day, bytes: bytes.length, at });
 }
 
+// ---- Spokane's weather for the page's sky (Open-Meteo: free, no key, credited on the page)
+
+const SKY_WHERE = 'latitude=47.66&longitude=-117.43&timezone=America%2FLos_Angeles';  // the city of Spokane
+const SKY_TTL = 600;  // seconds
+
+async function getJSON(url) {
+  try {
+    const r = await fetch(url, { signal: AbortSignal.timeout(5000), headers: { accept: 'application/json' } });
+    return r.ok ? await r.json() : null;
+  } catch {
+    return null;
+  }
+}
+const numOrNull = (v) => (typeof v === 'number' && Number.isFinite(v) ? v : null);
+
+async function sky(request, waitUntil) {
+  const cache = caches.default;
+  const key = new Request(new URL('/api/planedex?sky', request.url).toString());
+  const hit = await cache.match(key);
+  if (hit) return hit;
+  const [w, a] = await Promise.all([
+    getJSON('https://api.open-meteo.com/v1/forecast?' + SKY_WHERE
+      + '&current=temperature_2m,apparent_temperature,weather_code,cloud_cover,is_day,precipitation,snowfall,wind_speed_10m,wind_direction_10m'
+      + '&daily=sunrise,sunset&forecast_days=1&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch'),
+    getJSON('https://air-quality-api.open-meteo.com/v1/air-quality?' + SKY_WHERE + '&current=us_aqi,pm2_5'),
+  ]);
+  const c = w && w.current;
+  if (!c) return reply(503, { error: 'No weather right now.' });
+  const out = {
+    at: c.time || null,
+    temp: numOrNull(c.temperature_2m),
+    feels: numOrNull(c.apparent_temperature),
+    code: numOrNull(c.weather_code),
+    cloud: numOrNull(c.cloud_cover),
+    isDay: c.is_day === 1,
+    precip: numOrNull(c.precipitation),
+    snow: numOrNull(c.snowfall),
+    wind: numOrNull(c.wind_speed_10m),
+    windDir: numOrNull(c.wind_direction_10m),
+    sunrise: (w.daily && w.daily.sunrise && w.daily.sunrise[0]) || null,
+    sunset: (w.daily && w.daily.sunset && w.daily.sunset[0]) || null,
+    aqi: numOrNull(a && a.current && a.current.us_aqi),
+    pm25: numOrNull(a && a.current && a.current.pm2_5),
+    source: 'Open-Meteo.com',
+  };
+  const res = new Response(JSON.stringify(out), {
+    headers: { ...BASE_HEADERS, 'cache-control': 'public, max-age=' + SKY_TTL },
+  });
+  waitUntil(cache.put(key, res.clone()));
+  return res;
+}
+
 async function write(request, env) {
   const m = (request.headers.get('authorization') || '').match(/^Bearer\s+([A-Za-z0-9_-]{20,200})$/);
   if (!m) return reply(401, { error: 'Missing upload key.' });
@@ -283,8 +339,9 @@ async function write(request, env) {
 }
 
 export async function onRequest({ request, env, waitUntil }) {
-  if (!env.PLANEDEX_DB) return reply(503, { error: 'The PLANEDEX_DB binding is missing.' });
   const q = new URL(request.url).searchParams;
+  if (request.method === 'GET' && q.has('sky')) return sky(request, waitUntil);
+  if (!env.PLANEDEX_DB) return reply(503, { error: 'The PLANEDEX_DB binding is missing.' });
   switch (request.method) {
     case 'GET':
       if (q.has('voice')) return voice(request, env, waitUntil, q.get('voice'));

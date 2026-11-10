@@ -3,7 +3,7 @@
 cfworx.tech/tools/planedex/ and push it to the site.
 
 Runs on the PC that keeps the logs. A systemd user timer runs it every
-5 minutes (see install.sh). Standard library only.
+2 minutes (see install.sh). Standard library only.
 
   planedex_push.py              build and push
   planedex_push.py --dry-run    build and print the JSON, push nothing
@@ -334,14 +334,14 @@ QUESTS = [
     ("e_airlines", "easy", "Spot 20 different airlines", 20, "distinct", lambda p, top, day: p["airline"]),
     ("e_canada", "easy", "Spot 10 planes from Canada", 10, "count", lambda p, top, day: p["country"] == "CA"),
     ("e_props", "easy", "Spot 25 propeller planes", 25, "count", _prop),
-    ("e_species", "easy", "Spot 50 different species", 50, "distinct", lambda p, top, day: p["code"] or None),
+    ("e_species", "easy", "Spot 50 different plane models", 50, "distinct", lambda p, top, day: p["code"] or None),
     ("e_cargo", "easy", "Spot 8 cargo flights", 8, "count", lambda p, top, day: p["cargo"]),
     ("m_planes", "medium", "Spot 500 planes", 500, "count", lambda p, top, day: True),
     ("m_heavy", "medium", "Spot 45 widebodies", 45, "count", _heavy),
     ("m_asia", "medium", "Spot 15 planes from Asia", 15, "count", lambda p, top, day: p["country"] in p["_asia"]),
     ("m_biz", "medium", "Spot 45 business jets", 45, "count", _biz),
     ("m_airlines", "medium", "Spot 30 different airlines", 30, "distinct", lambda p, top, day: p["airline"]),
-    ("m_species", "medium", "Spot 75 different species", 75, "distinct", lambda p, top, day: p["code"] or None),
+    ("m_species", "medium", "Spot 75 different plane models", 75, "distinct", lambda p, top, day: p["code"] or None),
     ("m_rotor", "medium", "Spot 12 helicopters", 12, "count", _rotor),
     ("m_old", "medium", "Spot 5 planes built before 1980", 5, "count", lambda p, top, day: bool(p["year"] and p["year"] < 1980)),
     ("m_dream", "medium", "Spot 12 Dreamliners", 12, "count", lambda p, top, day: p["code"] in DREAMLINERS),
@@ -350,15 +350,15 @@ QUESTS = [
     ("m_mil", "medium", "Spot 10 military planes", 10, "count", lambda p, top, day: p["military"]),
     ("m_jumbo", "medium", "Spot 5 jumbo jets", 5, "count", lambda p, top, day: p["code"] in JUMBO_747 or p["code"] == "A388"),
     ("h_planes", "hard", "Spot 750 planes", 750, "count", lambda p, top, day: True),
-    ("h_species", "hard", "Spot 100 different species", 100, "distinct", lambda p, top, day: p["code"] or None),
-    ("h_new", "hard", "Discover a new species", 1, "count", lambda p, top, day: p["_new_on"] == day),
+    ("h_species", "hard", "Spot 100 different plane models", 100, "distinct", lambda p, top, day: p["code"] or None),
+    ("h_new", "hard", "Discover a new plane model", 1, "count", lambda p, top, day: p["_new_on"] == day),
     ("h_high", "hard", "Spot 5 planes at 45,000 ft or higher", 5, "count", lambda p, top, day: bool(top and top >= 45000)),
     ("h_countries", "hard", "Spot planes from 15 countries", 15, "distinct", lambda p, top, day: p["country"]),
     ("h_airlines", "hard", "Spot 45 different airlines", 45, "distinct", lambda p, top, day: p["airline"]),
-    ("h_rare", "hard", "Spot 8 Rare-or-better species", 8, "distinct", lambda p, top, day: p["code"] if p["rarity"] >= 3 else None),
+    ("h_rare", "hard", "Spot 8 Rare-or-better models", 8, "distinct", lambda p, top, day: p["code"] if p["rarity"] >= 3 else None),
     ("h_vintage", "hard", "Spot a plane built before 1960", 1, "count", lambda p, top, day: bool(p["year"] and p["year"] < 1960)),
     ("h_fresh", "hard", "Spot 10 planes built this year", 10, "count", lambda p, top, day: p["year"] == day.year),
-    ("h_miltypes", "hard", "Spot 6 different military species", 6, "distinct", lambda p, top, day: p["code"] if p["military"] else None),
+    ("h_miltypes", "hard", "Spot 6 different military models", 6, "distinct", lambda p, top, day: p["code"] if p["military"] else None),
     ("h_rotor", "hard", "Spot 20 helicopters", 20, "count", _rotor),
     ("h_types", "hard", "Spot 10 of the 11 plane types", 10, "types", lambda p, top, day: p["types"]),
 ]
@@ -445,6 +445,10 @@ def build(logs_dir, station, now, now_iso, cat):
     yesterday = today - timedelta(days=1)
     seen_today = days.get(today, {})
     today_codes = {planes[h]["code"] for h in seen_today if planes[h]["code"]}
+    today_counts = {}   # species -> how many different planes of it showed up today
+    for h in seen_today:
+        if planes[h]["code"]:
+            today_counts[planes[h]["code"]] = today_counts.get(planes[h]["code"], 0) + 1
     new_species_by_day = {}
     for s in ordered:
         d = s["first_plane"]["first"].date()
@@ -526,6 +530,8 @@ def build(logs_dir, station, now, now_iso, cat):
             first["reg"] = p["reg"].upper()
         rec = {"dex": s["dex"], "code": s["code"], "name": s["name"], "types": s["types"],
                "rarity": s["rarity"], "count": s["count"], "first": first, "today": s["code"] in today_codes}
+        if s["code"] in today_counts:
+            rec["todayCount"] = today_counts[s["code"]]
         if s["fact"]:
             rec["fact"] = s["fact"]
         if s["top"]:
@@ -582,6 +588,10 @@ def build(logs_dir, station, now, now_iso, cat):
         "level": level_for(xp),
         "today": {"date": today.isoformat(), "planes": len(seen_today),
                   "newSpecies": new_species_by_day.get(today, 0),
+                  # first-ever sightings today, for the "+N today" under the header counts
+                  "newPlanes": sum(1 for p in planes.values() if p["first"].date() == today),
+                  "newAirlines": sum(1 for v in airline_recs.values() if v["first"].date() == today),
+                  "newCountries": sum(1 for v in country_recs.values() if v["first"].date() == today),
                   "quests": today_quests, "catch": catch},
         "yesterday": day_digest(yesterday, days, hours, planes, species, ordered, airline_recs,
                                 country_recs, badge_events, yesterday_quests, cat),
@@ -696,7 +706,7 @@ def make_badges(cat, now, planes, species, ordered, days, hours, timeline, day_l
         per_hour_max = max([per_hour_max] + list(counts.values()))
 
     L = [
-        ladder("species", "Species Collector", "SP", "Catch {n} species", [50, 100, 160, 220],
+        ladder("species", "Model Collector", "SP", "Catch {n} plane models", [50, 100, 160, 220],
                len(ordered), [nth(sp_times, n) for n in (50, 100, 160, 220)]),
         ladder("planes", "Plane Counter", "PL", "Catch {n} different planes", [2000, 8000, 20000, 40000],
                len(planes), [nth(pl_times, n) for n in (2000, 8000, 20000, 40000)]),
@@ -708,7 +718,7 @@ def make_badges(cat, now, planes, species, ordered, days, hours, timeline, day_l
                len(family_done_times), [nth(family_done_times, n) for n in (10, 25, 40, 60)]),
         ladder("missions", "Mission Master", "MSN", "Finish {n} daily missions", [30, 150, 500, 1000],
                len(mission_times), [nth(mission_times, n) for n in (30, 150, 500, 1000)]),
-        ladder("rare", "Rare Hunter", "RAR", "Catch {n} Rare-or-better species", [20, 40, 65, 90],
+        ladder("rare", "Rare Hunter", "RAR", "Catch {n} Rare-or-better models", [20, 40, 65, 90],
                len(rare_times), [nth(rare_times, n) for n in (20, 40, 65, 90)]),
         ladder("high", "High Flyer", "ALT", "See a plane at {n}", [45000, 47000, 49000, 51000],
                top_alt, [alt_time(n) for n in (45000, 47000, 49000, 51000)], unit="ft"),
@@ -716,7 +726,7 @@ def make_badges(cat, now, planes, species, ordered, days, hours, timeline, day_l
                per_day_max, [in_a_day(n) for n in (600, 750, 900, 1050)]),
         ladder("rush", "Rush Hour", "HR", "See {n} planes show up in one hour", [60, 75, 90, 105],
                per_hour_max, [in_a_day(n, hourly=True) for n in (60, 75, 90, 105)]),
-        ladder("zooday", "Zoo Day", "ZOO", "See {n} species in one day", [90, 105, 120, 135],
+        ladder("zooday", "Zoo Day", "ZOO", "See {n} models in one day", [90, 105, 120, 135],
                per_day_species, [in_a_day(n, key=lambda p: p["code"]) for n in (90, 105, 120, 135)]),
         ladder("airshow", "Air Show", "MIX", "See {n} of the 11 plane types in one day", [10, 11],
                per_day_types, [in_a_day(n, key=lambda p: p["types"]) for n in (10, 11)], xp=[1000, 2500]),
@@ -793,7 +803,7 @@ def make_badges(cat, now, planes, species, ordered, days, hours, timeline, day_l
         ("testpilot", "Test Pilot", "BOE", "Spot a Boeing test flight", 1, first_when(lambda p: any(c.startswith("BOE") for c in p["callsigns"])), None),
         ("warbird", "Warbird", "WW2", "Catch a World War II warbird", 1, first_when(has(WARBIRDS)), None),
         ("firewatch", "Fire Watch", "H2O", "Catch a firefighting aircraft", 1, first_when(lambda p: "fire" in p["types"]), None),
-        ("epic", "Epic Find", "4★", "Catch an Epic species", 1, first_when(lambda p: p["rarity"] == 4), None),
+        ("epic", "Epic Find", "4★", "Catch an Epic model", 1, first_when(lambda p: p["rarity"] == 4), None),
         ("desert", "Desert Wings", "DSR", "Catch a plane from the Middle East", 1, first_when(lambda p: p["country"] in MIDDLE_EAST), None),
         ("downunder", "Down Under", "AUS", "Catch a plane from Australia or New Zealand", 1, first_when(lambda p: p["country"] in {"AU", "NZ"}), None),
         ("graveyard", "Graveyard Shift", "ZZZ", "See 75 planes between midnight and 5 a.m.", 1, graveyard, None),
@@ -814,8 +824,8 @@ def make_badges(cat, now, planes, species, ordered, days, hours, timeline, day_l
         ("mayday", "Mayday Watch", "7700", "See a plane squawk 7700", 2, squawk_time("7700"), None),
         ("airbus", "Airbus Alphabet", "ABC", "Catch an A220, A320, A330, A340, A350 and A380", 3, all_of([g for _, g in AIRBUS_SET]), None),
         ("world", "Around the World", "6/6", "Catch planes from all six inhabited continents", 3, around, None),
-        ("legend", "Legend", "5★", "Catch a Legendary species", 3, first_when(lambda p: p["rarity"] == 5), None),
-        ("legends", "Legend Hunter", "LGD", "Catch 3 Legendary species", 3, nth(legend_species, 3), None),
+        ("legend", "Legend", "5★", "Catch a Legendary model", 3, first_when(lambda p: p["rarity"] == 5), None),
+        ("legends", "Legend Hunter", "LGD", "Catch 3 Legendary models", 3, nth(legend_species, 3), None),
         ("af1", "Air Force One", "AF1", "Catch the President's 747", 3, first_when(has({"VC25"})), None),
         # secret: name and description stay hidden until earned
         ("santa", "Santa Tracker", "HO!", "Spot a plane late on Christmas Eve", 1, on_day(12, 24, 21), "Watch the sky late on a very special winter night."),
@@ -969,7 +979,7 @@ def main():
         if not args.out:
             sys.stdout.write(json.dumps(data, indent=1, ensure_ascii=False) + "\n")
         t = data["totals"]
-        print(f"dry run: {t['species']} species, {t['planes']} planes, level {data['level']['level']}, "
+        print(f"dry run: {t['species']} models, {t['planes']} planes, level {data['level']['level']}, "
               f"{len(body):,} bytes", file=sys.stderr)
         return 0
 
@@ -979,7 +989,7 @@ def main():
         return 2
     status, text = push(cfg.get("PLANEDEX_URL") or DEFAULT_URL, token, body)
     t = data["totals"]
-    print(f"push {status}: {t['species']} species, {t['planes']} planes, {len(body):,} bytes. {text[:200]}")
+    print(f"push {status}: {t['species']} models, {t['planes']} planes, {len(body):,} bytes. {text[:200]}")
     return 0 if 200 <= status < 300 else 1
 
 

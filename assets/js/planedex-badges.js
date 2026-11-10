@@ -8,7 +8,9 @@
      data-icon   one of the icon names below
      data-metal  bronze, silver, gold, platinum or steel (not earned yet)
      data-ribbon an index into RIBBONS, for medals
-     data-tint   optional color swaps for the icon, like "y:p,b:q" */
+     data-tint   optional color swaps for the icon, like "y:p,b:q"
+
+   PlanedexBadges.paintIcon(canvas) draws just the data-icon (12x12). */
 (function () {
   'use strict';
 
@@ -75,7 +77,15 @@
     sunwave: '............ ....kkkk.... ...kyyyyk... ..kyyyyyyk.. ..kyyyyyyk.. kkkkkkkkkkkk kbbbsbbbbsbk kbsbbbsbbbbk kbbbbbbbsbbk kqqqqqqqqqqk kkkkkkkkkkkk ............',
     ticket: '............ ............ kkkkkkkkkkkk kyyyykyyyyyk kyrryyykkkyk kyrrykyyyyyk kyyyyyykkyyk kyrrykyyyyyk kyyyyyykkkyk kkkkkkkkkkkk ............ ............',
     trophy: 'kkkkkkkkkkkk kyyyyyyyyhyk kkyyyyyyhykk kykyyyyyyyky kkkyyyyyykkk ...kyyyyk... ....kyyk.... ....kyyk.... ...kyyyyk... ..kkkkkkkk.. ..knnnnnnk.. ..kkkkkkkk..',
-    weight: '............ ............ .kk......kk. kddk....kddk kddkkkkkkddk kdddddddwddk kddkkkkkkddk kddk....kddk .kk......kk. ............ ............ ............'
+    weight: '............ ............ .kk......kk. kddk....kddk kddkkkkkkddk kdddddddwddk kddkkkkkkddk kddk....kddk .kk......kk. ............ ............ ............',
+    // weather, for the header
+    sun: '.....oo..... .o...oo...o. ..o.kkkk.o.. ...kyyyyk... ..kyhhyyyk.. ookyhyyyykoo ookyyyyyykoo ..kyyyyyyk.. ...kyyyyk... ..o.kkkk.o.. .o...oo...o. .....oo.....',
+    suncloud: '.o...o...... ..kkkk...... okyhyyk..... .kyyyykkk... kyyykkwwwk.. kyykwwwwwwk. .kkkwwwwwwkk ..kwwwwwwwwk .kwwwwwwwwwk .kwwwwwsswwk ..kkkkkkkkk. ............',
+    mooncloud: '..kkk....... .kyyk....... kyyk........ kyyk..kkk... kyyykkwwwk.. .kyykwwwwwk. ..kkkwwwwwkk ..kwwwwwwwwk .kwwwwwwwwwk .kwwwwwsswwk ..kkkkkkkkk. ............',
+    rain: '....kkkk.... ...kwwwwk... .kkkwwwwkkk. kwwwwwwwwwwk kwwwwwwsswwk .kkkkkkkkkk. ..b...b...b. .b...b...b.. ............ ...b...b...b ..b...b...b. ............',
+    snow: '....kkkk.... ...kwwwwk... .kkkwwwwkkk. kwwwwwwwwwwk kwwwwwwsswwk .kkkkkkkkkk. ..s.....s... .sbs...sbs.. ..s..s..s... ....sbs..... .....s...... ............',
+    fog: '............ ..kkkk...... .keeeekkkk.. keeeeeeeeek. .kkkkkkkkk.. ............ .eeeeeeeee.. ............ ...eeeeeeeee ............ eeeeeeeee... ............',
+    storm: '....kkkk.... ...keeeek... .kkkeeeekkk. keeeeeeeeeek keeeeeeddeek .kkkkkkkkkk. .....kyyk... ....kyyk.... ...kyyyyyk.. .....kyyk... ....kyyk.... ....kk......'
   };
 
   // dark, base, light, shine
@@ -242,6 +252,26 @@
     }
   }
 
+  // Just an icon (12x12, outline included), for little labels around the page.
+  function paintIcon(canvas) {
+    var ctx = canvas.getContext && canvas.getContext('2d');
+    if (!ctx) return;
+    var rows = (ICONS[canvas.getAttribute('data-icon')] || ICONS.question).split(' ');
+    var tint = parseTint(canvas.getAttribute('data-tint'));
+    canvas.width = 12;
+    canvas.height = 12;
+    ctx.clearRect(0, 0, 12, 12);
+    for (var y = 0; y < 12; y++) {
+      for (var x = 0; x < 12; x++) {
+        var ch = rows[y].charAt(x);
+        if (ch === '.') continue;
+        if (tint && tint[ch]) ch = tint[ch];
+        ctx.fillStyle = ch === 'k' ? INK : PAL[ch];
+        ctx.fillRect(x, y, 1, 1);
+      }
+    }
+  }
+
   // Which icon each badge wears (and color swaps, so shared icons look different).
   var ART = {
     species: ['dex'], planes: ['plane'], airlines: ['ticket'], countries: ['globe'], families: ['familytree'],
@@ -260,5 +290,5 @@
   };
   function art(id) { return ART[id] || ['star']; }
 
-  window.PlanedexBadges = { paint: paint, art: art, icons: Object.keys(ICONS), W: W, H: H };
+  window.PlanedexBadges = { paint: paint, paintIcon: paintIcon, art: art, icons: Object.keys(ICONS), W: W, H: H };
 })();

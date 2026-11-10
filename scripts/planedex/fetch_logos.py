@@ -2,9 +2,10 @@
 """Planedex: download a logo for each airline in catalog.json into
 static/tools/planedex/logos/ for the airline stickers in the passport.
 
-Each logo is the airline's "logo image" on Wikidata (looked up by its
-ICAO code), and it's only used when Wikimedia Commons lists it as public
-domain or under a free license. Most airline logos there are simple
+Each logo is a hand-picked Commons file (PINS below) or the airline's
+"logo image" on Wikidata (looked up by its ICAO code), falling back to its
+Commons category and then a Commons search, and it's only used when
+Wikimedia Commons lists it as public domain or under a free license. Most airline logos there are simple
 enough to be public domain; ones that live only on Wikipedia as fair use
 are never touched. Airlines without a free logo get a colored code
 sticker instead. Credits go to logos/index.json and the page shows them.
@@ -45,11 +46,26 @@ FREE = re.compile(r"^(CC0|CC BY(-SA)? [\d.]+|Public domain|PD\b|Attribution$|No 
 ITEMS = {
     "BOE": "Q66",       # Boeing (test flights fly as BOEING)
 }
+# Hand-picked Commons files (after eyeballing a contact sheet), used first.
+PINS = {
+    "ATN": "ATI-LOGO.png",
+    "BCS": "DHL Logo.svg",                  # European Air Transport flies for DHL, in DHL colors
+    "CAL": "China Airlines wordmark.svg",
+    "CFS": "Empire Airlines.svg",           # the Idaho one, not the 1970s New York airline
+    "GJS": "GoJet logo.gif",
+    "KAL": "Korean Air 2025.svg",           # the new logo from March 2025
+    "KFA": "KF Aerospace logo.png",         # KF Cargo is part of KF Aerospace
+    "VIV": "Viva Logo.svg",                 # Viva Aerobus is just "Viva" since 2024
+}
 # Files a Commons search turned up that turned out to be something else.
 WRONG = {
     "VIVA 2002 logo.svg",            # a TV channel, not Viva Aerobus
     "VIVA Logo 1993-1998.svg",
     "Korean Air Cargo logo.svg",     # the cargo arm's logo
+    "Globalx-logo-blue.png",         # an Australian company, not GlobalX the airline
+    "Globalx-logo-white.png",
+    "Air Pacific logo.svg",          # Fiji Airways' old name
+    "MalaysiaAirlinesLogo Enrich.png",  # the frequent-flyer program
 }
 # Words that don't help tell two airlines apart.
 COMMON = {"air", "airlines", "airline", "airways", "aviation", "cargo", "express", "international",
@@ -97,13 +113,14 @@ def words(name, keep=()):
 def wikidata(codes):
     """{ICAO: (item, label, [logo file names])} for the best-matching live airline."""
     by_code = [c for c in codes if c not in ITEMS]
-    q = """SELECT ?key ?item ?itemLabel ?logo ?gone WHERE {
+    q = """SELECT ?key ?item ?itemLabel ?logo ?gone ?cat WHERE {
   { VALUES ?key { %s } ?item wdt:P230 ?key . }
   UNION
   { VALUES (?key ?item) { %s } }
   OPTIONAL { ?item p:P154 ?st . ?st ps:P154 ?logo ; wikibase:rank ?rank .
              FILTER(?rank != wikibase:DeprecatedRank) FILTER NOT EXISTS { ?st pq:P582 ?end } }
   OPTIONAL { ?item wdt:P576 ?gone }
+  OPTIONAL { ?item wdt:P373 ?cat }
   SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
 }""" % (" ".join(f'"{c}"' for c in by_code) or '"-"',
         " ".join(f'("{c}" wd:{q})' for c, q in ITEMS.items() if c in codes) or '("-" wd:Q1)')
@@ -113,9 +130,11 @@ def wikidata(codes):
         key = b["key"]["value"]
         item = b["item"]["value"].rsplit("/", 1)[1]
         rec = found.setdefault(key, {}).setdefault(item, {"label": b.get("itemLabel", {}).get("value", item),
-                                                           "logos": [], "gone": False})
+                                                           "logos": [], "gone": False, "cat": None})
         if "gone" in b:
             rec["gone"] = True
+        if "cat" in b:
+            rec["cat"] = b["cat"]["value"]
         if "logo" in b:
             f = urllib.parse.unquote(b["logo"]["value"].split("Special:FilePath/", 1)[1]).replace("_", " ")
             if f not in rec["logos"]:
@@ -200,6 +219,31 @@ def commons_logos(names):
     return sorted(hits, key=lambda t: (t.lower().endswith(".svg"), years(t)), reverse=True)
 
 
+def category_logos(cat, name):
+    """Free logo files in the airline's Commons category (or its "... logos"
+    subcategory) whose title names exactly this airline; newest first."""
+    keep = {"cargo", "express"}
+    want = words(name, keep)
+    if not cat or not want:
+        return []
+    def members(title, kind):
+        j = get(COMMONS + "?" + urllib.parse.urlencode({
+            "action": "query", "format": "json", "formatversion": "2", "list": "categorymembers",
+            "cmtitle": title, "cmtype": kind, "cmlimit": 200}))
+        time.sleep(1)
+        return [m["title"] for m in j.get("query", {}).get("categorymembers", [])]
+    cats = ["Category:" + cat] + [c for c in members("Category:" + cat, "subcat") if re.search(r"logo", c, re.I)]
+    hits = set()
+    for c in cats:
+        for t in members(c, "file"):
+            t = t.split(":", 1)[1]
+            got = {w for w in words(t.rsplit(".", 1)[0], keep) if not NOISE.match(w)}
+            if got == want and t.lower().endswith((".svg", ".png")) and t not in WRONG:
+                hits.add(t)
+    years = lambda t: max([int(y) for y in re.findall(r"(?:19|20)\d\d", t)] or [0])
+    return sorted(hits, key=lambda t: (years(t), t.lower().endswith(".svg")), reverse=True)
+
+
 def save(code, raw):
     """Trim the logo, fit it in the sticker box and save it as WebP.
     Returns True when it's light-colored and needs a dark sticker."""
@@ -278,13 +322,24 @@ def main():
     for code in codes:
         name = airlines[code][0]
         item, rec = pick_item(code, name, found.get(code, {}))
-        picks[code] = (item, rec or {"label": name, "logos": []})
-    infos = file_infos(sorted({f for _, rec in picks.values() for f in rec["logos"]}))
+        picks[code] = (item, rec or {"label": name, "logos": [], "cat": None})
+    infos = file_infos(sorted({f for _, rec in picks.values() for f in rec["logos"]} | {PINS[c] for c in codes if c in PINS}))
 
     for code, (item, rec) in sorted(picks.items()):
         name = airlines[code][0]
-        files = [f for f in rec["logos"] if infos.get(f, {}).get("free")]
         how = f"[{item} {rec['label']}]" if item else "[no Wikidata item]"
+        if code in PINS and infos.get(PINS[code], {}).get("free"):
+            files = [PINS[code]]
+            how += " (pinned)"
+        else:
+            files = [f for f in rec["logos"] if infos.get(f, {}).get("free") and f not in WRONG]
+        if not files and rec.get("cat"):
+            # Wikidata has no free logo: look in the airline's Commons category.
+            found_files = category_logos(rec["cat"], name)[:6]
+            more = file_infos(found_files) if found_files else {}
+            infos.update(more)
+            files = [f for f in found_files if more.get(f, {}).get("free")]
+            how += " (Commons category)"
         if not files:
             # Wikidata has no free logo: look for a file named after the airline.
             found_files = commons_logos([name])[:6]

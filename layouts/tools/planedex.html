@@ -7,13 +7,18 @@
        The game data isn't in the repo: assets/js/planedex.js fetches it
        from /api/planedex (functions/api/planedex.js, backed by the D1
        database "planedex"), which the PC that keeps the logs updates
-       every 5 minutes (scripts/planedex/). Pushing to GitHub is only for
+       every 2 minutes (scripts/planedex/). Pushing to GitHub is only for
        changes to the page itself. Model photos are in
        static/tools/planedex/photos/ (scripts/planedex/fetch_photos.py);
        pixel sprites from assets/js/planedex-sprites.js fill any gaps.
 
+       The background is a live pixel sky over Spokane
+       (assets/js/planedex-sky.js): day or night from the real sun, clouds,
+       rain and snow from the weather (/api/planedex?sky, Open-Meteo).
+
        Privacy: the data never carries positions, distances or exact
-       times, so nothing here can place the antenna. No inline styles or
+       times, so nothing here can place the antenna. The weather is for
+       the city, not the station. No inline styles or
        scripts anywhere: the site's CSP blocks them. */ -}}
 <!DOCTYPE html>
 <html lang="en">
@@ -43,8 +48,10 @@
 <link rel="preload" href="/fonts/press-start-2p-400-5.3.0.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/silkscreen-400-5.3.0.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/silkscreen-700-5.3.0.woff2" as="font" type="font/woff2" crossorigin>
-{{- with resources.Get "js/theme.js" }}
-{{- $js := . | fingerprint }}
+{{- /* The live Spokane sky. Not deferred: it picks the day or night theme
+       from the real sun before the first paint (there's no theme button). */}}
+{{- with resources.Get "js/planedex-sky.js" }}
+{{- $js := . | minify | fingerprint }}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
 {{- end }}
 {{- with resources.Get "css/planedex.css" }}
@@ -68,23 +75,20 @@
 <a class="skip" href="#main">Skip to content</a>
 <div class="pdx">
   <header class="hud">
-    <canvas class="flyby" id="pdx-flyby" width="48" height="24" aria-hidden="true"></canvas>
+    <canvas class="banner" id="pdx-banner" aria-hidden="true"></canvas>
     <div class="hud-in">
       <div class="hud-top">
         <a class="back" href="{{ .Parent.RelPermalink }}">◀ {{ .Parent.Title }}</a>
         <div class="hud-btns">
           <a class="hbtn" href="https://www.liveatc.net/search/?icao=kgeg" target="_blank" rel="noopener noreferrer">Tower audio</a>
           <button class="hbtn" id="pdx-sound" type="button" aria-pressed="true" hidden><span class="lbl">Sound on</span></button>
-          <button class="hbtn icon" id="pdx-theme" type="button" aria-label="Dark theme" aria-pressed="false" hidden>
-            <svg class="moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" d="M20.4 14.2A8.5 8.5 0 1 1 9.8 3.6a7 7 0 0 0 10.6 10.6z"/></svg>
-            <svg class="sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8"/></g></svg>
-          </button>
         </div>
       </div>
       <div class="hud-main">
         <div class="logo-wrap">
-          <h1 class="logo">{{ .Title }}</h1>
+          <h1 class="logo"><a class="logo-link" href="{{ .RelPermalink }}" data-home>{{ .Title }}</a></h1>
           <p class="station" id="pdx-station">Catching planes with my boys</p>
+          <p class="sky-now" id="pdx-sky-now" hidden></p>
         </div>
         <div class="level" id="pdx-level" hidden>
           <div class="lv-badge"><span class="lv-label">LV</span><span class="lv-num" id="pdx-lv">1</span></div>
@@ -147,8 +151,8 @@
               </label>
             </div>
           </div>
-          <ol class="dexlist" id="dex-list" aria-label="Planedex entries"></ol>
           <p class="dex-count" id="dex-shown"></p>
+          <ol class="dexlist" id="dex-list" aria-label="Planedex entries"></ol>
         </div>
       </div>
     </section>
