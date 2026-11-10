@@ -9,7 +9,7 @@ filetype: MS-DOS Application
 publisher: "Raven Software / id Software"
 year: 1994
 version: "1.2 shareware"
-bundle: /dos/heretic.jsdos
+bundle: /dos/heretic.jsdos?v=2
 download: /downloads/heretic.zip
 downloadsize: "2.8 MB"
 size: "2.8 MB"

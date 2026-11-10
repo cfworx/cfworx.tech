@@ -1,7 +1,9 @@
 {{- /* One DOS shareware game (/games/<name>/). Front matter:
        bundle   -> the packed game in static/dos/ (made by
                    scripts/win98/make_jsdos.py); leave it out for a
-                   download-only title
+                   download-only title. Browsers keep bundles for a
+                   week, so after rebuilding one add or bump "?v=2" on
+                   the end here to make them fetch the new file
        download -> the original archive in static/downloads/
        mouse    -> "lock" (captured, for first-person games), "point"
                    (follows the pointer) or "none"

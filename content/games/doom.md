@@ -9,7 +9,7 @@ filetype: MS-DOS Application
 publisher: "id Software"
 year: 1993
 version: "1.9 shareware"
-bundle: /dos/doom.jsdos
+bundle: /dos/doom.jsdos?v=2
 download: /downloads/doom19s.zip
 downloadsize: "2.3 MB"
 size: "2.3 MB"
