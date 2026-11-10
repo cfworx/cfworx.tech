@@ -39,6 +39,7 @@
   var RARITY_XP = [0, 25, 75, 200, 500, 1500];
   var ROMAN = ['I', 'II', 'III', 'IV', 'V'];
   var FLAGS = '/tools/planedex/flags/';
+  var FLAGS_V = '?v=2';  // flags are cached for 30 days; bump this when they're re-rendered
   var LOGOS = '/tools/planedex/logos/';
   var NARROW = window.matchMedia ? window.matchMedia('(max-width: 820px)') : { matches: false };
   var S = window.PlanedexSprites;
@@ -434,7 +435,7 @@
     var box = el.report;
     var fresh = r && r.text && r.day && (r.day === addDays(d.today.date, -1) || r.day === d.today.date);
     if (!fresh) { box.hidden = true; state.reportShown = null; return; }
-    var key = r.day + '|' + (r.at || '');
+    var key = r.day + '|' + (r.at || '') + '|' + (r.voice ? 1 : 0);  // redraw when its readout arrives
     if (state.reportShown === key) return;
     state.reportShown = key;
     state.logbook = null;
@@ -772,8 +773,9 @@
 
   /* ---- passport ---------------------------------------------------------------------------- */
 
-  function flag(code) {
-    return '<img class="flag" src="' + FLAGS + esc(String(code).toLowerCase()) + '.webp" width="24" height="18" alt="" loading="lazy" decoding="async">';
+  function flag(code, big) {
+    return '<img class="flag' + (big ? ' big' : '') + '" src="' + FLAGS + esc(String(code).toLowerCase()) + '.webp' + FLAGS_V + '" width="'
+      + (big ? 48 : 24) + '" height="' + (big ? 36 : 18) + '" alt="" loading="lazy" decoding="async">';
   }
   // Airline stickers: the logo when there's a free one, else the code on a colored sticker.
   function airlineBadge(a) {
@@ -788,10 +790,10 @@
     d.countries.forEach(function (c) { names[c.code] = c.name; });
     el.passport.innerHTML = '<div class="win intro"><p class="win-title">Passport <span class="win-sub">'
       + plural(d.countries.length, 'country', 'countries') + ' · ' + plural(d.airlines.length, 'airline', 'airlines') + '</span></p></div>'
-      + '<div class="stamps">' + d.countries.map(function (c) {
-        return '<div class="stamp"><span class="st-top">' + flag(c.code) + '<span class="st-code">' + esc(c.code) + '</span></span><span class="st-name">' + esc(c.name) + '</span>'
-          + '<span class="st-meta">' + plural(c.count, 'plane', 'planes') + ' · ' + esc(fmtDay(c.first)) + '</span></div>';
-      }).join('') + '</div>'
+      + '<div class="win"><p class="win-title">Countries</p><ul class="places">' + d.countries.map(function (c) {
+        return '<li class="place">' + flag(c.code, true) + '<span class="sk-n pl-n">×' + num(c.count) + '</span>'
+          + '<span class="pl-name">' + esc(c.name) + '</span><span class="pl-first">first ' + esc(fmtDay(c.first)) + '</span></li>';
+      }).join('') + '</ul></div>'
       + '<div class="win"><p class="win-title">Airline stickers</p><ul class="stickers">' + d.airlines.map(function (a) {
         return '<li class="sticker">' + airlineBadge(a) + '<span class="sk-name">' + esc(a.name)
           + '<small>' + flag(a.country) + ' first ' + esc(fmtDay(a.first)) + '</small></span><span class="sk-n">×' + num(a.count) + '</span></li>';

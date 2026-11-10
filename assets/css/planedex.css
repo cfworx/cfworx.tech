@@ -131,8 +131,6 @@
   --t-fire:      #b91c1c;
   --t-oddball:   #7a3fa0;
 
-  --s1: #1d5cc8; --s2: #b8322a; --s3: #1d7d46; --s4: #6f36c4; --s5: #9a5800;
-
   --pixel: "Planedex Label Digits", "Silkscreen", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --text:  "Planedex Digits", "Pixelify Sans", "Trebuchet MS", system-ui, sans-serif;
   --gutter-l: max(16px, env(safe-area-inset-left, 0px));
@@ -150,7 +148,6 @@
     --cloud: #c9d7f2; --focus: #ffd84d; --scrim: rgba(0, 3, 12, 0.8);
     --r1: #94a1b1; --r1-text: #b6c2d0; --r2: #3fbf77; --r2-text: #66d898; --r3: #5a95ff; --r3-text: #93baff;
     --r4: #a874ff; --r4-text: #c7a3ff; --r5: #ffc23d; --r5-text: #ffd166;
-    --s1: #8bb5ff; --s2: #ff8f80; --s3: #66d898; --s4: #c7a3ff; --s5: #ffcc66;
   }
 }
 :root[data-theme="dark"] {
@@ -163,13 +160,16 @@
   --cloud: #c9d7f2; --focus: #ffd84d; --scrim: rgba(0, 3, 12, 0.8);
   --r1: #94a1b1; --r1-text: #b6c2d0; --r2: #3fbf77; --r2-text: #66d898; --r3: #5a95ff; --r3-text: #93baff;
   --r4: #a874ff; --r4-text: #c7a3ff; --r5: #ffc23d; --r5-text: #ffd166;
-  --s1: #8bb5ff; --s2: #ff8f80; --s3: #66d898; --s4: #c7a3ff; --s5: #ffcc66;
 }
 
 /* ---- base ---------------------------------------------------------------- */
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
+/* Pixelify Sans joins "fi" and "fl" into one glyph that reads like an
+   "A" at these sizes ("Arst Nov 8", "Boeing test Aight"), so ligatures
+   stay off. !important because every `font:` shorthand resets them. */
+*, *::before, *::after { font-variant-ligatures: none !important; }
 
 html { background: var(--sky-1); -webkit-text-size-adjust: 100%; }
 body {
@@ -847,29 +847,15 @@ img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); ba
 
 /* ---- passport --------------------------------------------------------------------------- */
 
-.stamps { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px 14px; padding: 4px; }
-.stamp {
-  --sc: var(--s1);
-  --rot: -2deg;
-  display: grid;
-  gap: 2px;
-  padding: 12px 12px 10px;
-  border: 3px dashed var(--sc);
-  color: var(--sc);
-  background: var(--win);
-  box-shadow: 4px 4px 0 var(--drop);
-  transform: rotate(var(--rot));
-}
-.stamp:nth-child(5n+2) { --sc: var(--s2); --rot: 1.5deg; }
-.stamp:nth-child(5n+3) { --sc: var(--s3); --rot: -1deg; }
-.stamp:nth-child(5n+4) { --sc: var(--s4); --rot: 2deg; }
-.stamp:nth-child(5n+5) { --sc: var(--s5); --rot: -2.5deg; }
-.st-top { display: flex; align-items: center; gap: 8px; }
-.st-code { font: 700 1.8rem/1 var(--pixel); }
+.places { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); gap: 10px; list-style: none; margin: 0; padding: 0; }
+.place { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "flag n" "name name" "first first";
+  align-items: start; gap: 8px 8px; padding: 10px; border: 2px solid var(--edge); background: var(--win-2); }
+.place .flag.big { grid-area: flag; width: 48px; height: 36px; border: 2px solid var(--edge); vertical-align: top; }
+.pl-n { grid-area: n; justify-self: end; }
+.pl-name { grid-area: name; margin-top: 2px; font-weight: 700; line-height: 1.2; overflow-wrap: anywhere; }
+.pl-first { grid-area: first; margin-top: -4px; color: var(--muted); font-size: 0.85rem; }
 .flag { display: inline-block; width: 24px; height: 18px; object-fit: cover; border: 1px solid rgba(0, 0, 0, 0.3); vertical-align: -3px; background: var(--win-2); }
 .sk-name small .flag { width: 16px; height: 12px; margin-right: 4px; vertical-align: -1px; }
-.st-name { font-weight: 700; color: var(--ink); }
-.st-meta { color: var(--muted); font-size: 0.85rem; }
 .stickers { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 8px; list-style: none; margin: 0; padding: 0; }
 .sticker { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 6px 8px; border: 2px solid var(--edge); background: var(--win-2); }
 .sk-code { display: grid; place-items: center; width: 64px; height: 36px; padding: 0 4px; border: 2px solid #000; background: var(--edge); color: #fff; font: 700 0.72rem var(--pixel); box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.25); }
@@ -877,9 +863,9 @@ img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); ba
 .sk-code.c3 { background: #8e44ad; } .sk-code.c4 { background: #d35400; } .sk-code.c5 { background: #2c3e50; }
 .sk-code.c6 { background: #16a085; } .sk-code.c7 { background: #b8860b; } .sk-code.c8 { background: #7f1d1d; }
 .sk-code.c9 { background: #0e7490; } .sk-code.c10 { background: #4d7c0f; } .sk-code.c11 { background: #9d174d; }
-.sk-logo { display: grid; place-items: center; width: 64px; height: 36px; padding: 3px 4px; background: #fff; border: 2px solid var(--edge); }
+.sk-logo { display: block; width: 64px; height: 36px; padding: 3px 4px; background: #fff; border: 2px solid var(--edge); }
 .sk-logo.dark { background: #1d2333; }
-.sk-logo img { display: block; max-width: 100%; max-height: 100%; object-fit: contain; }
+.sk-logo img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .sk-name { font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
 .sk-name small { display: block; color: var(--muted); font-weight: 400; }
 .sk-n { font: 700 0.8rem var(--pixel); color: var(--muted); }
@@ -1057,7 +1043,8 @@ img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); ba
   .row { grid-template-columns: 10px 2.4rem 52px minmax(0, 1fr) auto; gap: 6px; padding: 3px 4px; }
   .row .mini { width: 52px; height: 26px; }
   .readout { grid-template-columns: minmax(0, 1fr); }
-  .posters, .medals, .stamps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .posters, .medals { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .places { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .poster-h { font-size: 1.15rem; }
   .log-line { grid-template-columns: 3.6rem minmax(0, 1fr); }
   .log-line .lt { grid-column: 2; justify-self: start; }
