@@ -1,18 +1,29 @@
-/* Two things that have to be settled before the page is drawn, so
-   nothing flashes on screen and then changes. Loaded without `defer`,
-   ahead of the stylesheet, for that reason.
+/* Runs in <head>, before anything is drawn, so nothing flashes at the
+   wrong size or pops up and disappears. It only sets classes on <html>:
 
-   1. The Welcome window shows once, the first time someone opens the
-      desktop. After that this marks <html> and the stylesheet keeps it
-      hidden (desktop.js records that it has been seen).
-   2. The visitor's chosen desktop size (Start > Settings > Display).
-      With no saved choice, win98.css picks a size from the screen's
-      width. Everything else about Display lives in desktop.js. */
+   - zoom-125 ... zoom-200: the desktop size chosen in Start > Settings >
+     Display (see "desktop size" in win98.css). Without a choice the
+     stylesheet picks a size from the width of the screen.
+   - welcome-seen: this visitor has already had the Welcome window, so
+     the home page doesn't draw it again.
+   - booting: show the start-up screen. Only on the home page, and only
+     when a visit begins there for the first time, or after Shut Down >
+     Restart. extras.js types the screen out and takes the class off
+     again; the stylesheet takes the screen away by itself after a few
+     seconds in case that script never arrives. */
 (function () {
   try {
     var store = window.localStorage, root = document.documentElement;
     if (store.getItem("cfw.welcome") === "seen") { root.classList.add("welcome-seen"); }
     var z = store.getItem("cfw.zoom");
     if (/^(100|125|150|175|200)$/.test(z)) { root.classList.add("zoom-" + z); }
-  } catch (e) { /* storage blocked: Welcome shows each time, size is automatic */ }
+    var fresh = store.getItem("cfw.booted") !== "1", again = window.sessionStorage.getItem("cfw.reboot") === "1";
+    if (window.location.pathname !== "/") {
+      /* arrived on a note or a game: the machine is already "on", so the
+         desktop won't suddenly start up later in the visit */
+      if (fresh) { store.setItem("cfw.booted", "1"); }
+    } else if ((fresh || again) && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      root.classList.add("booting");
+    }
+  } catch (e) { /* storage blocked: the automatic size, and the greeting, are fine */ }
 })();

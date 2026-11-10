@@ -3,7 +3,7 @@
 {{ define "bodyclass" }}page page-app page-game{{ end }}
 {{ define "main" }}
 <div class="window win-app win-ski" id="win-main" data-task="Ski Run" data-icon="ski">
-  {{ partial "win/titlebar.html" (dict "title" "Ski Run" "icon" "ski" "close" "/games/") }}
+  {{ partial "win/titlebar.html" (dict "title" "Ski Run" "icon" "ski" "exit" true) }}
   <div class="menu-bar" hidden>
     <div class="menu-wrap">
       <button type="button" class="menu-btn" aria-haspopup="true" aria-expanded="false"><u>G</u>ame</button>
@@ -11,7 +11,7 @@
         <li><button type="button" class="menu-item" data-ski="new">New Run<span class="accel">F2</span></button></li>
         <li><button type="button" class="menu-item" data-ski="pause">Pause<span class="accel">P</span></button></li>
         <li class="sep"></li>
-        <li><a class="menu-item" href="/games/">Exit</a></li>
+        <li><a class="menu-item" href="/" data-exit>Exit</a></li>
       </ul>
     </div>
     <div class="menu-wrap">

@@ -1,6 +1,8 @@
-{{- /* Windows that desktop.js opens on top of any page: Find, Run, Help,
-       About, Shut Down, Recycle Bin and the message box. They sit in
-       inert <template> elements until asked for. */ -}}
+{{- /* Windows that desktop.js opens on top of any page: Find, Run, Display
+       Properties, Help, About, Shut Down, Recycle Bin, an icon's
+       Properties and the message box. They sit in inert <template>
+       elements until asked for. Text that is only true with a mouse
+       carries class desk-only; text for phones carries small-only. */ -}}
 <template id="tpl-find">
   <div class="window win-find" data-task="Find: All Files" data-icon="find">
     {{ partial "win/titlebar.html" (dict "title" "Find: All Files" "icon" "find" "inpage" true) }}
@@ -86,8 +88,38 @@
   <div class="window win-dialog win-display" data-task="Display Properties" data-icon="computer">
     {{ partial "win/titlebar.html" (dict "title" "Display Properties" "icon" "computer" "inpage" true) }}
     <form class="win-body dialog-body" id="display-form">
-      <p class="tabs"><span class="tab">Settings</span></p>
-      <div class="tab-panel">
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab" role="tab" id="display-tab-saver" aria-selected="true" aria-controls="display-saver" data-tab="saver">Screen Saver</button>
+        <button type="button" class="tab" role="tab" id="display-tab-size" aria-selected="false" aria-controls="display-size" data-tab="size" tabindex="-1">Settings</button>
+      </div>
+      <div class="tab-panel" id="display-saver" role="tabpanel" aria-labelledby="display-tab-saver" data-panel="saver">
+        <div class="monitor" aria-hidden="true"><canvas class="monitor-screen" width="152" height="112"></canvas></div>
+        <fieldset class="group-box">
+          <legend>Screen Saver</legend>
+          <p class="saver-row">
+            <label class="visually-hidden" for="saver-pick">Screen saver</label>
+            <select id="saver-pick" class="field">
+              <option value="none">(None)</option>
+              <option value="stars">Starfield</option>
+              <option value="lines">Bouncing Lines</option>
+            </select>
+            <button type="button" class="btn" data-display="preview">Preview</button>
+          </p>
+          <p class="saver-row">
+            <label for="saver-wait">Wait:</label>
+            <select id="saver-wait" class="field">
+              <option value="1">1</option>
+              <option value="3">3</option>
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="30">30</option>
+            </select>
+            <span>minutes</span>
+          </p>
+        </fieldset>
+      </div>
+      <div class="tab-panel" id="display-size" role="tabpanel" aria-labelledby="display-tab-size" data-panel="size" hidden>
         <div class="msg">
           <img src="/icons/computer-32.png" alt="" width="32" height="32">
           <p>Choose how big the desktop is drawn. Auto picks a size to suit your screen.</p>
@@ -119,26 +151,37 @@
       <p>{{ site.Params.description }} It's dressed up as a late-90s desktop, but every note is still an ordinary page with its own address.</p>
       <h3>Finding a note</h3>
       <ul>
-        <li><b>Search</b> on the taskbar looks through every note, lab, tool and game as you type. Press <kbd>/</kbd> to jump to it.</li>
+        <li><b>Search</b> on the taskbar looks through every note, lab, tool and game as you type.<span class="desk-only"> Press <kbd>/</kbd> to jump to it.</span></li>
         <li><b>Start &gt; Find</b> opens the full search window, where you can search by name, by text inside, or one folder at a time.</li>
-        <li><b>IT Notes</b> on the desktop opens the notes as folders: Networking, Security, Cloud and so on. The folder tree is on the left.</li>
+        <li><b>IT Notes</b> on the desktop opens the notes as folders: Networking, Security, Cloud and so on.<span class="desk-only"> The folder tree is on the left.</span></li>
         <li><b>Start &gt; Documents</b> lists the newest notes.</li>
       </ul>
       <h3>Windows</h3>
       <ul>
-        <li>Drag a window by its title bar. The three buttons minimize, maximize and close it; closing takes you back to the desktop.</li>
+        <li class="desk-only">Drag a window by its title bar. The three buttons minimize, maximize and close it. Right-click the title bar, the taskbar or the desktop for their menus.</li>
+        <li>The <b>X</b> closes a window and shows what was behind it: a note goes back to the desktop, a tool or a game goes back to wherever you opened it from.</li>
         <li><b>Up</b> on the toolbar goes to the folder a note is in.</li>
-        <li>Desktop icons can be dragged into the <b>Recycle Bin</b>. Nothing is really deleted: open the bin to put them back, or just reload.</li>
-        <li>In a folder, <b>Views</b> switches between Large Icons, List and Details. Click a column heading to sort.</li>
+        <li class="desk-only">Desktop icons can be dragged into the <b>Recycle Bin</b>, or right-click one and choose Delete. Nothing is really deleted: open the bin to put them back, or just reload.</li>
+        <li class="small-only">Press and hold a desktop icon for its menu. Delete sends it to the <b>Recycle Bin</b>; nothing is really deleted, and a reload brings everything back.</li>
+        <li class="small-only">Pull down to reload the page, like anywhere else.</li>
+        <li>In a folder, <b>Views</b> switches between Large Icons, List and Details.<span class="desk-only"> Click a column heading to sort.</span></li>
       </ul>
-      <h3>Too small or too big?</h3>
+      <h3>Games</h3>
       <ul>
-        <li><b>Start &gt; Settings &gt; Display</b> changes the size of the whole desktop. It picks one to suit your screen until you choose.</li>
+        <li>Open a game and it starts. The DOS ones load for a few seconds first.</li>
+        <li class="desk-only">Keys go straight to the game; click it to look around with the mouse. The speaker by the clock mutes it.</li>
+        <li class="small-only">On a phone the game gets on-screen buttons. Turn the phone sideways, or tap Full screen, for a bigger picture.</li>
       </ul>
-      <h3>Keyboard</h3>
-      <ul>
-        <li><kbd>/</kbd> search &middot; <kbd>Esc</kbd> close a menu or dialog &middot; arrow keys move through menus.</li>
-      </ul>
+      <div class="desk-only">
+        <h3>Too small or too big?</h3>
+        <ul>
+          <li><b>Start &gt; Settings &gt; Display</b> changes the size of the whole desktop. It picks one to suit your screen until you choose. The screen saver lives there too.</li>
+        </ul>
+        <h3>Keyboard</h3>
+        <ul>
+          <li><kbd>/</kbd> search &middot; <kbd>Esc</kbd> close a menu or dialog &middot; arrow keys move through menus.</li>
+        </ul>
+      </div>
       <h3>Contact</h3>
       <p>&copy; {{ now.Year }} CFWorx &middot; <a href="https://github.com/cfworx" target="_blank" rel="noopener noreferrer">GitHub</a> &middot; <a href="mailto:{{ site.Params.email }}">{{ site.Params.email }}</a></p>
     </div>
@@ -169,10 +212,31 @@
   <div class="window win-recycle" data-task="Recycle Bin" data-icon="recycle">
     {{ partial "win/titlebar.html" (dict "title" "Recycle Bin" "icon" "recycle" "inpage" true) }}
     <div class="win-body field-box recycle-body">
-      <p class="empty-folder">Nothing in here. Drag a desktop icon onto the bin if you dare.</p>
+      <p class="empty-folder">Nothing in here. <span class="desk-only">Drag a desktop icon onto the bin if you dare.</span><span class="small-only">Press and hold a desktop icon and choose Delete, if you dare.</span></p>
       <ul class="bin-list" hidden></ul>
     </div>
     <div class="status-bar"><p class="status-field status-grow bin-count">0 object(s)</p><p class="status-field">Click an item to put it back</p></div>
+  </div>
+</template>
+
+<template id="tpl-props">
+  <div class="window win-dialog win-props" data-task="Properties" data-icon="doc">
+    {{ partial "win/titlebar.html" (dict "title" "Properties" "icon" "doc" "inpage" true) }}
+    <div class="win-body dialog-body">
+      <p class="tabs"><span class="tab">General</span></p>
+      <div class="tab-panel">
+        <div class="props-head">
+          <img class="props-icon" src="/icons/doc-32.png" alt="" width="32" height="32">
+          <p class="props-name field"></p>
+        </div>
+        <dl class="props-list">
+          <dt>Type:</dt><dd class="props-type"></dd>
+          <dt>Location:</dt><dd class="props-where"></dd>
+          <dt>Target:</dt><dd class="props-target"></dd>
+        </dl>
+      </div>
+      <p class="dialog-buttons"><button type="button" class="btn btn-default" data-win="close">OK</button></p>
+    </div>
   </div>
 </template>
 

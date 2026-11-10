@@ -466,6 +466,14 @@ def speaker(i):
 
 
 @icon
+def speaker_off(i):
+    i.poly([(4, 12), (10, 12), (17, 5), (17, 26), (10, 19), (4, 19)], fill=S, outline=K)
+    i.line([(11, 13), (16, 8)], W)
+    for d in (0, 1):                                   # a red cross where the sound waves were
+        i.line([(20 + d, 10), (28 + d, 21)], R); i.line([(28 + d, 10), (20 + d, 21)], R)
+
+
+@icon
 def back(i):
     i.poly([(3, 15), (14, 4), (14, 11), (28, 11), (28, 20), (14, 20), (14, 27)], fill=LG, outline=K)
     i.line([(5, 15), (13, 7)], W)
@@ -666,6 +674,31 @@ def downsample(im):
     return out
 
 
+# Line art doesn't survive being halved, so these 16px icons are drawn by
+# hand (same letters as GLYPH_FILL: K black, Y yellow, R red, . clear).
+SMALL = {
+    "speaker": [
+        "................", "................", "........K.......", ".......KK.......",
+        "......KYK..K....", "..KKKKYYK...K...", "..KYYYYYK.K..K..", "..KYYYYYK..K.K..",
+        "..KYYYYYK..K.K..", "..KYYYYYK.K..K..", "..KKKKYYK...K...", "......KYK..K....",
+        ".......KK.......", "........K.......", "................", "................"],
+    "speaker-off": [
+        "................", "................", "........K.......", ".......KK.......",
+        "......KYK.......", "..KKKKYYK.R...R.", "..KYYYYYK..R.R..", "..KYYYYYK...R...",
+        "..KYYYYYK..R.R..", "..KYYYYYK.R...R.", "..KKKKYYK.......", "......KYK.......",
+        ".......KK.......", "........K.......", "................", "................"],
+}
+
+
+def small(rows):
+    im = Image.new("RGBA", (16, 16), T)
+    fill = dict(GLYPH_FILL, K=K)
+    for y, row in enumerate(rows):
+        for x, ch in enumerate(row):
+            im.putpixel((x, y), fill[ch])
+    return im
+
+
 def main():
     out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "static", "icons")
     if len(sys.argv) > 1: out = sys.argv[1]
@@ -673,7 +706,8 @@ def main():
     for name, fn in sorted(ICONS.items()):
         i = Icon(); fn(i)
         i.im.save(os.path.join(out, name + "-32.png"), optimize=True)
-        downsample(i.im).save(os.path.join(out, name + "-16.png"), optimize=True)
+        im16 = small(SMALL[name]) if name in SMALL else downsample(i.im)
+        im16.save(os.path.join(out, name + "-16.png"), optimize=True)
     glyphs(out)
     print(len(ICONS), "icons +", len(GLYPHS), "glyphs ->", os.path.normpath(out))
 

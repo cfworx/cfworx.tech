@@ -5,7 +5,7 @@
 {{ define "bodyclass" }}page page-app{{ end }}
 {{ define "main" }}
 <div class="window win-app win-sysinfo" id="win-main" data-task="My Computer" data-icon="computer">
-  {{ partial "win/titlebar.html" (dict "title" "My Computer" "icon" "computer") }}
+  {{ partial "win/titlebar.html" (dict "title" "My Computer" "icon" "computer" "exit" true) }}
   <main id="main" class="win-body app-body" tabindex="-1">
     <article class="sysinfo">
       <h1 class="visually-hidden">{{ .Title }}</h1>
@@ -14,7 +14,7 @@
         <a href="/images/my-computer.png"><img src="/images/my-computer.png" width="1140" height="733" alt="fastfetch output for Cory's PC, gamebox: Fedora Linux 44, KDE Plasma on Wayland, AMD Ryzen 9 9950X3D, NVIDIA GeForce RTX 4070, 62 GB of memory, and three LG UltraGear 2560x1440 displays at 180 Hz."></a>
         {{ .Content }}
       </div>
-      <p class="dialog-buttons"><a class="btn btn-default" href="/">OK</a></p>
+      <p class="dialog-buttons"><a class="btn btn-default" href="/" data-exit>OK</a></p>
     </article>
   </main>
 </div>

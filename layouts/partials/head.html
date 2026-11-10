@@ -3,7 +3,7 @@
        tools and the games). Everything is same-origin: the site's
        Content-Security-Policy allows nothing else. */ -}}
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 {{- $isPost := and .IsPage (ne .Section "") }}
 {{- $title := printf "%s · %s" .Title site.Title }}
 {{- if .IsHome }}{{ $title = printf "%s - %s" site.Title site.Params.tagline }}{{ end }}
@@ -53,6 +53,10 @@
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
 {{- end }}
 {{- with resources.Get "js/wizard.js" }}
+{{- $js := . | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- end }}
+{{- with resources.Get "js/extras.js" }}
 {{- $js := . | fingerprint }}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
 {{- end }}

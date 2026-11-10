@@ -33,11 +33,15 @@ Nothing goes live until it is pushed to `main` on GitHub (see DEPLOY.md).
 | The wizard's pop-up lines | `assets/js/wizard.js` (the list at the top) |
 | My Computer's picture | `static/images/my-computer.png` |
 | Windows, toolbar, folder tree | `layouts/partials/win/` |
-| Find, Run, Help, Shut Down | `layouts/partials/dialogs.html` |
+| Find, Run, Help, Shut Down, Display | `layouts/partials/dialogs.html` |
 | The desktop's look | `assets/css/win98.css` (chrome), `assets/css/content.css` (reading) |
-| The desktop's behaviour | `assets/js/desktop.js` |
+| The phone layout | "Small screens" near the end of `assets/css/win98.css` |
+| The desktop's behaviour | `assets/js/desktop.js` (windows, menus, search, right-click menus) |
+| Screen savers, start-up screen | `assets/js/extras.js` |
+| The game player and its on-screen pad | `assets/js/dosplayer.js`, `layouts/games/dos.html` |
 | Wallpaper | `static/images/wallpaper.png` |
 | Icons | `static/icons/`, drawn by `scripts/win98/make_icons.py` |
+| Picture shown when a link is shared | `static/og-card.png`, made by `scripts/win98/make_og.mjs` |
 | Site name, tagline, folder order | `hugo.toml` |
 
 ## Common jobs
@@ -51,6 +55,10 @@ Nothing goes live until it is pushed to `main` on GitHub (see DEPLOY.md).
 - **New DOS game:** install or unzip it into a folder, then
   `python3 scripts/win98/make_jsdos.py <folder> GAME.EXE static/dos/<name>.jsdos`
   and copy `content/games/doom.md`; it shows up in the Games folder and Start menu by itself.
+  The `pad:` block in that file is the on-screen buttons phones get; the
+  comment at the top of `layouts/games/dos.html` explains every setting.
+- **New screen saver:** add it to `SAVERS` in `assets/js/extras.js` and an
+  `<option>` to the Display dialog in `layouts/partials/dialogs.html`.
 - **Desktop size:** the desktop is magnified on big monitors (see "desktop
   size" in `assets/css/win98.css` for the breakpoints); visitors can change it
   in Start > Settings > Display.

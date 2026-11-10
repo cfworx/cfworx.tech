@@ -87,7 +87,7 @@
       {{- range $i, $c := partial "win/crumbs.html" $p -}}
       <a href="{{ $c.url }}">{{ $c.title }}</a><span class="sl">\</span>
       {{- end -}}
-      {{- if .folder -}}
+      {{- if and .folder (not .file) -}}
       <span aria-current="page">{{ $p.Title }}</span>
       {{- else -}}
       <span aria-current="page">{{ .file }}</span>

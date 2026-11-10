@@ -45,7 +45,11 @@
     "Somebody set the VLAN to 1 and walked away. I'm not naming names. It was you.",
     "If you need me, I'll be in the Recycle Bin. It's quieter there.",
     "Pro tip: you can't have unread email if you never open the inbox.",
-    "I've seen things. Token Ring. Coax. A server room cooled by a box fan."
+    "I've seen things. Token Ring. Coax. A server room cooled by a box fan.",
+    "Leave me alone for five minutes and I put the stars on. They're not for you. I just like them.",
+    "Right-click the desktop. Go on. Nothing bad happens. Probably.",
+    "Start > Shut Down > Restart. I get to watch the memory count again. It's the little things.",
+    "IDDQD still works. I'm not saying you need it. I'm saying I've watched you play."
   ];
   var BY_PLACE = {
     notes: [
@@ -71,6 +75,14 @@
     home: [
       "Welcome to my desktop. Don't touch anything. Especially that.",
       "Go ahead, click something. I've already told the boss you're on break."
+    ],
+    computer: [
+      "Three monitors. For reading documentation. Allegedly.",
+      "Sixty-two gigs of RAM, and half of it is browser tabs he's 'going to read later'."
+    ],
+    explorer: [
+      "Everything on this drive, in one window. Try not to break it.",
+      "This is the C: drive. The A: drive retired. The B: drive was never heard from again."
     ]
   };
   /* dragging icons into the Recycle Bin: the first line is non-negotiable */

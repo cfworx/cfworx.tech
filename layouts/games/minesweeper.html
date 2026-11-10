@@ -4,7 +4,7 @@
 {{ define "bodyclass" }}page page-app page-game{{ end }}
 {{ define "main" }}
 <div class="window win-app win-mines" id="win-main" data-task="Minesweeper" data-icon="mine">
-  {{ partial "win/titlebar.html" (dict "title" "Minesweeper" "icon" "mine" "close" "/games/") }}
+  {{ partial "win/titlebar.html" (dict "title" "Minesweeper" "icon" "mine" "exit" true) }}
   <div class="menu-bar" hidden>
     <div class="menu-wrap">
       <button type="button" class="menu-btn" aria-haspopup="true" aria-expanded="false"><u>G</u>ame</button>
@@ -20,7 +20,7 @@
         <li class="sep"></li>
         <li><button type="button" class="menu-item" data-mines="times">Best Times...</button></li>
         <li class="sep"></li>
-        <li><a class="menu-item" href="/games/">Exit</a></li>
+        <li><a class="menu-item" href="/" data-exit>Exit</a></li>
       </ul>
     </div>
     <div class="menu-wrap">

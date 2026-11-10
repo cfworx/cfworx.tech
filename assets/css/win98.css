@@ -36,6 +36,7 @@
   --btn-h:   23px;
   --task-h:  28px;
   --px:      1;           /* icon zoom (2 on phones) */
+  --full-h:  100vh;       /* the screen's height; 100dvh where supported (below) */
   --zoom:    1;           /* whole-desktop magnification, see "desktop size" below */
 
   /* bevels: outer then inner, bottom-right then top-left */
@@ -45,6 +46,8 @@
   --sunken: inset -1px -1px var(--hilight), inset 1px 1px var(--shadow), inset -2px -2px var(--light), inset 2px 2px var(--dkshadow);
   --status: inset -1px -1px var(--hilight), inset 1px 1px var(--shadow);
 }
+
+@supports (height: 100dvh) { :root { --full-h: 100dvh; } }
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -75,6 +78,7 @@ img { image-rendering: pixelated; }
    don't know `zoom` simply show the original size. Phones are never
    magnified (see the end of this file). */
 @supports (zoom: 1) {
+  @media (pointer: coarse) { :root { --zoom: 1.25; } }   /* touch screens too wide for the phone layout: a size up, for fingers */
   @media (min-width: 1800px) and (min-height: 860px)  { :root { --zoom: 1.25; } }
   @media (min-width: 2300px) and (min-height: 1100px) { :root { --zoom: 1.5; } }
   @media (min-width: 3400px) and (min-height: 1700px) { :root { --zoom: 2; } }
@@ -84,6 +88,8 @@ img { image-rendering: pixelated; }
   :root.zoom-175 { --zoom: 1.75; }
   :root.zoom-200 { --zoom: 2; }
 }
+
+.small-only { display: none !important; }   /* text for phones (shown in "Small screens" below); .desk-only is its opposite */
 
 .visually-hidden {
   position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
@@ -151,7 +157,7 @@ u { text-decoration: underline; }
 .dicon:focus-visible img, .dicon:active img { filter: opacity(.6) drop-shadow(0 0 0 var(--navy)); }
 
 /* dragging an icon (desktop.js), and the Recycle Bin lighting up under it */
-.dicon { -webkit-user-drag: none; touch-action: manipulation; }
+.dicon { -webkit-user-drag: none; touch-action: manipulation; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .dicon.is-dragging { position: relative; z-index: 5; opacity: .8; }
 .dicon.is-drop span { background: var(--navy); border-color: #ffff7f; }
 .dicon.is-drop img { filter: opacity(.6) drop-shadow(0 0 0 var(--navy)); }
@@ -261,6 +267,9 @@ u { text-decoration: underline; }
 .menu-item.is-checked { background-image: url('/icons/ui-check.png'); background-repeat: no-repeat; background-position: 7px 50%; }
 .menu-item.is-checked:hover, .menu-item.is-checked:focus { background-image: url('/icons/ui-check-w.png'); }
 .menu .sep { height: 0; margin: 3px 1px; border-top: 1px solid var(--shadow); border-bottom: 1px solid var(--hilight); }
+.menu-item.is-default { font-weight: bold; }
+/* right-click menus (desktop.js builds them inside the desktop) */
+.ctx-menu { position: absolute; z-index: 900; min-width: 150px; }
 
 .has-sub { position: relative; }
 .has-sub > .menu-item::after {
@@ -363,7 +372,8 @@ u { text-decoration: underline; }
   justify-content: center;
   min-width: 75px;
   min-height: var(--btn-h);
-  padding: 0 12px;
+  --bp: 12px;                       /* side padding; change this, not `padding`, so a pressed button keeps its width */
+  padding: 0 var(--bp);
   border: 0;
   background: var(--face);
   box-shadow: var(--raised);
@@ -372,7 +382,8 @@ u { text-decoration: underline; }
   text-decoration: none;
   cursor: default;
 }
-.btn:active:not(:disabled) { box-shadow: var(--pressed); padding: 1px 11px 0 13px; }
+/* pressed: the label moves a pixel down and right, the button stays the same size */
+.btn:active:not(:disabled) { box-shadow: var(--pressed); padding: 1px calc(var(--bp) - 1px) 0 calc(var(--bp) + 1px); }
 .btn:focus-visible { outline: 1px dotted #000; outline-offset: -4px; }
 .btn:disabled { color: var(--gray-text); text-shadow: 1px 1px var(--hilight); }
 /* the default button carries an extra black frame */
@@ -428,6 +439,12 @@ fieldset.plain legend { padding: 0; margin-bottom: 8px; }
   border-top-right-radius: 2px;
 }
 .tab-panel { padding: 12px 10px; box-shadow: var(--raised); }
+/* tabs that switch (Display Properties): the chosen one stands taller and joins its page */
+button.tab { position: relative; border: 0; color: #000; font: inherit; cursor: default; }
+button.tab[aria-selected="true"] { z-index: 1; margin: 0 -1px 0 -2px; padding: 3px 10px 5px; }
+button.tab[aria-selected="false"] { margin-top: 2px; padding: 2px 8px 3px; }
+button.tab:first-child[aria-selected="true"] { margin-left: 0; }
+button.tab:focus-visible { outline: 1px dotted #000; outline-offset: -4px; }
 
 kbd {
   display: inline-block; min-width: 1.4em; padding: 0 4px; text-align: center;
@@ -618,6 +635,7 @@ kbd {
 
 .tray { flex: none; display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 9px; box-shadow: var(--status); }
 .clock { white-space: nowrap; }
+.tray:has(> .clock:empty:only-child) { display: none; }   /* no JavaScript, no clock: no empty box either */
 
 /* ---- Start menu ------------------------------------------------------------------------- */
 
@@ -679,16 +697,30 @@ kbd {
 .dialog-buttons { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; margin: 12px 0 0; }
 
 .win-dialog { width: 360px; left: calc(50% - 180px); top: 22%; }
+.win-dialog .tb-min, .win-dialog .tb-max { display: none; }   /* dialogs only close */
 .win-run { width: 350px; }
 .run-row { display: flex; align-items: center; gap: 8px; margin: 10px 0 0; }
 .run-row .field { flex: 1 1 auto; min-width: 0; }
 .win-about { width: 380px; }
-.win-display { width: 340px; }
+.win-display { width: 356px; top: max(8px, 9%); }
 .win-display .group-box { margin-bottom: 0; }
+/* the picture of a monitor on the Screen Saver tab; its screen is a live canvas */
+.monitor { position: relative; width: 184px; margin: 0 auto 24px; padding: 11px 14px 15px; background: var(--face); box-shadow: var(--raised); border-radius: 5px 5px 2px 2px; }
+.monitor::before { content: ""; position: absolute; left: calc(50% - 20px); bottom: -8px; width: 40px; height: 8px; background: var(--face); box-shadow: inset 1px 0 var(--hilight), inset -1px 0 var(--dkshadow), inset -2px 0 var(--shadow); }
+.monitor::after { content: ""; position: absolute; left: calc(50% - 48px); bottom: -15px; width: 96px; height: 8px; background: var(--face); box-shadow: var(--raised); border-radius: 2px 2px 0 0; }
+.monitor-screen { display: block; width: 156px; height: 116px; border: 2px solid; border-color: var(--shadow) var(--hilight) var(--hilight) var(--shadow); background: var(--desk); image-rendering: pixelated; }
+.saver-row { display: flex; align-items: center; gap: 8px; margin: 6px 0 0; }
+.saver-row #saver-pick { flex: 1 1 auto; min-width: 0; }
+.win-props { width: 330px; }
+.props-head { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--shadow); box-shadow: 0 1px var(--hilight); }
+.props-head img { flex: none; width: 32px; height: 32px; }
+.props-name { flex: 1 1 auto; min-width: 0; margin: 0; }
+.props-list { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; }
+.props-list dd { margin: 0; overflow-wrap: anywhere; }
 .wizard { width: 80px !important; height: 72px !important; }
 
 .welcome-seen .win-welcome { display: none !important; }   /* shown once per visitor, see display.js */
-.win-welcome { width: 470px; left: max(280px, calc(50% - 235px)); top: max(12px, 9%); }
+.win-welcome { width: 470px; left: max(8px, min(max(280px, calc(50% - 235px)), calc(100% - 478px))); top: max(12px, 9%); }
 .welcome-body { padding: 0 12px 10px; overflow: auto; }
 .welcome-banner { display: flex; align-items: center; gap: 14px; margin: 3px -9px 0; padding: 10px 14px; background: linear-gradient(90deg, #000, var(--navy) 55%, var(--navy2)); color: #fff; }
 .welcome-banner h1 { margin: 0; font: bold 26px/1.1 Arial, "Liberation Sans", sans-serif; letter-spacing: .01em; }
@@ -784,7 +816,7 @@ kbd {
 }
 .wizard-text { margin: 0 0 9px; }
 .wizard-actions { display: flex; justify-content: flex-end; gap: 6px; }
-.wizard-actions .btn { min-width: 0; min-height: 21px; padding: 0 9px; }
+.wizard-actions .btn { min-width: 0; min-height: 21px; --bp: 9px; }
 .wizard-guy { padding: 0; border: 0; background: none; cursor: pointer; margin-right: 6px; }
 .wizard-guy img { display: block; width: 80px; height: 72px; }
 .wizard-guy:focus-visible { outline: 1px dotted #fff; outline-offset: 2px; }
@@ -803,6 +835,28 @@ kbd {
 .shutdown-screen p { margin: 0; font: bold clamp(22px, 5vw, 38px)/1.3 Arial, "Liberation Sans", sans-serif; }
 .shutdown-wake { border: 0; background: none; color: #555; font: 12px var(--ui-font); cursor: pointer; }
 .shutdown-wake::before { content: ""; position: fixed; inset: 0; }
+
+/* ---- screen saver and start-up screen (extras.js) ------------------------------------------------ */
+
+.screensaver { position: fixed; inset: 0; z-index: 5000; background: #000; cursor: none; }
+.screensaver canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+
+/* Only drawn while <html> has class "booting" (display.js). The
+   animation is a safety net: if extras.js never runs, the screen takes
+   itself away after nine seconds. */
+.boot-screen { display: none; }
+.booting .boot-screen {
+  display: block;
+  position: fixed; inset: 0; z-index: 6000;
+  padding: 22px 24px;
+  background: #000; color: #c0c0c0;
+  font: 16px/1.35 "Courier New", "Liberation Mono", monospace;
+  cursor: default;
+  animation: boot-out 1ms linear 9s forwards;
+}
+.boot-text { margin: 0; padding: 0; border: 0; border-radius: 0; background: none; color: inherit; font: inherit; white-space: pre-wrap; overflow: visible; }
+.boot-skip { position: absolute; left: 24px; bottom: 18px; margin: 0; color: #707070; }
+@keyframes boot-out { to { visibility: hidden; } }
 
 /* ---- classic scrollbars (mouse only; phones keep their own) -------------------------------------- */
 
@@ -832,18 +886,45 @@ kbd {
 }
 
 /* ==========================================================================
-   Small screens (phones). Same desktop, sized for thumbs:
+   Small screens: phones either way up, small tablets, and narrow browser
+   windows. Same desktop, sized for thumbs:
    - every window fills the screen (dialogs stay small and centered);
    - icons sit in a grid and are drawn at double size;
    - the taskbar, title bars, menus and list rows are finger-height;
    - the Start menu is a full-width sheet whose submenus fold open in place;
    - the folder tree is hidden: the address bar and Up do that job.
+
+   The same condition is written out in four places, so keep them in
+   step: here, the Games section at the end of this file, content.css,
+   and SMALL in assets/js/desktop.js.
    ========================================================================== */
 
-@media (max-width: 700px) {
+@media (max-width: 700px), (pointer: coarse) and (max-width: 960px) {
   :root, :root[class] { --zoom: 1 !important; }
-  body { height: 100vh; height: 100dvh; }
-  .start-settings { display: none; }
+
+  /* The page itself never scrolls, but `overflow: hidden` on the page
+     would switch off a phone's pull-down-to-refresh, so the page is
+     left scrollable and the body does the clipping. The body always
+     covers the page; if a browser ever leaves a strip uncovered at the
+     bottom, the strip is taskbar grey rather than a hole. */
+  html { overflow-y: auto; background: linear-gradient(var(--desk) 0 50%, var(--face) 50%) var(--desk); }
+
+  /* The body is pinned to the part of the screen you can actually see.
+     desktop.js keeps --vvh (height) and --vvt (top) in step with the
+     browser's visual viewport, so when the on-screen keyboard opens the
+     taskbar sits on top of it instead of underneath or floating. */
+  body {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: var(--vvt, 0px);
+    height: var(--vvh, var(--full-h));
+    padding: 0 env(safe-area-inset-right, 0px) 0 env(safe-area-inset-left, 0px);
+  }
+  .desk-only { display: none !important; }
+  li.small-only { display: list-item !important; }
+  span.small-only { display: inline !important; }
+  p.small-only, div.small-only { display: block !important; }
   :root {
     --ui: 15px;
     --row: 44px;
@@ -868,7 +949,7 @@ kbd {
   .dicon:hover span { text-decoration: none; }
 
   .window, .window.is-max { inset: 0; left: 0 !important; top: 0 !important; width: auto !important; height: auto !important; max-height: none; padding: 0; box-shadow: none; }
-  .title-bar { padding: 0 4px 0 6px; gap: 6px; font-size: 16px; }
+  .title-bar { padding: 0 4px 0 6px; gap: 6px; font-size: 16px; touch-action: manipulation; }   /* windows don't drag here, so a pull-down may start on the title */
   .title-icon { width: 16px; height: 16px; }
   .tb-min, .tb-max { display: none; }
   .tb-btn { width: 30px; height: 26px; background-size: 16px auto; }
@@ -909,7 +990,8 @@ kbd {
   .task-search input { height: 36px; font-size: 16px; }   /* 16px stops iOS zooming in on focus */
   .tray { height: 36px; padding: 0 8px; font-size: 13px; }
 
-  .start-menu { left: 0; right: 0; bottom: calc(var(--task-h) + env(safe-area-inset-bottom, 0px) - 4px); max-height: calc(100dvh - var(--task-h) - 24px); }
+  .start-menu, .search-pop, .wizard-tip { position: absolute; }   /* they ride on the body, which follows the keyboard */
+  .start-menu { left: env(safe-area-inset-left, 0px); right: env(safe-area-inset-right, 0px); bottom: calc(var(--task-h) + env(safe-area-inset-bottom, 0px) - 4px); max-height: calc(var(--vvh, var(--full-h)) - var(--task-h) - 24px); }
   .start-banner { width: 26px; }
   .start-banner span { font-size: 20px; }
   .start-list { flex: 1 1 auto; min-width: 0; overflow-y: auto; overscroll-behavior: contain; }
@@ -925,21 +1007,26 @@ kbd {
   .start-menu .menu-item:hover { background: none; color: #000; }
   .start-menu .menu-item:active, .start-menu .menu-item:focus-visible { background: var(--navy); color: #fff; }
 
-  .search-pop { left: 0; right: 0; width: auto; max-height: calc(100dvh - var(--task-h) - 60px); }
+  .search-pop { left: env(safe-area-inset-left, 0px); right: env(safe-area-inset-right, 0px); width: auto; max-height: calc(var(--vvh, var(--full-h)) - var(--task-h) - 16px); }
   .search-pop .menu-item { min-height: 48px; font-size: 16px; gap: 10px; align-items: center; }
   .search-pop .hit small { font-size: 12px; }
 
   /* dialogs stay dialogs */
   .window.win-dialog, .window.win-recycle {
-    inset: auto; left: 10px !important; right: 10px; top: 14% !important; width: auto !important; height: auto !important;
+    inset: auto; left: max(10px, calc(50% - 220px)) !important; top: 14% !important; width: min(440px, calc(100% - 20px)) !important; height: auto !important;
+    max-height: calc(86% - 8px); overflow: auto;
     padding: 3px; box-shadow: var(--window-frame);
   }
+  .ctx-menu { min-width: 190px; }
+  .ctx-menu .menu-item { font-size: 16px; }
+  .booting .boot-screen { padding: 16px 14px; font-size: 13px; }
+  .boot-skip { left: 14px; }
   .window.win-recycle { height: 240px !important; }
-  .wizard-tip { right: 8px; }
+  .wizard-tip { right: calc(8px + env(safe-area-inset-right, 0px)); }
   .wizard-balloon { max-width: 230px; font-size: 14px; }
-  .wizard-actions .btn { min-height: 34px; padding: 0 12px; }
+  .wizard-actions .btn { min-height: 34px; --bp: 12px; }
   .wizard-guy img { width: 60px; height: 54px; }
-  .btn { min-width: 88px; padding: 0 14px; }
+  .btn { min-width: 88px; --bp: 14px; }
   .field { min-height: 38px; font-size: 16px; padding: 6px 8px; }
   .radio { margin: 0; min-height: 40px; gap: 10px; }
   .radio input { width: 18px; height: 18px; }
@@ -963,18 +1050,34 @@ kbd {
   .app-body { padding: 12px 12px 8px; }
 
   /* the home page scrolls as one sheet: icons first, the Welcome window under them */
-  .page-home .desktop { overflow-y: auto; display: flex; flex-direction: column; background-image: none; }
+  .page-home .desktop { overflow-y: auto; display: flex; flex-direction: column; }
   .page-home .desktop-icons { position: static; flex: none; overflow: visible; }
   .page-home .window.win-welcome { position: static; flex: none; margin: 4px 8px 16px; padding: 3px; box-shadow: var(--window-frame); }
   .page-home .window.win-welcome.is-min { display: none; }
 }
 
+/* A phone on its side has very little height: the address bar steps
+   aside (the title bar and Up say where you are) and the toolbar slims
+   down to one line. */
+@media (pointer: coarse) and (max-width: 960px) and (max-height: 480px) and (orientation: landscape) {
+  .address-bar { display: none; }
+  .tool-btn { flex-direction: row; gap: 5px; min-width: 0; min-height: 38px; padding: 2px 9px; }
+  .tool-btn img { width: 20px; height: 20px; }
+  .window.win-dialog, .window.win-recycle { top: 6px !important; max-height: calc(100% - 12px); }
+}
+
+/* On a narrow phone the picture in My Computer shows the half with the
+   words (the full picture opens with a tap). */
+@media (max-width: 560px) {
+  .sysinfo img { aspect-ratio: 650 / 733; object-fit: cover; object-position: 82% 50%; }
+}
+
 /* ---- print: just the note ---------------------------------------------------------------------- */
 
 @media print {
-  html, body { height: auto; overflow: visible; background: #fff; display: block; }
+  html, body { position: static; height: auto; overflow: visible; background: #fff; display: block; }
   .desktop { overflow: visible; background: none; }
-  .desktop-icons, .taskbar, .start-menu, .search-pop, .wizard-tip, .title-bar, .menu-bar, .toolbar, .address-bar, .status-bar, .tree-pane, .skip, .post-nav, .term-copy { display: none !important; }
+  .desktop-icons, .taskbar, .start-menu, .search-pop, .wizard-tip, .ctx-menu, .screensaver, .boot-screen, .title-bar, .menu-bar, .toolbar, .address-bar, .status-bar, .tree-pane, .skip, .post-nav, .term-copy { display: none !important; }
   .window, .window.is-max { position: static; display: block; padding: 0; box-shadow: none; background: none; max-height: none; }
   .window:not(#win-main) { display: none; }
   .file-pane, .doc-view, .app-body { overflow: visible; box-shadow: none; background: none; }
@@ -1007,10 +1110,27 @@ kbd {
 .win-dos { width: min(668px, 100% - 16px); left: max(8px, calc(50% - 334px)); top: max(4px, 2%); }
 .win-dos.is-max .dos-body { display: flex; flex-direction: column; }
 .dos-body { overflow: auto; background: var(--face); padding: 0; outline: 0; }
-.dos-screen { position: relative; background: #000; box-shadow: var(--sunken); padding: 2px; margin: 1px 0 0; aspect-ratio: 4 / 3; max-height: var(--dos-max, calc(100dvh - 190px)); margin-inline: auto; width: 100%; }
+.win-dos.is-max .dos-stage { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+/* The screen is a black box; the picture in it is always 4:3 and as
+   large as fits (the cq units are the box's own size), so the game is
+   never stretched, whatever shape the window is. */
+.dos-screen {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; aspect-ratio: 4 / 3; max-height: var(--dos-max, calc(var(--full-h) - 190px));
+  margin: 1px auto 0; padding: 2px;
+  background: #000; box-shadow: var(--sunken);
+  container-type: size;
+}
 .win-dos.is-max .dos-screen { flex: 1 1 auto; max-height: none; aspect-ratio: auto; min-height: 0; }
-.dos-screen canvas { display: block; width: 100%; height: 100%; object-fit: fill; image-rendering: pixelated; outline: 0; touch-action: none; }
-.dos-screen:fullscreen { padding: 0; box-shadow: none; max-height: none; }
+.dos-screen canvas { display: block; width: 100%; height: 100%; object-fit: fill; image-rendering: pixelated; outline: 0; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+@supports (width: 1cqw) {
+  .dos-screen canvas { width: min(100cqw, 100cqh * 4 / 3); height: min(100cqh, 100cqw * 3 / 4); }
+}
+.dos-stage:fullscreen { display: flex; flex-direction: column; background: #000; }
+.dos-stage:fullscreen .dos-screen { flex: 1 1 auto; min-height: 0; max-height: none; aspect-ratio: auto; margin: 0; padding: 0; box-shadow: none; }
+.dos-stage:-webkit-full-screen { display: flex; flex-direction: column; background: #000; }
+.dos-stage:-webkit-full-screen .dos-screen { flex: 1 1 auto; min-height: 0; max-height: none; aspect-ratio: auto; margin: 0; padding: 0; box-shadow: none; }
 .dos-cover {
   position: absolute; inset: 2px;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
@@ -1033,15 +1153,81 @@ kbd {
 .dos-info dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 6px 0; }
 .dos-info dt { color: #404040; }
 .dos-info dd { margin: 0; }
-.dos-keys { display: none; gap: 4px; padding: 0 6px 6px; flex-wrap: wrap; }
-.dos-keys .btn { min-width: 44px; padding: 0 8px; }
-@media (pointer: coarse) { .dos-keys.is-on { display: flex; } }
+.touch-only { display: none; }
+@media (pointer: coarse) { dt.touch-only, dd.touch-only { display: block; } }
+
+/* The on-screen pad for touch screens (dosplayer.js shows it): small
+   keys in a row, a direction pad on the left, action buttons on the
+   right. Under the picture when the phone is upright; either side of
+   it when the phone is on its side (further down). */
+.dos-pad {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: "keys keys keys" "left . right";
+  align-items: center;
+  gap: 10px 6px;
+  padding: 8px 10px 10px;
+  background: var(--face);
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+}
+.pad-keys { grid-area: keys; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.pad-left { grid-area: left; display: flex; }
+.pad-right { grid-area: right; display: grid; grid-template-columns: repeat(2, minmax(0, 78px)); gap: 8px; }
+.pad-right.pad-one { display: flex; }
+.pad-key, .pad-btn, .pad-dpad { touch-action: none; }
+.btn.pad-key { min-width: 50px; min-height: 36px; --bp: 9px; }
+.btn.pad-btn { min-width: 0; min-height: 62px; --bp: 4px; font-weight: bold; }
+.btn.pad-wide { width: 150px; min-height: 100px; }
+.pad-key.is-on, .pad-btn.is-on { box-shadow: var(--pressed); }
+.pad-dpad { display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); width: 162px; max-width: 100%; aspect-ratio: 1; }
+.pad-dpad span { background: var(--face) center no-repeat; box-shadow: var(--raised); image-rendering: pixelated; pointer-events: none; }
+.pad-dpad .d-up { grid-area: 1 / 2; background-image: url('/icons/ui-up.png'); background-size: 21px 12px; }
+.pad-dpad .d-left { grid-area: 2 / 1; background-image: url('/icons/ui-left.png'); background-size: 12px 21px; }
+.pad-dpad .d-mid { grid-area: 2 / 2; box-shadow: none; }
+.pad-dpad .d-right { grid-area: 2 / 3; background-image: url('/icons/ui-right.png'); background-size: 12px 21px; }
+.pad-dpad .d-down { grid-area: 3 / 2; background-image: url('/icons/ui-down.png'); background-size: 21px 12px; }
+.pad-dpad .is-on { box-shadow: var(--pressed); background-position: calc(50% + 1px) calc(50% + 1px); }
+.dos-stage:fullscreen .dos-pad { background: #000; }
+.dos-stage:-webkit-full-screen .dos-pad { background: #000; }
+
+/* the speaker in the taskbar tray (game pages) */
+.tray-btn { display: grid; place-items: center; width: 18px; height: 18px; padding: 0; border: 0; background: none; cursor: default; }
+.tray-btn img { width: 16px; height: 16px; }
 
 @media (prefers-reduced-motion: reduce) { .dos-cover .dos-prompt::after { animation: none; } }
 
-@media (max-width: 700px) {
+@media (max-width: 700px), (pointer: coarse) and (max-width: 960px) {
   .game-touchbar .field, .game-touchbar .btn { min-height: 40px; }
   .mines-canvas { margin: 8px auto 0; }
-  .dos-screen { max-height: 56dvh; }
+  .dos-screen { max-height: calc(var(--vvh, var(--full-h)) * 0.56); margin-top: 0; }
   .dos-info { font-size: 15px; }
+  .btn.pad-key { min-height: 40px; }
+  .tray-btn { width: 30px; height: 30px; }
+  .tray-btn img { width: 20px; height: 20px; image-rendering: auto; }
+}
+
+/* A phone on its side: the picture fills the height and the pad sits
+   either side of it, small keys above the direction pad. */
+@media (pointer: coarse) and (max-width: 960px) and (orientation: landscape) {
+  .dos-stage.has-pad {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas: "keys screen right" "left screen right";
+    height: 100%;
+    background: var(--face);
+  }
+  .has-pad .dos-pad { display: contents; }
+  .has-pad .dos-screen { grid-area: screen; width: auto; height: 100%; max-height: none; aspect-ratio: 4 / 3; margin: 0; }
+  .has-pad .pad-keys { grid-area: keys; align-self: start; padding: 5px 4px 0; gap: 4px; }
+  .has-pad .pad-left { grid-area: left; align-self: end; justify-content: center; padding: 6px 6px 8px; }
+  .has-pad .pad-right { grid-area: right; align-self: end; justify-content: center; padding: 6px 6px 8px; }
+  .has-pad .pad-dpad { width: min(162px, 100%); }
+  .has-pad .btn.pad-wide { width: min(150px, 100%); min-height: clamp(84px, 30vh, 120px); }
+  .has-pad .btn.pad-key { min-width: 34px; min-height: 32px; --bp: 6px; font-size: 12px; }
+  .has-pad .btn.pad-btn { --bp: 2px; font-size: 13px; }
+  .dos-stage.has-pad:fullscreen { background: #000; }
+  .dos-stage.has-pad:fullscreen .dos-screen { flex: none; aspect-ratio: 4 / 3; }
+  .dos-stage.has-pad:-webkit-full-screen { background: #000; }
+  .dos-stage.has-pad:-webkit-full-screen .dos-screen { flex: none; aspect-ratio: 4 / 3; }
 }

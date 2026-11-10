@@ -17,6 +17,18 @@ mouse: lock
 keymap: "KeyW=ArrowUp KeyS=ArrowDown KeyA=AltLeft+ArrowLeft KeyD=AltLeft+ArrowRight KeyF=ControlLeft KeyE=Space"
 novert: true
 controls: "W and S move, A and D strafe, the mouse or the arrow keys turn (click the game first), left click or F fires, Space or E opens doors, Shift runs, 1-4 pick a weapon. Esc is the menu."
+pad:
+  dpad: { up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight" }
+  buttons:
+    - { key: "ControlLeft", label: "Fire" }
+    - { key: "Space", label: "Open" }
+    - { key: "AltLeft", label: "Strafe" }
+    - { key: "ShiftRight", label: "Run" }
+  keys:
+    - { key: "Escape", label: "Menu" }
+    - { key: "Enter", label: "Enter" }
+    - { key: "KeyY", label: "Y" }
+    - { key: "next:Digit3,Digit4,Digit1,Digit2", label: "Weapon" }
 scripts: ["dosplayer.js"]
 ---
 Episode one, *Escape from Castle Wolfenstein*: ten floors.

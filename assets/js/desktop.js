@@ -9,7 +9,8 @@
 
    Sections:  1 helpers   2 clock   3 windows + taskbar buttons
               4 menus (menu bars and the Start menu)   5 search
-              6 Find window   7 Run, Shut Down, message box
+              6 Find window   7 Run, Shut Down, Display, message box
+              7a the Recycle Bin   7b right-click menus + Properties
               8 folder views + sorting   9 commands   10 start-up */
 (function () {
   "use strict";
@@ -24,7 +25,10 @@
   function $$(sel, root) { return Array.prototype.slice.call((root || doc).querySelectorAll(sel)); }
   function on(el, type, fn, opts) { if (el) { el.addEventListener(type, fn, opts); } }
 
-  var small = window.matchMedia("(max-width: 700px)");
+  /* "Small screen": phones either way up, small tablets, narrow windows.
+     The same condition is written out in win98.css and content.css. */
+  var SMALL = "(max-width: 700px), (pointer: coarse) and (max-width: 960px)";
+  var small = window.matchMedia(SMALL);
   var hover = window.matchMedia("(hover: hover) and (pointer: fine)");
 
   function store(kind, key, value) {
@@ -103,8 +107,9 @@
   function minimize(el) { el.classList.add("is-min"); activate(topWindow()); }
   function restore(el) { el.classList.remove("is-min"); activate(el); }
 
+  function sizable(el) { return !small.matches && !el.classList.contains("win-dialog") && !!$(".tb-max", el); }
   function toggleMax(el) {
-    if (small.matches) { return; }
+    if (!sizable(el)) { return; }
     if (el.classList.contains("is-max")) {
       el.classList.remove("is-max");
       /* a window that was born maximized has no size of its own yet */
@@ -133,7 +138,7 @@
 
   function drag(el, bar) {
     on(bar, "pointerdown", function (e) {
-      if (e.button !== 0 || e.target.closest(".title-controls")) { return; }
+      if (e.button !== 0 || e.target.closest(".title-controls, .title-icon")) { return; }   /* the icon opens the window's menu */
       if (small.matches || el.classList.contains("is-max")) { return; }
       var r = el.getBoundingClientRect(), d = desktop.getBoundingClientRect();
       var ox = e.clientX - r.left, oy = e.clientY - r.top, z = scale();
@@ -156,7 +161,7 @@
       e.preventDefault();
     });
     on(bar, "dblclick", function (e) {
-      if (e.target.closest(".title-controls") || !$(".tb-max", el)) { return; }
+      if (e.target.closest(".title-controls, .title-icon")) { return; }
       toggleMax(el);
     });
   }
@@ -246,6 +251,7 @@
       startButton.setAttribute("aria-expanded", "false");
     }
     closeSearchPop();
+    closeCtx();
   }
 
   function openSub(li) {
@@ -357,8 +363,8 @@
     if (e.key === "Escape") {
       var shut = doc.getElementById("shutdown-screen");
       if (shut && !shut.hidden) { shut.hidden = true; return; }
-      if (openBar || (startMenu && !startMenu.hidden) || (searchPop && !searchPop.hidden)) {
-        var back = openBar || (startMenu && !startMenu.hidden ? startButton : null);
+      if (ctx || openBar || (startMenu && !startMenu.hidden) || (searchPop && !searchPop.hidden)) {
+        var back = ctx ? ctxFrom : (openBar || (startMenu && !startMenu.hidden ? startButton : null));
         closeMenus();
         if (back) { back.focus(); }
         return;
@@ -726,7 +732,11 @@
       var pick = $('input[name="sd"]:checked', el);
       var what = pick ? pick.value : "shutdown";
       closeWindow(el);
-      if (what === "restart") { window.location.href = "/"; return; }
+      if (what === "restart") {                    /* display.js shows the start-up screen on the way back in */
+        store("session", "cfw.reboot", "1");
+        if (window.location.pathname === "/") { window.location.reload(); } else { window.location.href = "/"; }
+        return;
+      }
       if (what === "dos") { window.location.href = "/games/"; return; }
       var screen = doc.getElementById("shutdown-screen");
       if (!screen) { return; }
@@ -748,17 +758,59 @@
     } catch (e) { if (value !== "auto") { root.classList.add("zoom-" + value); } }
     window.dispatchEvent(new Event("resize"));     /* games re-measure themselves */
   }
-  function openDisplay() {
+  /* Two tabs: Screen Saver (which saver, how long to wait, with a small
+     live preview in the picture of a monitor; the savers themselves are
+     in extras.js) and Settings (the desktop size). */
+  function openDisplay(tab) {
     closeMenus();
     var el = openApp("display");
     if (!el) { return; }
+    var saver = window.CFSaver, pickSaver = $("#saver-pick", el), pickWait = $("#saver-wait", el), screen = $(".monitor-screen", el);
+    var stopPreview = null;
+    function preview() {
+      if (stopPreview) { stopPreview(); stopPreview = null; }
+      if (!screen) { return; }
+      var g = screen.getContext("2d");
+      g.fillStyle = "#008689";                       /* "None": the plain desktop */
+      g.fillRect(0, 0, screen.width, screen.height);
+      if (saver && pickSaver.value !== "none") { stopPreview = saver.run(screen, pickSaver.value); }
+    }
+    function showTab(name) {
+      $$("[data-tab]", el).forEach(function (t) {
+        var onNow = t.getAttribute("data-tab") === name;
+        t.setAttribute("aria-selected", onNow ? "true" : "false");
+        t.tabIndex = onNow ? 0 : -1;
+      });
+      $$("[data-panel]", el).forEach(function (p) { p.hidden = p.getAttribute("data-panel") !== name; });
+    }
     var saved = store("local", "cfw.zoom") || "auto";
-    var pick = $('input[name="zoom"][value="' + saved + '"]', el) || $('input[name="zoom"][value="auto"]', el);
-    pick.checked = true;
+    ($('input[name="zoom"][value="' + saved + '"]', el) || $('input[name="zoom"][value="auto"]', el)).checked = true;
+    if (saver) { pickSaver.value = saver.kind(); pickWait.value = String(saver.wait()); }
+    else { pickSaver.disabled = true; pickWait.disabled = true; }
+    showTab(tab || "saver");
     if (el.getAttribute("data-ready")) { return; }
     el.setAttribute("data-ready", "1");
-    function apply() { var c = $('input[name="zoom"]:checked', el); if (c) { setZoom(c.value); } }
-    on($("#display-form", el), "submit", function (e) { e.preventDefault(); apply(); closeWindow(el); });
+    preview();
+    function apply() {
+      var c = $('input[name="zoom"]:checked', el);
+      if (c && c.value !== (store("local", "cfw.zoom") || "auto")) { setZoom(c.value); }
+      if (saver) { saver.save(pickSaver.value, Number(pickWait.value) || 5); }
+    }
+    on(pickSaver, "change", preview);
+    on(el, "click", function (e) {
+      var t = e.target.closest("[data-tab]");
+      if (t) { showTab(t.getAttribute("data-tab")); return; }
+      if (e.target.closest('[data-display="preview"]') && saver && pickSaver.value !== "none") { saver.start(pickSaver.value); }
+      if (e.target.closest('[data-win="close"]') && stopPreview) { stopPreview(); }
+    });
+    on(el, "keydown", function (e) {
+      var t = e.target.closest ? e.target.closest("[data-tab]") : null;
+      if (!t || (e.key !== "ArrowLeft" && e.key !== "ArrowRight")) { return; }
+      var tabs = $$("[data-tab]", el), next = tabs[(tabs.indexOf(t) + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
+      showTab(next.getAttribute("data-tab"));
+      next.focus();
+    });
+    on($("#display-form", el), "submit", function (e) { e.preventDefault(); apply(); if (stopPreview) { stopPreview(); } closeWindow(el); });
     on($('[data-display="apply"]', el), "click", apply);
   }
 
@@ -766,14 +818,16 @@
     doc.getElementById("shutdown-screen").hidden = true;
   });
 
-  /* ---- 7a. dragging desktop icons into the Recycle Bin ------------------------
-     Mouse only. An icon dropped anywhere else springs back. Nothing is
-     stored: the icons are only hidden, and a reload brings them back. */
+  /* ---- 7a. the Recycle Bin ----------------------------------------------------
+     A desktop icon gets there by being dragged onto the bin (mouse), or
+     by Delete on its right-click / press-and-hold menu (7b). An icon
+     dropped anywhere else springs back. Nothing is stored: the icons
+     are only hidden, and a reload brings them back. */
 
   var recycled = [], binCount = 0, swallowClick = false;
 
   function binAt(ev) {
-    var bin = $('.desktop-icons .dicon[data-cmd="recycle"]');
+    var bin = theBin();
     if (!bin || bin.hidden) { return null; }
     var r = bin.getBoundingClientRect();
     return ev.clientX >= r.left && ev.clientX <= r.right && ev.clientY >= r.top && ev.clientY <= r.bottom ? bin : null;
@@ -799,6 +853,22 @@
     list.hidden = recycled.length === 0;
     empty.hidden = recycled.length !== 0;
     count.textContent = recycled.length + " object(s)";
+  }
+
+  function theBin() { return $('.desktop-icons .dicon[data-cmd="recycle"]'); }
+  function toBin(icon) {
+    icon.hidden = true;
+    recycled.push(icon);
+    binCount++;
+    renderBin();
+    var bin = theBin();
+    var left = $$(".desktop-icons .dicon").filter(function (d) { return !d.hidden && d !== bin; }).length;
+    if (window.CFWizard) { window.CFWizard.recycled(binCount, left); }
+  }
+  function emptyBin() {
+    recycled = [];
+    renderBin();
+    if (window.CFWizard) { window.CFWizard.say("Emptied. They're gone for good. Or until you hit refresh, whichever comes first.", 9000); }
   }
 
   on(doc, "dragstart", function (e) {
@@ -828,14 +898,7 @@
       icon.classList.remove("is-dragging");
       icon.style.transform = "";
       if (over) { over.classList.remove("is-drop"); }
-      if (ev.type === "pointerup" && over) {
-        icon.hidden = true;
-        recycled.push(icon);
-        binCount++;
-        renderBin();
-        var left = $$(".desktop-icons .dicon").filter(function (d) { return !d.hidden && d !== over; }).length;
-        if (window.CFWizard) { window.CFWizard.recycled(binCount, left); }
-      }
+      if (ev.type === "pointerup" && over) { toBin(icon); }
     }
     doc.addEventListener("pointermove", move);
     doc.addEventListener("pointerup", up);
@@ -844,6 +907,244 @@
   on(doc, "click", function (e) {
     if (swallowClick) { swallowClick = false; e.preventDefault(); e.stopPropagation(); }
   }, true);
+
+  /* ---- 7b. right-click menus and Properties ----------------------------------
+     The desktop, its icons, the taskbar and title bars have menus of
+     their own, on a right click or (touch) a press-and-hold. Everywhere
+     else, inside a note for instance, the browser's own menu is left
+     alone so copy, paste and "open in new tab" keep working. */
+
+  var ctx = null, ctxFrom = null, pressTimer = null, pressedAt = 0;
+
+  function closeCtx() {
+    if (ctx) { ctx.remove(); ctx = null; }
+  }
+
+  /* items: { label, run, bold, disabled } or "-" for a separator.
+     x, y: where the pointer is, in screen pixels. */
+  function openCtx(items, x, y, focusFirst) {
+    closeMenus();
+    var ul = doc.createElement("ul");
+    ul.className = "menu ctx-menu";
+    ul.setAttribute("role", "menu");
+    items.forEach(function (it) {
+      var li = doc.createElement("li");
+      if (it === "-") { li.className = "sep"; ul.appendChild(li); return; }
+      var b = doc.createElement("button");
+      b.type = "button";
+      b.className = "menu-item" + (it.bold ? " is-default" : "");
+      b.setAttribute("role", "menuitem");
+      b.textContent = it.label;
+      b.disabled = !!it.disabled || !it.run;
+      on(b, "click", function (e) { e.stopPropagation(); closeCtx(); it.run(); });
+      li.appendChild(b);
+      ul.appendChild(li);
+    });
+    desktop.appendChild(ul);
+    /* place it at the pointer, opening upward or leftward near an edge */
+    var d = desktop.getBoundingClientRect(), z = scale();
+    var left = (x - d.left) / z, top = (y - d.top) / z, w = ul.offsetWidth, h = ul.offsetHeight;
+    if (left + w > desktop.clientWidth - 2) { left = Math.max(2, left - w); }
+    if (top + h > desktop.clientHeight - 2) { top = Math.max(2, top - h); }
+    ul.style.left = Math.max(2, Math.min(left, desktop.clientWidth - w - 2)) + "px";
+    ul.style.top = Math.max(2, top) + desktop.scrollTop + "px";
+    ctx = ul;
+    ctxFrom = doc.activeElement && doc.activeElement !== doc.body ? doc.activeElement : null;
+    if (focusFirst) { var first = $(".menu-item:not(:disabled)", ul); if (first) { first.focus(); } }
+  }
+
+  function flickerIcons() {
+    var box = $(".desktop-icons");
+    if (!box) { return; }
+    box.style.visibility = "hidden";
+    setTimeout(function () { box.style.visibility = ""; }, 100);
+  }
+  /* by name, the way Windows did it: My Computer first, the bin last */
+  function arrangeIcons() {
+    var box = $(".desktop-icons");
+    if (!box) { return; }
+    function rank(el) { return el.textContent.trim() === "My Computer" ? 0 : (el === theBin() ? 2 : 1); }
+    $$(".dicon", box).sort(function (a, b) {
+      return rank(a) - rank(b) || a.textContent.trim().localeCompare(b.textContent.trim());
+    }).forEach(function (el) { box.appendChild(el); });
+    flickerIcons();
+  }
+  function cascade() {
+    var n = 0;
+    wins.forEach(function (w) {
+      if (w.el.classList.contains("is-min")) { return; }
+      if (w.el.classList.contains("is-max")) { toggleMax(w.el); }
+      w.el.style.left = (14 + n * 22) + "px";
+      w.el.style.top = (12 + n * 22) + "px";
+      activate(w.el);
+      n++;
+    });
+  }
+
+  function iconKind(icon) {
+    var href = icon.getAttribute("href");
+    if (!href) { return "System Folder"; }
+    if (/^https?:/i.test(href)) { return "Internet Shortcut"; }
+    if (href === "/computer/") { return "System Folder"; }
+    if (/^\/(notes|homelab|tools|games)\/$/.test(href)) { return "File Folder"; }
+    return "Application";
+  }
+  function openProps(icon) {
+    var old = $('.window[data-app="props"]', desktop);
+    if (old) { closeWindow(old); }
+    var el = openApp("props");
+    if (!el) { return; }
+    var name = icon.textContent.trim(), img = $("img", icon), w = entry(el);
+    $(".title-text", el).textContent = name + " Properties";
+    if (w) { $("span", w.btn).textContent = name + " Properties"; w.btn.title = name + " Properties"; }
+    if (img) { $(".props-icon", el).src = img.getAttribute("src"); }
+    $(".props-name", el).textContent = name;
+    $(".props-type", el).textContent = iconKind(icon);
+    $(".props-where", el).textContent = "C:\\Desktop";
+    $(".props-target", el).textContent = icon.href || "Built into CFWorx 98";
+    var ok = $(".btn-default", el);
+    if (ok && !small.matches) { ok.focus(); }
+  }
+
+  function iconMenu(icon) {
+    var items = [{ label: "Open", bold: true, run: function () { icon.click(); } }];
+    if (icon === theBin()) {
+      items.push({ label: "Empty Recycle Bin", disabled: !recycled.length, run: emptyBin });
+    } else {
+      items.push("-", { label: "Delete", run: function () { toBin(icon); } });
+    }
+    items.push("-", { label: "Properties", run: function () { openProps(icon); } });
+    return items;
+  }
+  function desktopMenu() {
+    return [
+      { label: "Arrange Icons", run: arrangeIcons },
+      { label: "Line Up Icons", run: flickerIcons },
+      { label: "Refresh", run: flickerIcons },
+      "-",
+      { label: "Paste", disabled: true },
+      { label: "Paste Shortcut", disabled: true },
+      "-",
+      { label: "New Folder", run: function () {
+        if (window.CFWizard) { window.CFWizard.say("A new folder? On MY desktop? Request denied. It's nothing personal. Fine, it's a little personal.", 9000); }
+      } },
+      "-",
+      { label: "Properties", run: function () { if (small.matches) { command("about"); } else { openDisplay(); } } }
+    ];
+  }
+  function windowMenu(el) {
+    var min = el.classList.contains("is-min"), max = el.classList.contains("is-max");
+    var canMax = sizable(el);
+    return [
+      { label: "Restore", disabled: !(min || (max && canMax)), run: function () { if (min) { restore(el); } else { toggleMax(el); } } },
+      { label: "Minimize", disabled: min || !canMax, run: function () { minimize(el); } },
+      { label: "Maximize", disabled: max || !canMax, run: function () { if (min) { restore(el); } toggleMax(el); } },
+      "-",
+      { label: "Close", bold: true, run: function () { var x = $(".tb-close", el); if (x) { x.click(); } } }
+    ];
+  }
+  function taskbarMenu() {
+    return [
+      { label: "Cascade Windows", disabled: small.matches || !wins.length, run: cascade },
+      { label: "Minimize All Windows", disabled: !wins.length, run: function () { command("show-desktop"); } },
+      "-",
+      { label: "Properties", run: function () { command("about"); } }
+    ];
+  }
+
+  /* which menu, if any, belongs to the thing under the pointer */
+  function menuFor(t) {
+    if (!t || !t.closest) { return null; }
+    var icon = t.closest(".desktop-icons .dicon");
+    if (icon) { return iconMenu(icon); }
+    if (t === desktop || t.classList.contains("desktop-icons")) { return desktopMenu(); }
+    var bar = t.closest(".title-bar");
+    if (bar && !t.closest(".title-controls")) { var win = bar.closest(".window"); return win && entry(win) ? windowMenu(win) : null; }
+    if (t.closest("#start-button")) {
+      return [
+        { label: "Open", bold: true, run: function () { toggleStart(true); } },
+        { label: "Explore", run: function () { window.location.href = "/explorer/"; } },
+        { label: "Find...", run: function () { openFind(); } }
+      ];
+    }
+    var task = t.closest(".task-btn");
+    if (task) {
+      for (var i = 0; i < wins.length; i++) { if (wins[i].btn === task) { return windowMenu(wins[i].el); } }
+      return null;
+    }
+    if (t.closest(".taskbar") && !t.closest(".task-search, .ql-btn, .tray-btn")) { return taskbarMenu(); }
+    return null;
+  }
+
+  on(doc, "contextmenu", function (e) {
+    if (e.target.closest && e.target.closest(".ctx-menu")) { e.preventDefault(); return; }
+    var menu = menuFor(e.target);
+    if (!menu) { return; }
+    e.preventDefault();
+    clearTimeout(pressTimer);
+    if (Date.now() - pressedAt < 900) { return; }               /* the press-and-hold timer already opened it */
+    var x = e.clientX, y = e.clientY, keyboard = !x && !y;
+    if (keyboard) { var r = e.target.getBoundingClientRect(); x = r.left + r.width / 2; y = r.top + r.height / 2; }
+    if (pointerKind !== "mouse" && !keyboard) { pressedAt = Date.now(); guardLift(); }
+    openCtx(menu, x, y, keyboard);
+  });
+
+  /* A finger that opened a menu by pressing and holding is still down.
+     Lifting it must not count as a tap on whatever is under it. (Some
+     systems only send the menu event once the finger is already up;
+     then there is nothing to guard.) */
+  function guardLift() {
+    if (!fingerDown) { return; }
+    swallowClick = true;
+    function lifted() {
+      doc.removeEventListener("pointerup", lifted, true);
+      doc.removeEventListener("pointercancel", lifted, true);
+      setTimeout(function () { swallowClick = false; }, 300);
+    }
+    doc.addEventListener("pointerup", lifted, true);
+    doc.addEventListener("pointercancel", lifted, true);
+  }
+
+  /* Touch: press and hold on the desktop or an icon. Phones that send a
+     contextmenu event for a long press (Android) are handled above;
+     this timer covers the ones that don't (iOS). Lifting the finger
+     afterwards must not count as a tap on the icon. */
+  on(doc, "pointerdown", function (e) {
+    if (e.pointerType === "mouse" || !e.target.closest) { return; }
+    var t = e.target, sx = e.clientX, sy = e.clientY;
+    if (t !== desktop && !t.closest(".desktop-icons")) { return; }
+    clearTimeout(pressTimer);
+    pressTimer = setTimeout(function () {
+      var menu = ctx ? null : menuFor(t);
+      if (!menu) { return; }
+      pressedAt = Date.now();
+      guardLift();
+      openCtx(menu, sx, sy, false);
+    }, 600);
+    function over(ev) {
+      if (ev.type === "pointermove" && Math.abs(ev.clientX - sx) + Math.abs(ev.clientY - sy) < 12) { return; }
+      clearTimeout(pressTimer);
+      doc.removeEventListener("pointermove", over);
+      doc.removeEventListener("pointerup", over);
+      doc.removeEventListener("pointercancel", over);
+    }
+    doc.addEventListener("pointermove", over);
+    doc.addEventListener("pointerup", over);
+    doc.addEventListener("pointercancel", over);
+  });
+
+  /* the little icon at the left of a title bar opens the window's menu */
+  on(doc, "click", function (e) {
+    var ico = e.target.closest ? e.target.closest(".title-bar > .title-icon") : null;
+    if (!ico) { return; }
+    var win = ico.closest(".window");
+    if (!win || !entry(win)) { return; }
+    e.stopPropagation();
+    var r = ico.getBoundingClientRect();
+    openCtx(windowMenu(win), r.left, r.bottom + 2, false);
+  });
+  on(window, "blur", closeCtx);
+  on(window, "resize", closeCtx);
 
   /* ---- 8. folder views and sorting ------------------------------------------ */
 
@@ -971,10 +1272,16 @@
 
   /* Icons open with one click, but plenty of people double-click a
      desktop. The second click of a double-click would land on whatever
-     the new page put under the pointer, so a click that comes within
-     0.6 s of the click that opened this page is ignored. */
+     the new page put under the pointer, so a mouse click that comes
+     within 0.6 s of the mouse click that opened this page is ignored.
+     Fingers don't double-click, so taps are never held back. */
+  var pointerKind = "mouse", fingerDown = false;
+  on(doc, "pointerdown", function (e) { pointerKind = e.pointerType || "mouse"; fingerDown = pointerKind !== "mouse"; }, true);
+  on(doc, "pointerup", function () { fingerDown = false; }, true);
+  on(doc, "pointercancel", function () { fingerDown = false; }, true);
   on(doc, "click", function (e) {
     if (!e.target.closest || !e.target.closest("a[href], [data-cmd]")) { return; }
+    if ((e.pointerType || pointerKind) !== "mouse") { store("session", "cfw.click", "0"); return; }
     var last = Number(store("session", "cfw.click") || 0), now = Date.now();
     if (now - last < 600 && store("session", "cfw.clickpage") !== window.location.pathname) {
       e.preventDefault();
@@ -983,6 +1290,57 @@
     }
     store("session", "cfw.click", String(now));
     store("session", "cfw.clickpage", window.location.pathname);
+  }, true);
+
+  /* Phones: keep the desktop glued to the part of the screen you can
+     see. When the on-screen keyboard opens, a phone browser may shrink
+     the page, pan it, or leave it sized for a screen that is now half
+     covered. The "visual viewport" is what is really visible, so on
+     small screens the body is sized and placed to match it (--vvh and
+     --vvt, used by "Small screens" in win98.css). Pinch-zooming is left
+     alone. */
+  var vv = window.visualViewport;
+  function fitViewport() {
+    var rootStyle = doc.documentElement.style;
+    if (!vv || !small.matches || Math.abs(vv.scale - 1) > 0.02) {
+      rootStyle.removeProperty("--vvh");
+      rootStyle.removeProperty("--vvt");
+      return;
+    }
+    rootStyle.setProperty("--vvh", vv.height + "px");
+    rootStyle.setProperty("--vvt", vv.offsetTop + "px");
+  }
+  if (vv) {
+    on(vv, "resize", fitViewport);
+    on(vv, "scroll", fitViewport);
+    on(window, "orientationchange", fitViewport);
+    on(window, "pageshow", fitViewport);
+    if (small.addEventListener) { small.addEventListener("change", fitViewport); }
+    fitViewport();
+  }
+
+  /* Closing a program shows what was behind it. A tool or a game opened
+     from its folder goes back to the folder; one started from the
+     desktop (an icon, the Start menu, Search) goes back to the desktop;
+     one opened while reading a note goes back to the note. Every
+     desktop, folder and document page notes itself as "the place
+     behind", and a program's close links (data-exit) go there. With
+     nothing noted (you arrived straight on the program) they keep
+     their own address, the desktop. */
+  var isProgram = doc.body.classList.contains("page-app");
+  function noteBase() {
+    var c = doc.body.classList;
+    if (c.contains("page-home") || c.contains("page-folder") || c.contains("page-doc")) {
+      store("session", "cfw.base", window.location.pathname);
+    }
+  }
+  noteBase();
+  on(window, "pageshow", function (e) { if (e.persisted) { noteBase(); } });
+  on(doc, "click", function (e) {
+    var a = e.target.closest ? e.target.closest("a[data-exit]") : null;
+    if (!a || !isProgram) { return; }
+    var base = store("session", "cfw.base");
+    if (base && base.charAt(0) === "/" && base.charAt(1) !== "/" && base !== window.location.pathname) { a.setAttribute("href", base); }
   }, true);
 
   var main = doc.getElementById("win-main");
@@ -1020,10 +1378,14 @@
     }
   }
 
+  /* On a phone a lab's table of contents can fill two screens before the
+     write-up starts: fold it shut (one tap opens it). */
+  if (small.matches) { $$("details.toc[open]").forEach(function (t) { t.open = false; }); }
+
   /* a long address shows its end (where you are), not its start */
   var addr = $(".address-path");
   if (addr) { addr.scrollLeft = addr.scrollWidth; }
 
   /* for the page scripts (games) that want to open a window or a message */
-  window.CFDesktop = { open: openApp, message: message, command: command, register: register, closeMenus: closeMenus };
+  window.CFDesktop = { open: openApp, message: message, command: command, register: register, closeMenus: closeMenus, small: small, scale: scale };
 })();

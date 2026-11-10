@@ -411,7 +411,7 @@ body.lightbox-open { overflow: hidden; }
 .quiz-feedback.no { color: var(--bad); }
 .quiz-feedback code { white-space: nowrap; font-size: 14px; }
 
-@media (max-width: 700px) {
+@media (max-width: 700px), (pointer: coarse) and (max-width: 960px) {
   .doc { padding: 0.2rem 0.9rem 2.5rem; font-size: 16px; }
   .post-header h1 { font-size: 1.6rem; }
   .doc h2 { font-size: 1.35rem; }

@@ -15,7 +15,22 @@ downloadsize: "2.3 MB"
 size: "2.3 MB"
 mouse: lock
 novert: true
-controls: "W A S D move, the mouse turns (click the game first), left click or F fires, Space opens doors, Shift runs, 1-7 pick a weapon. Esc is the menu."
+keymap: "KeyW=ArrowUp KeyS=ArrowDown"
+rawafter: "KeyI KeyD"
+controls: "W A S D move (so do the arrow keys), the mouse turns (click the game first), left click or F fires, Space opens doors, Shift runs, 1-7 pick a weapon. Esc is the menu. IDDQD and friends still work."
+pad:
+  dpad: { up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight" }
+  buttons:
+    - { key: "KeyF", label: "Fire" }
+    - { key: "Space", label: "Open" }
+    - { key: "KeyA", label: "< Strafe" }
+    - { key: "KeyD", label: "Strafe >" }
+  keys:
+    - { key: "Escape", label: "Menu" }
+    - { key: "Enter", label: "Enter" }
+    - { key: "KeyY", label: "Y" }
+    - { key: "next:Digit3,Digit4,Digit5,Digit1,Digit2", label: "Weapon" }
+    - { key: "Tab", label: "Map" }
 scripts: ["dosplayer.js"]
 ---
 The first episode, *Knee-Deep in the Dead*: all nine levels. The installer says it best: "Shareware version. Please distribute!"

@@ -16,6 +16,19 @@ size: "14.3 MB"
 mouse: lock
 novert: true
 controls: "W A S D move, the mouse turns (click the game first), left click or F fires, X alternate fire, E opens, Space jumps, Z crouches, Shift runs. Esc is the menu."
+pad:
+  dpad: { up: "ArrowUp", down: "ArrowDown", left: "ArrowLeft", right: "ArrowRight" }
+  buttons:
+    - { key: "KeyF", label: "Fire" }
+    - { key: "KeyE", label: "Open" }
+    - { key: "Space", label: "Jump" }
+    - { key: "KeyX", label: "Alt fire" }
+  keys:
+    - { key: "Escape", label: "Menu" }
+    - { key: "Enter", label: "Enter" }
+    - { key: "KeyY", label: "Y" }
+    - { key: "Quote", label: "Weapon" }
+    - { key: "Tab", label: "Map" }
 scripts: ["dosplayer.js"]
 ---
 Episode one, *The Way of All Flesh*. The biggest download on the shelf, so give it a moment to load.

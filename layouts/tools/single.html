@@ -9,7 +9,7 @@
 {{ define "main" }}
 {{- $icon := printf "tool-%s" (.Params.icon | default "cli") }}
 <div class="window win-app win-tool" id="win-main" data-task="{{ .Title }}" data-icon="{{ $icon }}">
-  {{ partial "win/titlebar.html" (dict "title" .Title "icon" $icon "close" .Parent.RelPermalink) }}
+  {{ partial "win/titlebar.html" (dict "title" .Title "icon" $icon "exit" true) }}
   <main id="main" class="win-body app-body" tabindex="-1">
     <article class="tool">
       <header class="tool-header">

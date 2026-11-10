@@ -17,7 +17,7 @@
       {{- with .Content }}{{ . }}{{ else }}
       <p>{{ site.Params.description }}</p>
       {{- end }}
-      <p>Click an icon on the desktop, or press <b>Start</b> for everything. My <a href="/notes/">IT notes</a> live in folders, the <a href="/tools/">practice tools</a> and <a href="/games/">games</a> are programs, and the <b>Search</b> box on the taskbar looks through all of it.</p>
+      <p>Open an icon on the desktop, or press <b>Start</b> for everything. My <a href="/notes/">IT notes</a> live in folders, the <a href="/tools/">practice tools</a> and <a href="/games/">games</a> are programs, and the <b>Search</b> box on the taskbar looks through all of it.</p>
     </div>
     {{- with first 6 (where site.RegularPages "Section" "in" (slice "notes" "homelab")) }}
     <fieldset class="group-box">
@@ -35,5 +35,13 @@
       <button type="button" class="btn" data-win="close" hidden>Close</button>
     </p>
   </main>
+</div>
+{{ end }}
+{{- /* The start-up screen: shown on a first visit and after Shut Down >
+       Restart (display.js decides, extras.js types it out). */}}
+{{ define "overlay" }}
+<div class="boot-screen" id="boot-screen" aria-hidden="true">
+  <pre class="boot-text" id="boot-text"></pre>
+  <p class="boot-skip"><span class="desk-only">Press any key to skip</span><span class="small-only">Tap to skip</span></p>
 </div>
 {{ end }}

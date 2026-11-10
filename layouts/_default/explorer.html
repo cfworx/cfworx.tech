@@ -5,7 +5,7 @@
 {{ define "main" }}
 <div class="window win-explorer is-max" id="win-main" data-task="Exploring - CFWorx (C:)" data-icon="explorer">
   {{ partial "win/titlebar.html" (dict "title" "Exploring - CFWorx (C:)" "icon" "explorer") }}
-  {{ partial "win/explorer-bars.html" (dict "page" . "folder" true "icon" "explorer") }}
+  {{ partial "win/explorer-bars.html" (dict "page" . "folder" true "icon" "explorer" "file" "C:\\") }}
   <div class="win-body folder-view">
     {{ partial "win/tree.html" . }}
     <main id="main" class="file-pane view-large" data-view="large" tabindex="-1">
