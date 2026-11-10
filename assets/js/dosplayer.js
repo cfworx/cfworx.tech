@@ -575,8 +575,11 @@
     }).catch(fail);
   }
   play.addEventListener("click", start);
-  /* any first click or key press may be what unlocks the sound */
-  document.addEventListener("pointerdown", unlockAudio, true);
+  /* any first click, tap or key press may be what unlocks the sound
+     (phones only allow it when a finger lifts) */
+  ["pointerdown", "pointerup", "touchend", "click"].forEach(function (type) {
+    document.addEventListener(type, unlockAudio, true);
+  });
   if (window.matchMedia("(pointer: coarse)").matches) { showPad(); }     /* phones and tablets: the pad is there from the start */
   start();
 

@@ -459,6 +459,19 @@ def start(i):
 
 
 @icon
+def resurgence(i):
+    """Resurgence Builds (builds for a shooter): an aiming reticle on a dark tile."""
+    dark, edge = (40, 40, 48, 255), (96, 96, 108, 255)
+    i.rect(3, 3, 28, 28, fill=dark, outline=K)
+    i.line([(4, 27), (4, 4), (27, 4)], edge)
+    for r in (0, 1):                                    # the ring, two pixels thick
+        i.ell(8 + r, 8 + r, 23 - r, 23 - r, outline=ORANGE)
+    for a, b in ((5, 10), (21, 26)):                    # four ticks through it
+        i.rect(15, a, 16, b, fill=ORANGE); i.rect(a, 15, b, 16, fill=ORANGE)
+    i.rect(15, 15, 16, 16, fill=W)
+
+
+@icon
 def speaker(i):
     i.poly([(4, 12), (10, 12), (17, 5), (17, 26), (10, 19), (4, 19)], fill=S, outline=K)
     i.line([(11, 13), (16, 8)], W)
@@ -675,13 +688,18 @@ def downsample(im):
 
 
 # Line art doesn't survive being halved, so these 16px icons are drawn by
-# hand (same letters as GLYPH_FILL: K black, Y yellow, R red, . clear).
+# hand (K black, Y yellow, R red, W white, O orange, D dark slate, . clear).
 SMALL = {
     "speaker": [
         "................", "................", "........K.......", ".......KK.......",
         "......KYK..K....", "..KKKKYYK...K...", "..KYYYYYK.K..K..", "..KYYYYYK..K.K..",
         "..KYYYYYK..K.K..", "..KYYYYYK.K..K..", "..KKKKYYK...K...", "......KYK..K....",
         ".......KK.......", "........K.......", "................", "................"],
+    "resurgence": [
+        "................", ".KKKKKKKKKKKKKK.", ".KDDDDDOODDDDDK.", ".KDDDDDOODDDDDK.",
+        ".KDDDOOOOOODDDK.", ".KDDODDDDDDODDK.", ".KDDODDDDDDODDK.", ".KOOODDWWDDOOOK.",
+        ".KOOODDWWDDOOOK.", ".KDDODDDDDDODDK.", ".KDDODDDDDDODDK.", ".KDDDOOOOOODDDK.",
+        ".KDDDDDOODDDDDK.", ".KDDDDDOODDDDDK.", ".KKKKKKKKKKKKKK.", "................"],
     "speaker-off": [
         "................", "................", "........K.......", ".......KK.......",
         "......KYK.......", "..KKKKYYK.R...R.", "..KYYYYYK..R.R..", "..KYYYYYK...R...",
@@ -692,7 +710,7 @@ SMALL = {
 
 def small(rows):
     im = Image.new("RGBA", (16, 16), T)
-    fill = dict(GLYPH_FILL, K=K)
+    fill = dict(GLYPH_FILL, K=K, O=ORANGE, D=(40, 40, 48, 255))
     for y, row in enumerate(rows):
         for x, ch in enumerate(row):
             im.putpixel((x, y), fill[ch])

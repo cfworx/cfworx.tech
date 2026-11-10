@@ -907,7 +907,7 @@ kbd {
      left scrollable and the body does the clipping. The body always
      covers the page; if a browser ever leaves a strip uncovered at the
      bottom, the strip is taskbar grey rather than a hole. */
-  html { overflow-y: auto; background: linear-gradient(var(--desk) 0 50%, var(--face) 50%) var(--desk); }
+  html { overflow-y: auto; background: var(--face) linear-gradient(var(--desk) 0 50%, var(--face) 50%) no-repeat; }
 
   /* The body is pinned to the part of the screen you can actually see.
      desktop.js keeps --vvh (height) and --vvt (top) in step with the

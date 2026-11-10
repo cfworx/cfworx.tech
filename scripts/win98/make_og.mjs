@@ -15,8 +15,8 @@ const base = process.argv[2] || 'http://localhost:8098';
 const out = process.argv[3] || path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'static', 'og-card.png');
 const browser = await chromium.launch();
 const ctx = await browser.newContext({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
-// straight to a first-visit desktop at 175%, skipping the start-up screen; the wizard keeps to himself
-await ctx.addInitScript(() => { try { localStorage.setItem('cfw.booted', '1'); localStorage.setItem('cfw.zoom', '175'); localStorage.setItem('cfw.wizard.off', '1'); } catch (e) { /* fine */ } });
+// straight to a first-visit desktop at 150%, skipping the start-up screen; the wizard keeps to himself
+await ctx.addInitScript(() => { try { localStorage.setItem('cfw.booted', '1'); localStorage.setItem('cfw.zoom', '150'); localStorage.setItem('cfw.wizard.off', '1'); } catch (e) { /* fine */ } });
 const page = await ctx.newPage();
 await page.clock.install({ time: new Date('1998-06-25T09:41:00') });      // the clock in the tray
 await page.goto(base + '/', { waitUntil: 'networkidle' });
