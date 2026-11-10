@@ -355,6 +355,7 @@ progress::-moz-progress-bar { background: var(--bar, var(--ok)); }
 .stats dd small { color: var(--hud-muted); font-size: var(--fs-sm); }
 .stats dd.stat-today { order: 3; margin-top: 4px; color: #74e39a; font: 700 var(--fs-xs)/1.25 var(--pixel); text-transform: uppercase; letter-spacing: var(--caps); white-space: normal; }
 .stats.is-loading dd, .stats.is-loading dd *, .level.is-loading .lv-num { color: transparent; }   /* the boxes hold their places until the numbers arrive */
+.stats .l-short { display: none; }
 .stats .stat.bump { animation: bump 1.8s ease-out; }
 @keyframes bump { 0%, 30% { background: rgba(255, 216, 77, 0.35); border-color: var(--sel); } 100% { background: rgba(0, 0, 0, 0.18); } }
 
@@ -1184,11 +1185,17 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
   /* the tagline keeps to the left so the kid's radio station fits beside it */
   .station { max-width: 16em; margin-top: 8px; font-size: var(--fs-sm); }
   .hud-main { margin-top: 14px; gap: 12px; }
-  .stats { margin-top: 12px; gap: 6px; }
-  .stats div { padding: 6px 8px; }
-  .stats { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-  .stats div { grid-column: span 2; }
-  .stats div:nth-child(n+4) { grid-column: span 3; }
+  /* phones: one slim strip of five counters under a small heading, instead of two rows of tall boxes */
+  .stats { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; margin-top: 14px; }
+  .stats::before { content: "Spotted so far"; grid-column: 1 / -1; color: var(--hud-muted); font: 700 var(--fs-xs) var(--pixel); letter-spacing: var(--caps); text-transform: uppercase; }
+  .stats div { padding: 6px 2px; align-items: center; text-align: center; }
+  .stats .l-full { display: none; }
+  .stats .l-short { display: inline; }
+  .stats dt { font-size: var(--fs-xs); }
+  .stats dd { font-size: var(--fs-lg); }
+  .stats dd small { display: block; font-size: var(--fs-xs); line-height: 1.1; }
+  .stats dd.stat-today { margin-top: 2px; letter-spacing: 0; text-transform: none; }
+  .hud-in { padding-bottom: 14px; }
   .level { flex-basis: 100%; }
   .report-text { font-size: var(--fs-md); }
   .tab { padding-inline: 10px; }
@@ -1216,7 +1223,6 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
   .quiz-opts { grid-template-columns: minmax(0, 1fr); }
   .fp-m { grid-template-columns: 80px minmax(0, 1fr); }
   .fp-status { grid-column: 2; }
-  .stats dd { font-size: var(--fs-xl); }
 }
 @media (max-width: 340px) {
   .logo { font-size: 1.85rem; }

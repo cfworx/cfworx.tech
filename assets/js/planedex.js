@@ -462,10 +462,11 @@
       ['countries', 'countries spotted', null, td.newCountries, 'Countries the planes we spotted come from'],
       ['badges', 'badges earned', t.badgesTotal, null, 'Badge levels earned so far']
     ];
+    var SHORT = { species: 'models', planes: 'planes', airlines: 'airlines', countries: 'countries', badges: 'badges' };
     el.stats.innerHTML = stats.map(function (c) {
       var v = t[c[0]] || 0;
       var from = prev && typeof prev[c[0]] === 'number' && prev[c[0]] < v ? prev[c[0]] : v;
-      return '<div class="stat' + (from !== v ? ' bump' : '') + '" title="' + esc(c[4]) + '"><dt>' + c[1] + '</dt>'
+      return '<div class="stat' + (from !== v ? ' bump' : '') + '" title="' + esc(c[4]) + '"><dt><span class="l-full">' + c[1] + '</span><span class="l-short">' + SHORT[c[0]] + '</span></dt>'
         + '<dd><b class="count" data-to="' + v + '">' + num(from) + '</b>' + (c[2] ? '<small> of ' + num(c[2]) + '</small>' : '') + '</dd>'
         + (c[3] ? '<dd class="stat-today">+' + num(c[3]) + ' today</dd>' : '') + '</div>';
     }).join('');
@@ -1410,12 +1411,12 @@
 
     // The PLANEDEX letters' real top and bottom: the text box is taller than the pixel letters.
     function glyphs(logo, box) {
-      var cs = getComputedStyle(logo);
-      meas.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
-      var m = meas.measureText(logo.textContent);
-      if (!m.fontBoundingBoxAscent || !m.actualBoundingBoxAscent) return { top: box.top, bottom: box.bottom };
-      var base = box.top + m.fontBoundingBoxAscent;
-      return { top: base - m.actualBoundingBoxAscent, bottom: base + m.actualBoundingBoxDescent + 8 };  // + its 8px shadow
+      // Silkscreen's own proportions: the text box is 1.267em tall with the baseline 81% of the
+      // way down, and the capitals stand 0.625em above it. Worked out from the page itself,
+      // because some phone browsers blur or block the canvas text measurements.
+      var fs = parseFloat(getComputedStyle(logo).fontSize) || 34;
+      var base = box.top + box.height * 0.808;
+      return { top: base - fs * 0.625, bottom: base + 8 };   // + its 8px shadow
     }
 
     function measure() {
