@@ -320,9 +320,9 @@
   })();
 
   /* ---- the captain's readout ------------------------------------------------- */
-  /* The API makes the MP3 with ElevenLabs the first time a day is played.
-     It plays through Web Audio, which the click unlocks, so it works on
-     phones without an <audio> element. */
+  /* The morning-report task makes each day's MP3 with ElevenLabs and stores
+     it with the API. It plays through Web Audio, which the click unlocks,
+     so it works on phones without an <audio> element. */
 
   var Voice = (function () {
     var btn = null, src = null, label = '';
@@ -810,7 +810,7 @@
       fetch(API + '?logbook', { headers: { accept: 'application/json' } })
         .then(function (r) { return r.ok ? r.json() : { reports: [] }; })
         .catch(function () { return { reports: [] }; })
-        .then(function (j) { state.logbook = (j && j.reports) || []; state.logbookVoice = Boolean(j && j.voice); drawLogbook(); });
+        .then(function (j) { state.logbook = (j && j.reports) || []; drawLogbook(); });
       return;
     }
     drawLogbook();
@@ -822,7 +822,7 @@
       + (list.length ? '<ol class="logbook">' + list.map(function (r) {
         var paras = String(r.text || '').split(/\n\s*\n/).map(function (t) { return '<p>' + esc(t.trim()) + '</p>'; }).join('');
         return '<li class="win lb-entry"><p class="win-title">' + esc(weekday(r.day) + ' · ' + longDate(r.day)) + '</p><div class="textbox">' + paras + '</div>'
-          + (state.logbookVoice ? voiceButton(r.day, r.at, 'small', '▶ Hear it') : '') + '</li>';
+          + (r.voice ? voiceButton(r.day, r.at, 'small', '▶ Hear it') : '') + '</li>';
       }).join('') + '</ol>' : '<p class="status-msg">The first report shows up tomorrow morning.</p>');
   }
 

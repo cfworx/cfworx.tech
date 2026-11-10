@@ -46,20 +46,20 @@ usual push.
 ### The captain's readout
 
 Each report can be played aloud by "the captain" (an airline-pilot voice
-from ElevenLabs), with a cabin chime first. The first time a day's report
-is played, `GET /api/planedex?voice=YYYY-MM-DD` has ElevenLabs read it and
-keeps the MP3 in the `voice` table, so every later play is free. The
-scheduled task asks for it right after writing the report, so it's ready
-before anyone wakes up.
+from ElevenLabs), with a cabin chime first. Right after writing the report,
+the same scheduled task records it through Claude's ElevenLabs connection
+(one take, about 800 credits a day), puts the SHA-256 of a one-time token in
+the `voice_tokens` table and sends the MP3 to
+`POST /api/planedex?voice=YYYY-MM-DD`, which keeps it in the `voice` table.
+If a day's readout fails, the next morning's run catches up one missed day.
+The play button only shows on days that have a readout, in the report box
+and in the Logbook.
 
-It needs one secret on the Pages project (Settings → Variables and
-Secrets): `ELEVENLABS_API_KEY`, a key restricted to Text to Speech, ideally
-with a credit limit. Without it the play button just doesn't show. A
-readout costs about one ElevenLabs credit per character (roughly 600 to
-900 a day). Optional plain variables: `PLANEDEX_VOICE_ID` for another voice
-and `PLANEDEX_VOICE_MODEL` (for example `eleven_flash_v2_5`, half the
-credits). New readouts are limited to reports from the last 60 days and 8
-an hour.
+No ElevenLabs key is needed on the site. If the secret `ELEVENLABS_API_KEY`
+is ever added to the Pages project, the site can also make a missing
+readout itself the first time it's played (reports from the last 60 days,
+8 an hour at most; `PLANEDEX_VOICE_ID` and `PLANEDEX_VOICE_MODEL` swap the
+voice or model).
 
 ## Photos
 
