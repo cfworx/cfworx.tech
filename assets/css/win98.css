@@ -687,6 +687,7 @@ kbd {
 .win-display .group-box { margin-bottom: 0; }
 .wizard { width: 80px !important; height: 72px !important; }
 
+.welcome-seen .win-welcome { display: none !important; }   /* shown once per visitor, see display.js */
 .win-welcome { width: 470px; left: max(280px, calc(50% - 235px)); top: max(12px, 9%); }
 .welcome-body { padding: 0 12px 10px; overflow: auto; }
 .welcome-banner { display: flex; align-items: center; gap: 14px; margin: 3px -9px 0; padding: 10px 14px; background: linear-gradient(90deg, #000, var(--navy) 55%, var(--navy2)); color: #fff; }

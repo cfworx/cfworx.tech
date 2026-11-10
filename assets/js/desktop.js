@@ -125,7 +125,6 @@
   function closeWindow(el) {
     var w = entry(el);
     if (!w) { return; }
-    if (el.id === "win-main" && el.classList.contains("win-welcome")) { store("session", "cfw.welcome", "closed"); }
     el.remove();
     w.btn.remove();
     wins.splice(wins.indexOf(w), 1);
@@ -672,7 +671,7 @@
     "explorer": "/explorer/", "my computer": "/computer/", "c:": "/explorer/", "c:\\": "/explorer/",
     "notepad": "/notes/", "command": "/tools/cli/", "cmd": "/tools/cli/", "calc": "/tools/subnetting/",
     "desktop": "/", "help": "cmd:help", "winver": "cmd:about", "find": "cmd:find",
-    "display": "cmd:display", "control": "cmd:display", "desk.cpl": "cmd:display", "settings": "cmd:display"
+    "welcome": "cmd:welcome", "display": "cmd:display", "control": "cmd:display", "desk.cpl": "cmd:display", "settings": "cmd:display"
   };
 
   function go(p) {
@@ -921,6 +920,10 @@
       case "run": openRun(); break;
       case "shutdown": openShutdown(); break;
       case "display": openDisplay(); break;
+      case "welcome":      /* Run > "welcome" brings the greeting back */
+        try { window.localStorage.removeItem("cfw.welcome"); } catch (e) { /* fine */ }
+        window.location.href = "/";
+        break;
       case "help": closeMenus(); openApp("help"); break;
       case "about": closeMenus(); openApp("about"); break;
       case "recycle": closeMenus(); openApp("recycle"); renderBin(); break;
@@ -984,10 +987,15 @@
 
   var main = doc.getElementById("win-main");
   if (main) {
-    if (main.classList.contains("win-welcome") && store("session", "cfw.welcome") === "closed" && !small.matches) {
+    /* The Welcome window greets a visitor once. display.js hides it on
+       later visits before the page is drawn; here it is taken out of the
+       page, or shown and remembered as seen. */
+    var welcome = main.classList.contains("win-welcome");
+    if (welcome && (doc.documentElement.classList.contains("welcome-seen") || store("local", "cfw.welcome") === "seen")) {
       main.remove();
     } else {
       register(main);
+      if (welcome) { store("local", "cfw.welcome", "seen"); }
     }
   }
 
