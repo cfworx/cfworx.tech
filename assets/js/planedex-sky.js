@@ -160,6 +160,7 @@
     var c = box.querySelector('canvas');
     if (c && window.PlanedexBadges && window.PlanedexBadges.paintIcon) window.PlanedexBadges.paintIcon(c);
     box.hidden = false;
+    box.classList.remove('is-loading');   // its line was held empty until now, so nothing below jumps
   }
 
   /* ---- the picture -------------------------------------------------------------- */

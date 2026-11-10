@@ -451,6 +451,7 @@
     el.xp.value = maxed ? 1 : Math.max(0, L.xp - L.prev);
     el.xpText.textContent = maxed ? num(L.xp) + ' XP · MAX LEVEL!' : num(L.xp) + ' XP · ' + num(L.next - L.xp) + ' to LV ' + (L.level + 1);
     el.level.hidden = false;
+    el.level.classList.remove('is-loading');
     var t = d.totals, td = d.today || {}, prev = state.shownTotals;
     // Our own counts, said plainly ("509 planes spotted"), with today's firsts underneath.
     // When a refresh brings bigger numbers, they count up and the box flashes.
@@ -471,9 +472,12 @@
     state.shownTotals = { species: t.species, planes: t.planes, airlines: t.airlines, countries: t.countries, badges: t.badges };
     countUp(el.stats);
     el.stats.hidden = false;
+    el.stats.classList.remove('is-loading');
     $('n-dex').textContent = t.species;
     $('n-wanted').textContent = d.wanted.filter(function (w) { return !w.caught; }).length;
     $('n-badges').textContent = t.badges + '/' + t.badgesTotal;
+    revealTab($('tab-' + state.tab));   // the counters change the tabs' widths
+    menuEdges();
     updateClock();
   }
 
@@ -821,10 +825,11 @@
   function renderWanted(d) {
     var left = d.wanted.filter(function (w) { return !w.caught; }).length;
     el.wanted.innerHTML = '<div class="win intro"><p class="win-title">Most wanted <span class="win-sub">' + num(left) + ' left</span></p></div>'
-      + '<div class="posters">' + d.wanted.map(function (w) {
+      + '<div class="posters">' + d.wanted.map(function (w, i) {
         var sp = w.caught && state.byCode[w.code];
         var pic = photoOf(w.code)
-          ? '<span class="stage poster-stage photo-stage">' + photoImg(w.code, w.name, true) + '</span>'
+          ? '<span class="stage poster-stage photo-stage"><img class="photo-img" src="' + photoSrc(w.code, 'm') + '" srcset="' + photoSrc(w.code, 'm') + ' 360w, '
+            + photoSrc(w.code) + ' 900w" sizes="(max-width: 440px) 45vw, 250px" width="900" height="600" alt="' + esc(w.name) + '"' + (i < 4 ? '' : ' loading="lazy"') + ' decoding="async"></span>'
           : '<span class="stage poster-stage">' + spriteTag(w.code, w.types, !sp, 'big') + '</span>';
         return '<div class="poster' + (sp ? ' got' : '') + '">'
           + '<p class="poster-h">WANTED</p>' + pic
@@ -1142,8 +1147,27 @@
       $('panel-' + t).hidden = !on || !state.data;
     });
     if (focus) $('tab-' + name).focus();
+    revealTab($('tab-' + name));
     if (name === 'logbook' && state.data) renderLogbook();
     try { history.replaceState(null, '', name === 'dex' ? location.pathname : '#' + name); } catch (e) { /* not fatal */ }
+  }
+
+  // On a phone not every screen fits in the menu row: keep the chosen one in view, and fade
+  // whichever edge has more screens past it, with an arrow, so they're easy to find.
+  function revealTab(tab) {
+    var row = tab && tab.parentNode;
+    if (!row || row.scrollWidth <= row.clientWidth) return;
+    var left = tab.offsetLeft - row.offsetLeft, right = left + tab.offsetWidth;
+    if (left < row.scrollLeft + 24) row.scrollLeft = Math.max(0, left - 40);
+    else if (right > row.scrollLeft + row.clientWidth - 24) row.scrollLeft = right - row.clientWidth + 40;
+    menuEdges();
+  }
+  function menuEdges() {
+    var row = $('pdx-tabs'), menu = row && row.parentNode;
+    if (!menu) return;
+    var more = row.scrollWidth - row.clientWidth;
+    menu.classList.toggle('more-l', more > 2 && row.scrollLeft > 2);
+    menu.classList.toggle('more-r', more > 2 && row.scrollLeft < more - 2);
   }
 
   function goto(code) {
@@ -1240,153 +1264,269 @@
       });
   }
 
-  /* ---- the banner: our kid spotter snaps the flyby plane ----------------------------------- */
-  /* A plane flies across the title bar; a kid with a big aviation headset
-     pops up beside the PLANEDEX title, snaps its picture, the plane zips
-     into the camera and an instant photo pops out. Original pixel art, on
-     a canvas behind the title (so the plane passes behind the letters).
-     Every half minute or so; nothing moves with reduced motion. */
+  /* ---- the banner: our kid's radio station catches a plane --------------------------------- */
+  /* The title bar's little scene, in original pixel art: our kid in his computer chair at the
+     radar screen, with the antenna standing beside him, like the real station. Every half
+     minute or so a small plane crosses the strip of sky above the PLANEDEX title (over the
+     letters, never through them). As it passes over the antenna, radio waves ping, a blip
+     lights up the radar and the kid throws both arms up: "Caught it!".
+     Everything is placed in the empty space around the words, measured from the page whenever
+     the title bar changes, so the art never covers text. Where there isn't room, parts drop
+     out: the speech bubble, then the desk, then the whole scene (the plane still flies).
+     Drawn at the screen's own resolution, so the pixels and the bubble's words stay crisp.
+     With reduced motion the scene stays put and nothing moves. */
 
   var Banner = (function () {
-    var KID_PAL = { k: '#0b1022', n: '#7a4a2a', N: '#a26a3e', s: '#f0c39b', S: '#d99b74', h: '#ff9a3d', H: '#d9731f',
-      e: '#d5dce6', d: '#6b7686', r: '#e2402f', g: '#b8c1ce', G: '#7d8796', w: '#ffffff', b: '#20304f' };
-    // 16x20, facing left. AIM: camera up to the eye. CHEER: photo held high.
-    var AIM = ['......kk.kk.....', '.....knnknnk....', '....knNnnnnnk...', '...kdeeeeeeedk..', '...dnnnnnnnnnd..',
-      '..kddnnsssnnddk.', '.kkkkkksskssddk.', 'kGgggggksssskdk.', 'kgkbbkgksSssk.r.', 'kgbwbbgkssssrk..',
-      'kgkbbkgkkkkkk...', 'kggggggkhhhhhk..', '.kkkkkksshhhhhk.', '....khsshhhhHhk.', '....khhhhhhhHhk.',
-      '....khhhhhhhHhk.', '....khhhhhhhHhk.', '....khhhhhhhHhk.', '....khhhhhhhHhk.', '....khhhhhhhHhk.'];
-    var CHEER = ['.kkk............', '.kssk..kk.kk....', '.kssk.knnknnk...', '..khkknNnnnnnk..', '..khkdeeeeeeedk.',
-      '..khkdnnnnnnnnd.', '..khkddssssssddk', '..khkdsskssksddk', '..khhkssssssssk.', '...khkssSssSsrk.',
-      '...khkkssrrssk..', '...khhkkssssk...', '....khhhkkkkhk..', '....khhhhhhhhhk.', '....khhhhhhhHhgk',
-      '....khhhhhhhHgGk', '....khhhhhhhHhk.', '....khhhhhhhHhk.', '....khhhhhhhHhk.', '....khhhhhhhHhk.'];
+    var PAL = {
+      k: '#0b1022', n: '#7a4a2a', s: '#f0c39b', S: '#d99b74', h: '#ff9a3d', H: '#d9731f', e: '#d5dce6', d: '#6b7686',
+      r: '#e2402f', j: '#3a5a9c', J: '#2b4478', w: '#ffffff', c: '#2a3346', C: '#46557a', a: '#2f6fe0', m: '#9aa7b8',
+      M: '#5f6b7c', t: '#b07a45', T: '#7f532b', f: '#1c2333', g: '#0f3d2a', G: '#3ddc84', o: '#f4f8ff', b: '#20304f',
+      x: '#c9d4e3', l: '#4ee08a', y: '#ffd84d'
+    };
+    // 15x16: the computer, its radar screen showing a ring, on a little desk with the keyboard
+    var DESK = ['..fffffffff....', '..fgggGgggf....', '..fggGgGggf....', '..fgGgggGgf....', '..fggGgGggf....',
+      '..fgggGgggf....', '..fffffffff....', '.....fff.......', '....fffff.mmmm.', 'ttttttttttttttt', 'TTTTTTTTTTTTTTT',
+      '.T...........T.', '.T...........T.', '.T...........T.', '.T...........T.', '.T...........T.'];
+    // 13x17, in his chair facing the desk (left). TYPE: hands on the keyboard. CHEER: turned round, both arms up.
+    var TYPE = ['....kkkkk....', '...kneeenk...', '..knnnnnenk..', '..kssnnnddk..', '..ksksnnddkc.', '.ksssSnnddkCc',
+      '..krssssnnkac', '...kksssk.Cac', '...khhhhhkCac', 'kkkhhhhhHkCCc', 'sshhhhhhHkCCc', 'kkkhhhhHHkcCc',
+      '...kjjjjjjjjc', '..kjjjjjjjJJc', '..kj.cccccccc', '.kwk....M....', 'krrk.MMMMMMM.'];
+    var CHEER = ['ks..keeeek.sk', 'kh.kennnnekhk', '.hkdnnnnnndh.', '.hkdssssssdhc', '.hkdskssksdhc', '.hkdssssssdhc',
+      '..kkssrrssCac', '...hkkssk.Cac', '...khhhhhkCac', '...khhhhhkCCc', '...khhhhHkCCc', '...khhhHHkcCc',
+      '...kjjjjjjjjc', '..kjjjjjjjJJc', '..kj.cccccccc', '.kwk....M....', 'krrk.MMMMMMM.'];
+    // 7x19: the ADS-B antenna on its stand; the little box has a light (l) that blinks on a catch
+    var ANT = ['...w...', '...o...', '...o...', '..xox..', '...o...', '...o...', '..xox..', '...o...', '...o...',
+      '..MMM..', '...m...', '...m...', '...m...', '...m...', '...m...', '..kfk..', '..klk..', '.m.m.m.', 'm..m..m'];
+    // 19x7: a small airliner flying right
+    var PLANE = ['.kk................', '.kak...............', '.kaakkkkkkkkkkkk...', 'kwwwwwwwwwwwwwwwkk.',
+      'kxwbwbwbwbwbwbwwwbk', '.kkxxwwwwwwwwwwxkk.', '.....kMMMMk........'];
+    var KID_W = 13, KID_H = 17, ANT_W = 7, ANT_H = 19, DESK_W = 15, PLANE_W = 19, PLANE_H = 7;
+    var SAY = 'Caught it!';
+    var FONT = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+    var CHEER_FOR = 3.4, WAVE = 1.2;   // seconds
     var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var cv, ctx, hud, planeImg, scale = 2, W = 0, H = 0, run = null, timer = 0;
+    var cv, ctx, hud, meas, lay = null, run = null, timer = 0, pending = 0;
+    var unit = 2, dpr = 1, P = 2;      // CSS px per art pixel; device px per CSS px; device px per art pixel
 
-    function sprite(rows, x, y, clipY) {
+    function sprite(rows, x, y, swap) {
+      x = Math.round(x); y = Math.round(y);
       for (var r = 0; r < rows.length; r++) {
-        if (y + r >= clipY) break;
-        for (var c = 0; c < 16; c++) {
+        for (var c = 0; c < rows[r].length; c++) {
           var ch = rows[r].charAt(c);
           if (ch === '.') continue;
-          ctx.fillStyle = KID_PAL[ch];
-          ctx.fillRect(x + c, y + r, 1, 1);
+          ctx.fillStyle = PAL[(swap && swap[ch]) || ch];
+          ctx.fillRect((x + c) * P, (y + r) * P, P, P);
         }
       }
     }
-    // A little instant photo with a plane in a blue sky.
-    function photo(x, y) {
-      ctx.fillStyle = '#0b1022'; ctx.fillRect(x - 1, y - 1, 16, 14);
-      ctx.fillStyle = '#ffffff'; ctx.fillRect(x, y, 14, 12);
-      ctx.fillStyle = '#7cc8ff'; ctx.fillRect(x + 1, y + 1, 12, 8);
-      ctx.fillStyle = '#ffffff'; ctx.fillRect(x + 4, y + 5, 6, 1); ctx.fillRect(x + 6, y + 3, 2, 4);
-      ctx.fillStyle = '#e2402f'; ctx.fillRect(x + 3, y + 4, 1, 2);
+    function dot(x, y, color) { ctx.fillStyle = color; ctx.fillRect(Math.round(x) * P, Math.round(y) * P, P, P); }
+
+    // The PLANEDEX letters' real top and bottom: the text box is taller than the pixel letters.
+    function glyphs(logo, box) {
+      var cs = getComputedStyle(logo);
+      meas.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      var m = meas.measureText(logo.textContent);
+      if (!m.fontBoundingBoxAscent || !m.actualBoundingBoxAscent) return { top: box.top, bottom: box.bottom };
+      var base = box.top + m.fontBoundingBoxAscent;
+      return { top: base - m.actualBoundingBoxAscent, bottom: base + m.actualBoundingBoxDescent + 8 };  // + its 8px shadow
     }
 
     function measure() {
-      var r = hud.getBoundingClientRect();
-      var logo = document.querySelector('.logo-link');
-      if (!logo || !r.width) return null;
+      var hr = hud.getBoundingClientRect();
+      var logo = hud.querySelector('.logo-link');
+      if (!hr.width || !hr.height || !logo) return null;
+      unit = hr.width >= 900 ? 3 : 2;
+      dpr = Math.min(3, window.devicePixelRatio || 1);
+      P = Math.max(1, Math.round(unit * dpr));
+      var W = Math.round(hr.width * dpr), H = Math.round(hr.height * dpr);
+      if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+      var AW = Math.floor(W / P), AH = Math.floor(H / P);
+      function art(r) { return { l: (r.left - hr.left) * dpr / P, t: (r.top - hr.top) * dpr / P, r: (r.right - hr.left) * dpr / P, b: (r.bottom - hr.top) * dpr / P }; }
+      // Everything the art must keep clear of: the buttons, the title, and every line of words.
+      var obs = [], bar = 0;
+      function keep(r) { if (r.width > 0 && r.height > 0) { var a = art(r); obs.push(a); return a; } return null; }
+      hud.querySelectorAll('.hud-top a, .hud-top button').forEach(function (b) { var a = keep(b.getBoundingClientRect()); if (a) bar = Math.max(bar, a.b); });
       var range = document.createRange();
       range.selectNodeContents(logo);
-      var t = range.getBoundingClientRect();
-      scale = r.width >= 900 ? 3 : 2;
-      var w = Math.ceil(r.width / scale), h = Math.ceil(r.height / scale);
-      if (w !== W || h !== H) { W = cv.width = w; H = cv.height = h; }
-      var kx = Math.round((t.right - r.left) / scale) + (scale === 3 ? 14 : 8);
-      var bar = document.querySelector('.hud-top');
-      return {
-        kidX: kx + 16 <= W - 4 ? kx : null,                    // no room beside the title: just the flyby
-        ground: Math.round((t.bottom - r.top) / scale) - 2,    // the kid hides below the title's baseline
-        top: bar ? Math.ceil((bar.getBoundingClientRect().bottom - r.top) / scale) + 1 : 0,  // stay clear of the buttons
-        planeY: Math.round((t.top - r.top) / scale) - (scale === 3 ? 6 : 4)
-      };
+      var box = range.getBoundingClientRect();
+      var g = glyphs(logo, box);
+      var L = art({ left: box.left, right: box.right, top: g.top, bottom: g.bottom });
+      obs.push(L);
+      var st = hud.querySelector('.station');
+      if (st) { range.selectNodeContents(st); [].forEach.call(range.getClientRects(), keep); }
+      hud.querySelectorAll('.sky-now > *, .level, .stats').forEach(function (e) { keep(e.getBoundingClientRect()); });
+
+      // The plane's lane: the strip of sky between the buttons and the tops of the letters.
+      var bandTop = Math.ceil(bar) + 1, bandBot = Math.floor(L.t) - 1;
+      obs.forEach(function (o) { if (o !== L && o.t > bandTop && o.t <= bandBot) bandBot = Math.floor(o.t) - 1; });
+      var planeY = bandBot - bandTop + 1 >= PLANE_H + 2 ? Math.round((bandTop + bandBot + 1 - PLANE_H) / 2) : null;
+
+      // The scene: to the right of the title, under the plane's lane, with room above the kid
+      // for his speech bubble. The leftmost spot that fits wins.
+      var fontPx = unit === 3 ? 16 : 14;
+      meas.font = '700 ' + fontPx + 'px ' + FONT;
+      var bw = Math.ceil(meas.measureText(SAY).width) + 20, bh = Math.round(fontPx * 1.25) + 12, tail = 6;   // CSS px
+      var bubW = Math.ceil(bw * dpr / P), bubH = Math.ceil((bh + tail) * dpr / P);
+      var minTop = planeY != null ? planeY + PLANE_H + 1 : bandTop;
+      var x0 = Math.ceil(L.r) + 3;
+      var spot = null;
+      [[true, true], [false, true], [true, false], [false, false]].some(function (o) {
+        var desk = o[0], talk = o[1];
+        var w = (desk ? DESK_W + 1 : 0) + KID_W + 2 + ANT_W;
+        var ground = Math.max(Math.ceil(L.b), minTop + ANT_H, talk ? bandTop + bubH + KID_H : 0);
+        for (var x = x0; x + w <= AW - 1; x++) {
+          var floor = AH - 2, blocked = false;
+          for (var i = 0; i < obs.length && !blocked; i++) {
+            var b = obs[i];
+            if (b.r <= x || b.l >= x + w || b.b <= minTop) continue;
+            if (b.t <= minTop) blocked = true;
+            else floor = Math.min(floor, Math.floor(b.t) - 1);
+          }
+          if (blocked || ground > floor) continue;
+          var kidX = x + (desk ? DESK_W + 1 : 0);
+          var bubble = null;
+          if (talk) {
+            var top = ground - KID_H + 1 - bubH;
+            var l = Math.max(x0, Math.min(AW - 1 - bubW, Math.round(kidX + KID_W / 2 - bubW / 2)));
+            var hit = obs.some(function (b) { return b.r > l && b.l < l + bubW && b.b > top && b.t < top + bubH; });
+            if (hit || l < x0) continue;
+            bubble = { l: l, t: top, w: bw, h: bh, tail: tail, tailX: kidX + 6, font: fontPx };
+          }
+          spot = { deskX: desk ? x : null, kidX: kidX, antX: kidX + KID_W + 2, ground: ground, bubble: bubble };
+          return true;
+        }
+        return false;
+      });
+      return { AW: AW, AH: AH, planeY: planeY, scene: spot };
     }
 
-    // The show's pace, in seconds (relative to the snap): slow enough to follow.
-    var POP = 2.4, RISE = 0.7, FLASH = 0.45, SHRINK = 1.0, SLIDE = 0.9, CHEER_FOR = 3.2, DUCK = 0.7;
-
-    function frame(now) {
-      var m = run.m, t = (now - run.t0) / 1000;
-      ctx.clearRect(0, 0, W, H);
-      var px = -52 + t * run.v;                     // plane's left edge
-      var kid = m.kidX;
-      var snapAt = kid == null ? Infinity : (kid - 26 - 48 + 52) / run.v;   // nose about 26px from the kid
-      var cheerAt = snapAt + SHRINK + SLIDE, duckAt = cheerAt + CHEER_FOR;
-      var risen = 0, pose = AIM, done = false;
-      if (kid != null) {
-        var popAt = snapAt - POP;
-        if (t > popAt) risen = Math.min(1, (t - popAt) / RISE);
-        if (t > duckAt) risen = Math.max(0, 1 - (t - duckAt) / DUCK);
+    // One picture: the scene (idle when f is null), the radio waves, the plane, the bubble.
+    function paint(f, planeX) {
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      var sc = lay && lay.scene;
+      if (sc) {
+        var gr = sc.ground;
+        if (sc.deskX != null) {
+          for (var cx = sc.deskX + 13; cx <= sc.antX + 3; cx++) dot(cx, gr, PAL.M);   // the antenna's cable to the computer
+          var deskTop = gr - DESK.length + 1;
+          sprite(DESK, sc.deskX, deskTop);
+          if (f && f.blip) dot(sc.deskX + 8, deskTop + 2, PAL.y);
+        }
+        sprite(f && f.cheer ? CHEER : TYPE, sc.kidX, gr - KID_H + 1);
+        sprite(ANT, sc.antX, gr - ANT_H + 1, f && f.led ? null : { l: 'f' });
+        if (f && f.waves) waves(sc.antX + 3, gr - ANT_H + 1, f.waves);
       }
-      // the plane, then the capture
-      if (t < snapAt) {
-        ctx.drawImage(planeImg, Math.round(px), m.planeY);
-      } else if (t < snapAt + SHRINK) {
-        var k = (t - snapAt) / SHRINK;              // shrink into the lens
-        var sx = -52 + snapAt * run.v, lens = [kid + 1, m.ground - 20 * risen + 9];
-        var w = Math.max(2, Math.round(48 * (1 - k))), hh = Math.max(1, Math.round(24 * (1 - k)));
-        var x = Math.round(sx + (lens[0] - sx - 24) * k + 24 - w / 2), y = Math.round(m.planeY + (lens[1] - m.planeY - 12) * k + 12 - hh / 2);
-        ctx.globalAlpha = (Math.floor(k * 6) % 2) ? 0.6 : 1;
-        ctx.drawImage(planeImg, x, y, w, hh);
+      if (planeX != null && lay.planeY != null) plane(planeX, lay.planeY);
+      if (f && f.bubble && sc && sc.bubble) bubble(sc.bubble);
+    }
+
+    // Rings of radio waves spreading from the antenna's tip, left and right.
+    function waves(tx, ty, ages) {
+      ages.forEach(function (age) {
+        var k = age / WAVE, r = 2 + Math.round(k * 7);
+        ctx.globalAlpha = Math.max(0, 1 - k);
+        for (var deg = -50; deg <= 50; deg += 8) {
+          var a = deg * Math.PI / 180, dx = Math.round(Math.cos(a) * r), dy = Math.round(Math.sin(a) * r);
+          dot(tx + dx, ty + 2 + dy, PAL.y);
+          dot(tx - dx, ty + 2 + dy, PAL.y);
+        }
+        ctx.globalAlpha = 1;
+      });
+    }
+
+    function plane(x, y) {
+      x = Math.round(x);
+      if (document.documentElement.getAttribute('data-theme') === 'dark') {
+        if (Math.floor(performance.now() / 600) % 2) dot(x + 9, y + 2, PAL.r);   // the beacon blinks at night
+      } else {
+        for (var i = 1; i <= 14; i += 2) { ctx.globalAlpha = 0.5 * (1 - i / 15); dot(x - i, y + 3, PAL.w); }   // a short contrail by day
         ctx.globalAlpha = 1;
       }
-      if (kid != null && risen > 0) {
-        var ky = Math.round(m.ground - 20 * risen);
-        if (t > cheerAt) pose = CHEER;
-        sprite(pose, kid, ky, m.ground);
-        if (t >= snapAt && t < snapAt + FLASH) {    // the flash: bright white, then fading
-          var f = (t - snapAt) / FLASH;
-          ctx.fillStyle = 'rgba(255,255,240,' + (f < 0.4 ? 1 : (1 - f) / 0.6) + ')';
-          var rr = Math.round(2 + f * 7);
-          ctx.fillRect(kid + 1 - rr, ky + 9 - Math.round(rr / 2), rr * 2, rr);
-          ctx.fillRect(kid + 1 - Math.round(rr / 2), ky + 9 - rr, rr, rr * 2);
-        }
-        // the instant photo slides out of the bottom of the camera
-        if (t > snapAt + SHRINK && t <= cheerAt) photo(kid - 5, Math.round(ky + 9 + 6 * ((t - snapAt - SHRINK) / SLIDE)));
-        if (t > cheerAt && ky < m.ground - 4) {
-          // the photo held up high when there's room above, else held out to the side
-          var above = ky - 13 >= m.top;
-          if (above || kid + 33 <= W) photo(above ? kid - 4 : kid + 17, above ? ky - 12 : ky + 3);
-          var tx = above ? kid + 12 : kid + 35, ty = above ? Math.max(m.top, ky - 12) : ky + 4;
-          if (t < duckAt && tx + 43 <= W) {
-            ctx.font = '700 8px Silkscreen, monospace';
-            ctx.textBaseline = 'top';
-            ctx.fillStyle = '#0b1022'; ctx.fillText('CAUGHT!', tx + 1, ty + 1);
-            ctx.fillStyle = '#ffd84d'; ctx.fillText('CAUGHT!', tx, ty);
-          }
-        }
-        done = t > duckAt + DUCK;
-      } else if (kid == null) {
-        done = px > W + 4;
-      } else if (t > duckAt + DUCK) {
-        done = true;
+      sprite(PLANE, x, y);
+    }
+
+    // A comic speech bubble with a pixel outline; the words in the page's own type.
+    function bubble(b) {
+      var x = Math.round(b.l * P), y = Math.round(b.t * P), w = Math.round(b.w * dpr), h = Math.round(b.h * dpr);
+      var k = Math.max(1, Math.round(2 * dpr)), u = Math.max(1, Math.round(dpr * 2));
+      ctx.fillStyle = PAL.k;
+      ctx.fillRect(x + k, y, w - 2 * k, h);
+      ctx.fillRect(x, y + k, w, h - 2 * k);
+      ctx.fillStyle = PAL.w;
+      ctx.fillRect(x + k, y + k, w - 2 * k, h - 2 * k);
+      var tx = Math.round((b.tailX + 0.5) * P), steps = Math.max(2, Math.round(b.tail * dpr / u));
+      for (var i = 0; i < steps; i++) {   // the tail points down at the kid
+        var half = (steps - i) * u;
+        ctx.fillStyle = PAL.k; ctx.fillRect(tx - half - k, y + h - k + i * u, 2 * half + 2 * k, u);
+        ctx.fillStyle = PAL.w; ctx.fillRect(tx - half, y + h - k + i * u - (i ? 0 : k), 2 * half, u + (i ? 0 : k));
       }
-      if (done) { ctx.clearRect(0, 0, W, H); run = null; schedule(30000 + Math.random() * 20000); return; }
+      ctx.fillStyle = PAL.k; ctx.fillRect(tx - k, y + h - k + steps * u, 2 * k, k);
+      ctx.fillStyle = '#1c2b4f';
+      ctx.font = '700 ' + Math.round(b.font * dpr) + 'px ' + FONT;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(SAY, x + w / 2, y + h / 2 + Math.round(dpr / 2));
+    }
+
+    // The show's timeline, in seconds from the moment the plane is over the antenna.
+    function frame(now) {
+      if (!run) return;
+      if (!lay) { run = null; schedule(5000); return; }
+      var t = (now - run.t0) / 1000;
+      var sc = lay.scene;
+      var px = run.x0 + t * run.v;                                    // the plane's left edge
+      var at = sc && lay.planeY != null ? (sc.antX + 3 - PLANE_W / 2 - run.x0) / run.v : run.fallback;
+      var dt = t - at, f = null;
+      if (sc && dt > -0.4) {
+        var ages = [-0.4, 0, 0.4].map(function (s) { return dt - s; }).filter(function (a) { return a >= 0 && a < WAVE; });
+        var blink = Math.floor(dt * 4) % 2 === 0;
+        var clear = !sc.bubble || lay.planeY == null || sc.bubble.t >= lay.planeY + PLANE_H || px > sc.bubble.l + sc.bubble.w * dpr / P;
+        f = {
+          waves: ages,
+          led: dt < CHEER_FOR && blink,
+          blip: dt >= 0 && dt < CHEER_FOR && blink,
+          cheer: dt >= 0.3 && dt < CHEER_FOR,
+          bubble: dt >= 0.5 && dt < CHEER_FOR && clear
+        };
+      }
+      var flying = lay.planeY != null && px <= lay.AW + 2;
+      paint(f, flying ? px : null);
+      if (!flying && (!sc || dt >= CHEER_FOR)) { run = null; paint(null); schedule(30000 + Math.random() * 20000); return; }
       requestAnimationFrame(frame);
     }
 
     function go() {
-      if (document.hidden) { schedule(5000); return; }
-      var m = measure();
-      if (!m) { schedule(5000); return; }
-      run = { m: m, t0: performance.now(), v: scale === 3 ? 42 : 32 };   // canvas pixels a second: an unhurried flyby
+      if (document.hidden || !lay) { schedule(5000); return; }
+      run = { t0: performance.now(), v: unit === 3 ? 28 : 22, x0: -PLANE_W - 2, fallback: 1.5 };   // art pixels a second
       requestAnimationFrame(frame);
     }
     function schedule(ms) { clearTimeout(timer); timer = setTimeout(go, ms); }
+
+    // Re-measure whenever the title bar changes (data arriving, the weather line, fonts, resizing).
+    function relayout() {
+      if (pending) return;
+      pending = requestAnimationFrame(function () {
+        pending = 0;
+        lay = measure();
+        if (!run && lay) paint(null);
+      });
+    }
 
     return {
       start: function () {
         cv = $('pdx-banner');
         hud = document.querySelector('.hud');
-        if (!cv || !hud || !S || still) return;
+        if (!cv || !hud || !cv.getContext) return;
         ctx = cv.getContext('2d');
-        if (!ctx) return;
-        planeImg = document.createElement('canvas');
-        planeImg.width = 48;
-        planeImg.height = 24;
-        S.paint(planeImg, 'B738', ['jet'], false);
-        var ready = document.fonts && document.fonts.load ? document.fonts.load('700 8px Silkscreen') : Promise.resolve();
-        ready.then(function () { schedule(1500); }, function () { schedule(1500); });
+        meas = document.createElement('canvas').getContext('2d');
+        if (!ctx || !meas) return;
+        if (window.ResizeObserver) new ResizeObserver(relayout).observe(hud);
+        var inner = hud.querySelector('.hud-in');
+        if (window.MutationObserver && inner) new MutationObserver(relayout).observe(inner, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['hidden'] });
+        window.addEventListener('resize', relayout);
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(relayout);
+        relayout();
+        if (!still) schedule(3500);
       }
     };
   })();
@@ -1421,6 +1561,9 @@
     loadFamilyInfo();
     Banner.start();
     if (TABS.indexOf(location.hash.slice(1)) >= 0) state.tab = location.hash.slice(1);
+    $('pdx-tabs').addEventListener('scroll', menuEdges, { passive: true });
+    window.addEventListener('resize', menuEdges);
+    menuEdges();
 
     document.addEventListener('click', function (e) {
       var v = e.target.closest('.voice-btn');

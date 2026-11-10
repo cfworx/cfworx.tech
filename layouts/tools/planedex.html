@@ -84,18 +84,26 @@
         <div class="logo-wrap">
           <h1 class="logo"><a class="logo-link" href="{{ .RelPermalink }}" data-home>{{ .Title }}</a></h1>
           <p class="station" id="pdx-station">Catching planes with my boys</p>
-          <p class="sky-now" id="pdx-sky-now" hidden></p>
+          <p class="sky-now is-loading" id="pdx-sky-now"></p>
         </div>
-        <div class="level" id="pdx-level" hidden>
-          <div class="lv-badge"><span class="lv-label">LV</span><span class="lv-num" id="pdx-lv">1</span></div>
+        {{- /* The level and the counters are drawn empty first, at their real size,
+               so the page doesn't jump when the numbers arrive (planedex.js fills them). */}}
+        <div class="level is-loading" id="pdx-level">
+          <div class="lv-badge"><span class="lv-label">LV</span><span class="lv-num" id="pdx-lv">0</span></div>
           <div class="lv-meta">
-            <p class="lv-title" id="pdx-lv-title"></p>
+            <p class="lv-title" id="pdx-lv-title">&nbsp;</p>
             <progress class="xp" id="pdx-xp" max="100" value="0" aria-labelledby="pdx-xp-text"></progress>
-            <p class="xp-text" id="pdx-xp-text"></p>
+            <p class="xp-text" id="pdx-xp-text">&nbsp;</p>
           </div>
         </div>
       </div>
-      <dl class="stats" id="pdx-stats" hidden></dl>
+      <dl class="stats is-loading" id="pdx-stats">
+        <div class="stat"><dt>plane models caught</dt><dd><b>0</b><small> of 0</small></dd><dd class="stat-today">&nbsp;</dd></div>
+        <div class="stat"><dt>planes spotted</dt><dd><b>0</b></dd><dd class="stat-today">&nbsp;</dd></div>
+        <div class="stat"><dt>airlines spotted</dt><dd><b>0</b></dd><dd class="stat-today">&nbsp;</dd></div>
+        <div class="stat"><dt>countries spotted</dt><dd><b>0</b></dd><dd class="stat-today">&nbsp;</dd></div>
+        <div class="stat"><dt>badges earned</dt><dd><b>0</b><small> of 0</small></dd></div>
+      </dl>
     </div>
   </header>
 
