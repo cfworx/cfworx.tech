@@ -651,10 +651,17 @@ img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); ba
 .chip[aria-pressed="true"] { background: var(--sel); color: var(--sel-ink); box-shadow: inset 0 0 0 2px var(--edge); }
 .chip span[aria-hidden] { font: 400 var(--fs-md)/1 var(--text); letter-spacing: 1px; }
 .chip .st-short { display: none; }
-/* six even chips on one row: full star rows when there's room, "5★" when it's tight */
+/* six even chips on one row: "5★" by default, the full row of stars only when the
+   filter box itself is wide enough to hold five of them in a chip */
+.dex-tools { container-type: inline-size; }
 #dex-rarity { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
-#dex-rarity .chip { padding: 4px 2px; }
-#dex-rarity .chip .st-full { font-size: var(--fs-sm); letter-spacing: 0; }
+#dex-rarity .chip { padding: 4px 2px; overflow: hidden; white-space: nowrap; }
+#dex-rarity .chip .st-full { display: none; font-size: var(--fs-sm); letter-spacing: 0; }
+#dex-rarity .chip .st-short { display: inline; }
+@container (min-width: 640px) {
+  #dex-rarity .chip .st-full { display: inline; }
+  #dex-rarity .chip .st-short { display: none; }
+}
 /* 16px in the menus, so phones don't zoom in when one is tapped */
 .select select {
   min-height: 44px;
@@ -1110,7 +1117,14 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
 .report > summary .win-sub { margin-left: auto; }
 .report[open] > summary { margin-bottom: 10px; }
 .report-text p + p { margin-top: 10px; }
-.report-text p, .lb-entry .textbox p { max-width: 62ch; }   /* about 75 letters a line: easy to follow on wide screens */
+/* On wide screens the report fills its box in two columns, like a newspaper, so the lines
+   stay a comfortable length (about 65 letters) instead of running the full width. */
+@media (min-width: 900px) {
+  .report-text, .lb-entry .textbox { column-count: 2; column-gap: 36px; }
+  .report-text p, .lb-entry .textbox p { break-inside: avoid; }
+  .report-text p + p, .lb-entry .textbox p + p { margin-top: 0; }
+  .report-text p:not(:last-child), .lb-entry .textbox p:not(:last-child) { margin-bottom: 10px; }
+}
 .report-text.typing { cursor: pointer; }
 .report-text.typing::after { visibility: hidden; }
 
@@ -1170,10 +1184,6 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
 
 /* ---- small screens ---------------------------------------------------------------------------- */
 
-@media (max-width: 1160px) {
-  #dex-rarity .chip .st-full { display: none; }
-  #dex-rarity .chip .st-short { display: inline; }
-}
 @media (max-width: 820px) {
   .dex-screen { grid-template-columns: minmax(0, 1fr); }
   .dex-screen > .entry { display: none; }
