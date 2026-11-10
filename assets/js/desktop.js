@@ -767,25 +767,7 @@
     doc.getElementById("shutdown-screen").hidden = true;
   });
 
-  /* ---- 7a. desktop icons open on a double-click --------------------------------
-     With a mouse: one click selects an icon, a double-click opens it,
-     as on a real desktop. A tap on a touch screen opens it straight
-     away, and so does Enter from the keyboard. The icons are still
-     ordinary links underneath. */
-
-  var lastPointer = "mouse";
-  on(doc, "pointerdown", function (e) { lastPointer = e.pointerType || "mouse"; }, true);
-  on(doc, "click", function (e) {
-    var icon = e.target.closest ? e.target.closest(".desktop-icons .dicon") : null;
-    $$(".dicon.is-selected").forEach(function (d) { if (d !== icon) { d.classList.remove("is-selected"); } });
-    if (!icon) { return; }
-    icon.classList.add("is-selected");
-    if (e.detail === 0 || e.detail >= 2 || lastPointer === "touch" || small.matches) { return; }   /* keyboard, double-click, tap: open */
-    e.preventDefault();
-    e.stopPropagation();
-  }, true);
-
-  /* ---- 7b. dragging desktop icons into the Recycle Bin ------------------------
+  /* ---- 7a. dragging desktop icons into the Recycle Bin ------------------------
      Mouse only. An icon dropped anywhere else springs back. Nothing is
      stored: the icons are only hidden, and a reload brings them back. */
 

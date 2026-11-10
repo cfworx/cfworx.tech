@@ -1,6 +1,6 @@
-{{- /* Desktop icons. Real links, so they work without JavaScript; with
-       it, desktop.js makes them open on a double-click (a single tap on
-       a phone) and lets them be dragged into the Recycle Bin. */ -}}
+{{- /* Desktop icons. Real links that open with one click, so they work
+       without JavaScript; with it, desktop.js also lets them be dragged
+       into the Recycle Bin. */ -}}
 <nav class="desktop-icons" aria-label="Desktop">
   {{- range partial "desktop-items.html" . }}
   {{- if .app }}

@@ -13,8 +13,8 @@ bundle: /dos/scorched.jsdos
 download: /downloads/scorched.zip
 downloadsize: "0.6 MB"
 size: "0.6 MB"
-mouse: point
-controls: "Arrows aim and set power, Space fires, Tab picks a weapon. Menus work with the mouse or the highlighted letters."
+mouse: lock
+controls: "Click the game to use its mouse pointer in the menus (Esc frees your mouse). In a round: arrows aim and set power, Space fires, Tab picks a weapon."
 scripts: ["dosplayer.js"]
 ---
 *The Mother of All Games*: up to ten tanks lobbing things at each other. Hot-seat multiplayer works fine at one keyboard.

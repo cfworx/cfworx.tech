@@ -17,7 +17,7 @@
       {{- with .Content }}{{ . }}{{ else }}
       <p>{{ site.Params.description }}</p>
       {{- end }}
-      <p>Double-click an icon on the desktop, or press <b>Start</b> for everything. My <a href="/notes/">IT notes</a> live in folders, the <a href="/tools/">practice tools</a> and <a href="/games/">games</a> are programs, and the <b>Search</b> box on the taskbar looks through all of it.</p>
+      <p>Click an icon on the desktop, or press <b>Start</b> for everything. My <a href="/notes/">IT notes</a> live in folders, the <a href="/tools/">practice tools</a> and <a href="/games/">games</a> are programs, and the <b>Search</b> box on the taskbar looks through all of it.</p>
     </div>
     {{- with first 6 (where site.RegularPages "Section" "in" (slice "notes" "homelab")) }}
     <fieldset class="group-box">

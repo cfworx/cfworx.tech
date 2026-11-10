@@ -14,8 +14,9 @@ download: /downloads/1wolf14.zip
 downloadsize: "0.7 MB"
 size: "0.7 MB"
 mouse: lock
+keymap: "KeyW=ArrowUp KeyS=ArrowDown KeyA=AltLeft+ArrowLeft KeyD=AltLeft+ArrowRight KeyF=ControlLeft KeyE=Space"
 novert: true
-controls: "Arrows move and turn (or use the mouse: click the game first), Ctrl or left click fires, Space opens doors, Shift runs, Alt strafes, 1-4 pick a weapon."
+controls: "W and S move, A and D strafe, the mouse or the arrow keys turn (click the game first), left click or F fires, Space or E opens doors, Shift runs, 1-4 pick a weapon. Esc is the menu."
 scripts: ["dosplayer.js"]
 ---
 Episode one, *Escape from Castle Wolfenstein*: ten floors.

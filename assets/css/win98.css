@@ -145,9 +145,10 @@ u { text-decoration: underline; }
   border: 1px dotted transparent;
   line-height: 1.15;
 }
+.dicon:hover span { text-decoration: underline; }   /* one click opens */
 .dicon:focus { outline: 0; }
-.dicon.is-selected span, .dicon:focus-visible span, .dicon:active span { background: var(--navy); border-color: #ffff7f; }
-.dicon.is-selected img, .dicon:focus-visible img, .dicon:active img { filter: opacity(.6) drop-shadow(0 0 0 var(--navy)); }
+.dicon:focus-visible span, .dicon:active span { background: var(--navy); border-color: #ffff7f; }
+.dicon:focus-visible img, .dicon:active img { filter: opacity(.6) drop-shadow(0 0 0 var(--navy)); }
 
 /* dragging an icon (desktop.js), and the Recycle Bin lighting up under it */
 .dicon { -webkit-user-drag: none; touch-action: manipulation; }
@@ -863,6 +864,7 @@ kbd {
   .dicon { width: auto; min-height: 0; }
   .dicon img { width: 48px; height: 48px; image-rendering: auto; }
   .dicon span { font-size: 13px; }
+  .dicon:hover span { text-decoration: none; }
 
   .window, .window.is-max { inset: 0; left: 0 !important; top: 0 !important; width: auto !important; height: auto !important; max-height: none; padding: 0; box-shadow: none; }
   .title-bar { padding: 0 4px 0 6px; gap: 6px; font-size: 16px; }

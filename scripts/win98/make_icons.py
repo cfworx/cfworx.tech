@@ -614,20 +614,6 @@ def g_scorch(i):
     i.rect(28, 12, 30, 14, fill=Y); i.px(29, 11, ORANGE); i.px(27, 13, ORANGE); i.px(31, 13, ORANGE); i.px(29, 15, ORANGE)
 
 
-@icon
-def g_raptor(i):
-    # red jet, nose up
-    i.poly([(13, 12), (1, 23), (1, 26), (13, 23)], fill=DR, outline=K)
-    i.poly([(18, 12), (30, 23), (30, 26), (18, 23)], fill=DR, outline=K)
-    i.poly([(13, 23), (8, 29), (8, 30), (13, 28)], fill=DR, outline=K)
-    i.poly([(18, 23), (23, 29), (23, 30), (18, 28)], fill=DR, outline=K)
-    i.poly([(15, 0), (16, 0), (19, 9), (19, 27), (12, 27), (12, 9)], fill=R, outline=K)
-    i.line([(13, 10), (13, 26)], PINK)
-    i.rect(14, 5, 17, 11, fill=C, outline=K); i.px(15, 6, W)
-    i.rect(14, 28, 17, 29, fill=ORANGE); i.rect(15, 30, 16, 31, fill=Y)
-    i.rect(4, 22, 5, 24, fill=S); i.rect(26, 22, 27, 24, fill=S)
-
-
 GLYPHS = {
     "ui-close": ["XX....XX", ".XX..XX.", "..XXXX..", "...XX...", "..XXXX..", ".XX..XX.", "XX....XX"],
     "ui-min": ["........", "........", "........", "........", "........", "XXXXXX..", "XXXXXX.."],

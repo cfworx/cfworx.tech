@@ -149,22 +149,52 @@
 
   /* ---- keyboard and mouse ----------------------------------------------------- */
 
-  var held = {}, lastEsc = 0, selfUnlock = false;
-  function key(code, down) {
-    var k = KEYS[code];
-    if (!ci || k === undefined) { return false; }
-    held[code] = down;
-    ci.sendKeyEvent(k, down);
+  /* A game page can remap keys (front matter `keymap`), for games whose
+     own key settings can't be edited: "KeyW=ArrowUp" presses Up when W
+     is pressed, "KeyA=AltLeft+ArrowLeft" presses two keys. Several
+     keys may press the same game key, so each game key is counted and
+     only released when the last one holding it lets go. */
+  var MAP = {};
+  (root.getAttribute("data-keymap") || "").split(/\s+/).filter(Boolean).forEach(function (pair) {
+    var kv = pair.split("=");
+    if (kv.length === 2) { MAP[kv[0]] = kv[1].split("+"); }
+  });
+  var down = {}, refs = {}, lastEsc = 0, selfUnlock = false;
+  function known(code) { return KEYS[code] !== undefined || !!MAP[code]; }
+  function press(code) {
+    (MAP[code] || [code]).forEach(function (c) {
+      if (KEYS[c] === undefined) { return; }
+      refs[c] = (refs[c] || 0) + 1;
+      if (refs[c] === 1) { ci.sendKeyEvent(KEYS[c], true); }
+    });
+  }
+  function release(code) {
+    (MAP[code] || [code]).forEach(function (c) {
+      if (KEYS[c] === undefined || !refs[c]) { return; }
+      refs[c]--;
+      if (refs[c] === 0) { ci.sendKeyEvent(KEYS[c], false); }
+    });
+  }
+  function key(code, isDown) {
+    if (!ci || !known(code)) { return false; }
+    if (isDown) {
+      if (down[code]) { release(code); }            /* a key-up went missing: release first */
+      down[code] = true;
+      press(code);
+    } else if (down[code]) {
+      down[code] = false;
+      release(code);
+    }
     return true;
   }
   function tap(code) { key(code, true); setTimeout(function () { key(code, false); }, 70); }
-  function releaseAll() { Object.keys(held).forEach(function (c) { if (held[c]) { key(c, false); } }); }
+  function releaseAll() { Object.keys(down).forEach(function (c) { if (down[c]) { key(c, false); } }); }
   function unlockAudio() { if (audio && audio.state === "suspended") { audio.resume().catch(function () {}); } }
 
   /* Does this key press belong to the game? Yes whenever it is running,
      unless you are typing in a field or using a menu or dialog. */
   function forGame(e) {
-    if (!ci || KEYS[e.code] === undefined || e.metaKey) { return false; }
+    if (!ci || !known(e.code) || e.metaKey) { return false; }
     if (e.code === "F5" || e.code === "F11" || e.code === "F12") { return false; }   /* leave reload, full screen, dev tools */
     var t = e.target, tag = t && t.tagName;
     if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") { return false; }
@@ -186,11 +216,10 @@
       if (Date.now() - lastEsc < 300) { return; }   /* already passed on when the mouse was freed */
       lastEsc = Date.now();
     }
-    if (held[e.code]) { key(e.code, false); }       /* a key-up went missing: release first */
     key(e.code, true);
   }, true);
   document.addEventListener("keyup", function (e) {
-    if (!ci || KEYS[e.code] === undefined || !held[e.code]) { return; }
+    if (!ci || !down[e.code]) { return; }
     key(e.code, false);
     if (forGame(e)) { e.preventDefault(); e.stopPropagation(); }
   }, true);
@@ -206,9 +235,8 @@
     if (!ci) { return; }
     unlockAudio();
     if (e.pointerType === "mouse" && mouseMode === "lock" && !locked() && canvas.requestPointerLock) {
-      var p = canvas.requestPointerLock();
+      var p = canvas.requestPointerLock();              /* the click that captures the mouse still counts as a click */
       if (p && p.catch) { p.catch(function () {}); }
-      return;
     }
     if (mouseMode !== "none" && BUTTONS[e.button] !== undefined) { ci.sendMouseButton(BUTTONS[e.button], true); }
   });
@@ -274,13 +302,15 @@
   /* Some games open on a set-up screen every time (Epic Pinball asks for
      a sound card). The page can list the key presses that get past it in
      data-autokeys: key names, with numbers as pauses in milliseconds.
-     The cover stays up while they are typed. */
+     The cover stays up while they are typed, unless the list starts
+     with "bg" (Descent: just pick the ready-made pilot once it asks). */
   function autoKeys() {
     var script = (root.getAttribute("data-autokeys") || "").split(/\s+/).filter(Boolean);
     if (!script.length) { return Promise.resolve(); }
-    bar.hidden = true;
-    msg.textContent = "Setting up the sound card...";
-    return script.reduce(function (chain, step) {
+    var background = script[0] === "bg";           /* "bg": type them while the game is already showing */
+    if (background) { script.shift(); }
+    else { bar.hidden = true; msg.textContent = "Setting up the sound card..."; }
+    var done = script.reduce(function (chain, step) {
       return chain.then(function () {
         return new Promise(function (resolve) {
           if (/^\d+$/.test(step)) { setTimeout(resolve, Number(step)); return; }
@@ -289,6 +319,7 @@
         });
       });
     }, Promise.resolve());
+    return background ? Promise.resolve() : done;
   }
 
   function start() {

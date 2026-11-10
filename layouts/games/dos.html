@@ -5,6 +5,9 @@
        download -> the original archive in static/downloads/
        mouse    -> "lock" (captured, for first-person games), "point"
                    (follows the pointer) or "none"
+       keymap   -> keys to translate before the game sees them, for
+                   games whose own key settings can't be edited
+                   (see dosplayer.js)
        autokeys -> key presses typed for you at start-up, to get past a
                    set-up screen (see dosplayer.js)
        novert   -> true to ignore up/down mouse movement (in the old
@@ -17,7 +20,7 @@
   {{ partial "win/titlebar.html" (dict "title" .Title "icon" (.Params.icon | default "dosgame") "close" .Parent.RelPermalink) }}
   <main id="main" class="win-body dos-body" tabindex="-1">
     {{- with .Params.bundle }}
-    <div class="dos-screen" id="dos" data-bundle="{{ . }}" data-mouse="{{ $.Params.mouse | default "lock" }}" data-novert="{{ if $.Params.novert }}1{{ end }}"{{ with $.Params.autokeys }} data-autokeys="{{ . }}"{{ end }}>
+    <div class="dos-screen" id="dos" data-bundle="{{ . }}" data-mouse="{{ $.Params.mouse | default "lock" }}" data-novert="{{ if $.Params.novert }}1{{ end }}"{{ with $.Params.autokeys }} data-autokeys="{{ . }}"{{ end }}{{ with $.Params.keymap }} data-keymap="{{ . }}"{{ end }}>
       <canvas id="dos-canvas" width="640" height="400" tabindex="0" aria-label="{{ $.Title }}, running in a DOS emulator"></canvas>
       <div class="dos-cover" id="dos-cover">
         <p>{{ $.Title }}</p>
