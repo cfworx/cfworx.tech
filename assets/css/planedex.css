@@ -97,11 +97,11 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --sky-1: #050a18; --sky-2: #0c1530;
-    --win: #1f305f; --win-2: #2a3f78; --edge: #b8ccf2; --ink: #ffffff; --muted: #d0daec;
-    --hi: #3a5294; --lo: #121c3a; --drop: rgba(0, 0, 0, 0.7);
-    --hud: #0a1129; --hud-2: #060b1d; --hud-muted: #9fb4d8;
-    --track: #24396a; --stage-1: #1d3266; --stage-2: #41609f; --ground-1: #2f6e48; --ground-2: #1f4f33;
+    --sky-1: #04070e; --sky-2: #0a101b;
+    --win: #1c2536; --win-2: #273349; --edge: #c3cede; --ink: #f8fafc; --muted: #cdd6e3;
+    --hi: #36445e; --lo: #111827; --drop: rgba(0, 0, 0, 0.75);
+    --hud: #0b1120; --hud-2: #070b16; --hud-muted: #b8c4d6;
+    --track: #36445c; --stage-1: #22304a; --stage-2: #3e5072; --ground-1: #2f6e48; --ground-2: #1f4f33;
     --cloud: #c9d7f2; --focus: #ffd84d; --scrim: rgba(0, 3, 12, 0.8);
     --r1: #94a1b1; --r1-text: #b6c2d0; --r2: #3fbf77; --r2-text: #66d898; --r3: #5a95ff; --r3-text: #93baff;
     --r4: #a874ff; --r4-text: #c7a3ff; --r5: #ffc23d; --r5-text: #ffd166;
@@ -109,11 +109,11 @@
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --sky-1: #050a18; --sky-2: #0c1530;
-  --win: #1f305f; --win-2: #2a3f78; --edge: #b8ccf2; --ink: #ffffff; --muted: #d0daec;
-  --hi: #3a5294; --lo: #121c3a; --drop: rgba(0, 0, 0, 0.7);
-  --hud: #0a1129; --hud-2: #060b1d; --hud-muted: #9fb4d8;
-  --track: #24396a; --stage-1: #1d3266; --stage-2: #41609f; --ground-1: #2f6e48; --ground-2: #1f4f33;
+  --sky-1: #04070e; --sky-2: #0a101b;
+  --win: #1c2536; --win-2: #273349; --edge: #c3cede; --ink: #f8fafc; --muted: #cdd6e3;
+  --hi: #36445e; --lo: #111827; --drop: rgba(0, 0, 0, 0.75);
+  --hud: #0b1120; --hud-2: #070b16; --hud-muted: #b8c4d6;
+  --track: #36445c; --stage-1: #22304a; --stage-2: #3e5072; --ground-1: #2f6e48; --ground-2: #1f4f33;
   --cloud: #c9d7f2; --focus: #ffd84d; --scrim: rgba(0, 3, 12, 0.8);
   --r1: #94a1b1; --r1-text: #b6c2d0; --r2: #3fbf77; --r2-text: #66d898; --r3: #5a95ff; --r3-text: #93baff;
   --r4: #a874ff; --r4-text: #c7a3ff; --r5: #ffc23d; --r5-text: #ffd166;
