@@ -55,6 +55,10 @@
 {{- $js := . | fingerprint }}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
 {{- end }}
+{{- with resources.Get "js/planedex-badges.js" }}
+{{- $js := . | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- end }}
 {{- with resources.Get "js/planedex.js" }}
 {{- $js := . | fingerprint }}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
@@ -80,7 +84,7 @@
       <div class="hud-main">
         <div class="logo-wrap">
           <h1 class="logo">{{ .Title }}</h1>
-          <p class="station" id="pdx-station">Catching planes with my 3 boys</p>
+          <p class="station" id="pdx-station">Catching planes with my boys</p>
         </div>
         <div class="level" id="pdx-level" hidden>
           <div class="lv-badge"><span class="lv-label">LV</span><span class="lv-num" id="pdx-lv">1</span></div>
@@ -103,6 +107,7 @@
       <button class="tab" type="button" role="tab" id="tab-families" aria-controls="panel-families" aria-selected="false" tabindex="-1" data-tab="families">Families</button>
       <button class="tab" type="button" role="tab" id="tab-badges" aria-controls="panel-badges" aria-selected="false" tabindex="-1" data-tab="badges">Badges <span class="n" id="n-badges"></span></button>
       <button class="tab" type="button" role="tab" id="tab-passport" aria-controls="panel-passport" aria-selected="false" tabindex="-1" data-tab="passport">Passport</button>
+      <button class="tab" type="button" role="tab" id="tab-logbook" aria-controls="panel-logbook" aria-selected="false" tabindex="-1" data-tab="logbook">Logbook</button>
     </div>
   </nav>
 
@@ -114,6 +119,7 @@
       <details class="win report" id="pdx-report" open hidden>
         <summary class="win-title"><span>Morning report</span><span class="win-sub" id="report-date"></span></summary>
         <div class="textbox report-text" id="report-text"></div>
+        <div class="report-actions"><span id="report-voice"></span><button class="link report-more" type="button" data-tab="logbook">Logbook ▶</button></div>
       </details>
       <div class="dex-screen">
         <article class="win entry" id="dex-entry" aria-live="polite" aria-labelledby="entry-title"></article>
@@ -152,11 +158,12 @@
     <section class="screen" id="panel-families" role="tabpanel" aria-labelledby="tab-families" hidden></section>
     <section class="screen" id="panel-badges" role="tabpanel" aria-labelledby="tab-badges" hidden></section>
     <section class="screen" id="panel-passport" role="tabpanel" aria-labelledby="tab-passport" hidden></section>
+    <section class="screen" id="panel-logbook" role="tabpanel" aria-labelledby="tab-logbook" hidden></section>
   </main>
 
   <footer class="foot">
     <p id="pdx-updated"></p>
-    <button class="link" type="button" data-credits>Photo credits</button>
+    <button class="link" type="button" data-credits>Credits</button>
   </footer>
 </div>
 
@@ -167,7 +174,7 @@
 <dialog class="sheet credits" id="pdx-credits" aria-labelledby="credits-title">
   <div class="sheet-body">
     <button class="sheet-close" type="button" data-credits="close" aria-label="Close">✕</button>
-    <h2 class="win-title" id="credits-title">Photo credits</h2>
+    <h2 class="win-title" id="credits-title">Credits</h2>
     <ul class="credit-list" id="pdx-credit-list"></ul>
   </div>
 </dialog>

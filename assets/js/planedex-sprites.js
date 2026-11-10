@@ -30,7 +30,7 @@
   var TYPE_HEX = {
     jet: '#2459c9', regional: '#0b78a6', heavy: '#6a3fd4', jumbo: '#c0185a',
     bizjet: '#0a776d', turboprop: '#c27a00', prop: '#3d8a16', rotor: '#d4500f',
-    military: '#56682c', fire: '#c42b2b'
+    military: '#56682c', fire: '#c42b2b', oddball: '#7a3fa0'
   };
 
   function Grid() { this.a = new Array(W * H); }
@@ -73,7 +73,40 @@
     tailwheel: { x0: 16, x1: 32, y: 13, h: 4, nose: 2, up: 1, fin: { w: 4, h: 4 }, win: 'cabin', hwing: [20, 30], strut: true, prop: true, gear: 'tail' },
     lowwing:   { x0: 16, x1: 32, y: 13, h: 4, nose: 2, up: 1, fin: { w: 4, h: 4 }, win: 'canopy', wing: [21, 29], prop: true, gear: 'tri' },
     twinpiston:{ x0: 15, x1: 33, y: 13, h: 4, nose: 2, up: 1, fin: { w: 4, h: 5 }, win: 'canopy', wing: [20, 30], props: [[26, 15]] },
-    scooper:   { x0: 10, x1: 37, y: 12, h: 6, nose: 2, up: 2, fin: { w: 6, h: 6 }, win: 'cock', hwing: [18, 31], props: [[22, 11], [29, 11]], fire: true }
+    scooper:   { x0: 10, x1: 37, y: 12, h: 6, nose: 2, up: 2, fin: { w: 6, h: 6 }, win: 'cock', hwing: [18, 31], props: [[22, 11], [29, 11]], fire: true },
+    quad:      { x0: 6, x1: 42, y: 10, h: 6, nose: 3, up: 2, fin: { w: 8, h: 8 }, win: 'row', wing: [17, 31], pods: [[14, 17, 4, 2], [25, 17, 4, 2]] },
+    quadMil:   { x0: 6, x1: 42, y: 10, h: 6, nose: 3, up: 2, fin: { w: 8, h: 8 }, win: 'cock', wing: [17, 31], pods: [[14, 17, 4, 2], [25, 17, 4, 2]], mil: true },
+    awacs:     { x0: 6, x1: 42, y: 11, h: 6, nose: 3, up: 2, fin: { w: 8, h: 7 }, win: 'cock', wing: [17, 31], pods: [[14, 18, 4, 2], [25, 18, 4, 2]], dome: [14, 6], mil: true },
+    hawkeye:   { x0: 12, x1: 38, y: 13, h: 5, nose: 2, up: 2, fin: { w: 5, h: 5 }, win: 'cock', hwing: [19, 30], props: [[25, 12]], dome: [15, 8], mil: true },
+    tri:       { x0: 6, x1: 42, y: 10, h: 6, nose: 3, up: 2, fin: { w: 8, h: 7, t: true }, win: 'row', wing: [18, 30], rear: [9, 10, 6] },
+    trijet:    { x0: 4, x1: 43, y: 9, h: 7, nose: 4, up: 3, fin: { w: 9, h: 8 }, win: 'row', wing: [16, 30], pods: [[20, 16, 7, 3]], top: [6, 7, 6] },
+    trijetF:   { x0: 4, x1: 43, y: 9, h: 7, nose: 4, up: 3, fin: { w: 9, h: 8 }, win: 'cock', wing: [16, 30], pods: [[20, 16, 7, 3]], top: [6, 7, 6], fire: true },
+    quadjetH:  { x0: 6, x1: 41, y: 11, h: 6, nose: 2, up: 2, fin: { w: 7, h: 7, t: true }, win: 'row', hwing: [16, 31], hpods: [[17, 12, 4, 2], [25, 12, 4, 2]] },
+    quadjetF:  { x0: 6, x1: 41, y: 11, h: 6, nose: 2, up: 2, fin: { w: 7, h: 7, t: true }, win: 'cock', hwing: [16, 31], hpods: [[17, 12, 4, 2], [25, 12, 4, 2]], fire: true },
+    beluga:    { x0: 3, x1: 44, y: 12, h: 6, nose: 3, up: 2, fin: { w: 9, h: 8 }, win: 'cock', bulge: 6, wing: [16, 30], pods: [[20, 18, 6, 2]] },
+    sp:        { x0: 8, x1: 42, y: 10, h: 7, nose: 4, up: 3, fin: { w: 11, h: 9 }, win: 'row', hump: true, wing: [17, 31], pods: [[15, 17, 5, 3], [25, 17, 5, 3]] },
+    dc3:       { x0: 8, x1: 38, y: 11, h: 5, nose: 3, up: 2, fin: { w: 6, h: 6 }, win: 'row', wing: [18, 30], props: [[26, 14]], gear: 'tail' },
+    dc6:       { x0: 6, x1: 40, y: 11, h: 5, nose: 3, up: 2, fin: { w: 7, h: 7 }, win: 'row', wing: [16, 31], props: [[22, 14], [30, 14]], gear: 'tri' },
+    fourprop:  { x0: 6, x1: 40, y: 12, h: 5, nose: 3, up: 2, fin: { w: 7, h: 7 }, win: 'cock', wing: [16, 31], props: [[22, 15], [30, 15]], mil: true },
+    bomberP:   { x0: 7, x1: 40, y: 12, h: 5, nose: 2, up: 2, fin: { w: 7, h: 8 }, win: 'cock', wing: [16, 31], props: [[22, 15], [30, 15]], mil: true, gear: 'tail' },
+    bomberT:   { x0: 10, x1: 38, y: 12, h: 5, nose: 2, up: 2, fin: { w: 6, h: 6 }, win: 'cock', hwing: [18, 30], props: [[25, 11]], mil: true },
+    swing:     { x0: 4, x1: 44, y: 12, h: 4, nose: 6, up: 1, fin: { w: 8, h: 8 }, win: 'cock', wing: [20, 30], pods: [[16, 16, 7, 2]], mil: true },
+    fighter:   { x0: 8, x1: 42, y: 12, h: 4, nose: 6, up: 1, fin: { w: 6, h: 7 }, win: 'canopy', cx: 31, wing: [18, 29], mil: true },
+    twinfin:   { x0: 8, x1: 42, y: 12, h: 4, nose: 6, up: 1, fin: { w: 7, h: 6 }, fin2: true, win: 'canopy', cx: 31, wing: [17, 29], mil: true },
+    hog:       { x0: 8, x1: 40, y: 12, h: 4, nose: 3, up: 1, fin: { w: 5, h: 6 }, fin2: true, win: 'canopy', cx: 31, wing: [20, 30], top: [11, 10, 6], mil: true },
+    trainer:   { x0: 10, x1: 40, y: 12, h: 4, nose: 5, up: 1, fin: { w: 6, h: 6 }, win: 'canopy', cx: 29, wing: [19, 29], mil: true },
+    warbird:   { x0: 12, x1: 36, y: 12, h: 4, nose: 2, up: 1, fin: { w: 5, h: 6 }, win: 'canopy', cx: 24, wing: [20, 30], prop: true, gear: 'tail', mil: true },
+    warbirdT:  { x0: 12, x1: 36, y: 12, h: 4, nose: 2, up: 1, fin: { w: 5, h: 6 }, win: 'canopy', cx: 25, wing: [20, 30], prop: true, gear: 'tri', mil: true },
+    stunt:     { x0: 15, x1: 34, y: 13, h: 4, nose: 2, up: 1, fin: { w: 5, h: 5 }, win: 'canopy', cx: 23, wing: [21, 30], prop: true, gear: 'tail' },
+    biplane:   { x0: 15, x1: 34, y: 13, h: 4, nose: 2, up: 1, fin: { w: 5, h: 5 }, win: 'none', wing: [21, 31], upper: [20, 32], prop: true, gear: 'tail' },
+    glider:    { x0: 10, x1: 38, y: 13, h: 3, nose: 3, up: 1, fin: { w: 4, h: 6, t: true }, win: 'canopy', cx: 31, wing: [19, 35] },
+    dragon:    { x0: 10, x1: 38, y: 13, h: 3, nose: 3, up: 1, fin: { w: 4, h: 6 }, win: 'canopy', cx: 31, wing: [17, 36], mil: true },
+    drone:     { x0: 8, x1: 40, y: 12, h: 4, nose: 4, up: 1, fin: { w: 5, h: 4 }, fin2: true, win: 'none', wing: [18, 33], top: [10, 10, 6], mil: true },
+    boat:      { x0: 14, x1: 35, y: 13, h: 4, nose: 2, up: 1, fin: { w: 5, h: 5, t: true }, win: 'canopy', cx: 27, wing: [20, 30], top: [17, 10, 4], hull: true },
+    bushplane: { x0: 13, x1: 35, y: 12, h: 5, nose: 2, up: 1, fin: { w: 5, h: 6 }, win: 'cabin', hwing: [19, 31], strut: true, prop: true, gear: 'tail' },
+    twinotter: { x0: 9, x1: 38, y: 12, h: 5, nose: 2, up: 1, fin: { w: 6, h: 6 }, win: 'row', hwing: [18, 31], strut: true, props: [[25, 11]], gear: 'tri' },
+    tracker:   { x0: 10, x1: 37, y: 12, h: 5, nose: 2, up: 2, fin: { w: 6, h: 6 }, win: 'cock', hwing: [18, 31], props: [[26, 11]], fire: true },
+    bronco:    { x0: 14, x1: 36, y: 12, h: 4, nose: 2, up: 1, fin: { w: 5, h: 5, t: true }, win: 'canopy', cx: 29, hwing: [17, 31], props: [[25, 11]], fire: true }
   };
 
   var BY_CODE = {
@@ -86,13 +119,28 @@
     C172: 'highwing', C72R: 'highwing', C182: 'highwing', T206: 'highwing',
     C185: 'tailwheel', M7: 'tailwheel',
     P28A: 'lowwing', P28R: 'lowwing', BE19: 'lowwing', SR20: 'lowwing', SR22: 'lowwing', S22T: 'lowwing',
-    AEST: 'twinpiston', R22: 'heliS', R44: 'heliS', B212: 'heliMil'
+    AEST: 'twinpiston', R22: 'heliS', R44: 'heliS', B212: 'heliMil',
+    B703: 'quad', E6: 'quadMil', R135: 'quadMil', E3TF: 'awacs', E2: 'hawkeye',
+    B712: 'rearjet', MD83: 'rearjet', MD87: 'rearjet', B722: 'tri', DC10: 'trijetF', MD11: 'trijet',
+    B462: 'quadjetF', RJ85: 'quadjetF', A3ST: 'beluga', A337: 'beluga', B74S: 'sp', A400: 'fourprop',
+    C30J: 'herc', P3: 'fourprop', DC3: 'dc3', DC6: 'dc6', B17: 'bomberP', B25: 'bomberT',
+    B1: 'swing', B2: 'wing', Q4: 'drone', U2: 'dragon',
+    F15: 'twinfin', F18H: 'twinfin', F18S: 'twinfin', F22: 'twinfin', F35: 'fighter', F16: 'fighter',
+    A10: 'hog', T38: 'trainer', L39: 'trainer', TEX2: 'warbirdT', T28: 'warbirdT',
+    P51: 'warbird', CORS: 'warbird', SPIT: 'warbird', YK52: 'warbirdT', E300: 'stunt',
+    ST75: 'biplane', PTS1: 'biplane', PTS2: 'biplane', BE17: 'biplane',
+    J3: 'tailwheel', PA18: 'tailwheel', CH7A: 'tailwheel', BL8: 'tailwheel', HUSK: 'tailwheel',
+    DHC2: 'bushplane', DHC3: 'bushplane', DHC6: 'twinotter', CL2P: 'scooper', S2T: 'tracker', V10: 'bronco',
+    LA4: 'boat', A5: 'boat', H47: 'chinook', S64: 'crane', GYRO: 'heliS',
+    GLID: 'glider', BALL: 'balloon', SHIP: 'blimp',
+    C32: 'narrowL', C40: 'narrowMil', C37: 'bizjet', C21: 'bizjet', C12: 'twinprop'
   };
 
   function shapeFor(code, types) {
     if (BY_CODE[code]) return BY_CODE[code];
     types = types || [];
     var has = function (t) { return types.indexOf(t) >= 0; };
+    if (has('oddball')) return 'balloon';
     if (has('rotor')) return has('military') ? 'heliMil' : 'heli';
     if (has('jumbo')) return 'jumbo';
     if (has('heavy')) return has('military') ? 'airlifter' : 'wide';
@@ -128,9 +176,12 @@
       g.h(x1 - 16, x1 - 5, y - 1, body);
       g.h(x1 - 14, x1 - 7, y - 2, body);
     }
-    if (P.bulge) {
+    if (P.bulge === true) {
       for (var k = 1; k <= 3; k++) g.h(x0 + 5 + k * 2, x1 - 6 - k * 2, y - k, body);
+    } else if (P.bulge) {  /* Beluga: a big round back */
+      for (var kb = 1; kb <= P.bulge; kb++) g.h(x0 + 4 + kb, x1 - 4 - Math.round(kb * 1.5), y - kb, body);
     }
+    if (P.fin2) g.h(x0 + 2, x0 + 4, y - 2, 'A');  /* the other fin of a twin tail, peeking out */
     if (P.hopper) g.h(mid - 2, mid + 2, y - 1, body);
 
     /* fuselage */
@@ -156,8 +207,9 @@
     } else if (P.win === 'cabin') {
       g.h(mid + 1, mid + 4, wy, 'b');
     } else if (P.win === 'canopy') {
-      g.h(mid + 1, mid + 5, y - 1, 'b');
-      g.h(mid + 2, mid + 4, y - 2, 'b');
+      var cm = P.cx || mid;
+      g.h(cm + 1, cm + 5, y - 1, 'b');
+      g.h(cm + 2, cm + 4, y - 2, 'b');
     }
     if (P.hump) for (var uw = x1 - 13; uw <= x1 - 8; uw += 2) g.px(uw, y - 1, 'b');
     var cockRow = y + 1;
@@ -173,6 +225,18 @@
       g.h(P.hwing[0], P.hwing[1], y - 1, body);
       g.h(P.hwing[0] + 2, P.hwing[1] - 1, y - 2, body);
     }
+    if (P.upper) {  /* biplane: the top wing on struts */
+      g.h(P.upper[0], P.upper[1], y - 4, body);
+      g.h(P.upper[0] + 1, P.upper[1] - 1, y - 3, belly);
+      g.v(P.upper[0] + 3, y - 2, y - 1, 'i');
+      g.v(P.upper[1] - 3, y - 2, y - 1, 'i');
+    }
+    if (P.dome) {  /* radar dish on a pylon */
+      g.v(P.dome[0] + 5, P.dome[1] + 2, y - 1, 'i');
+      g.h(P.dome[0] + 1, P.dome[0] + 9, P.dome[1], 'A');
+      g.h(P.dome[0], P.dome[0] + 10, P.dome[1] + 1, 'A');
+    }
+    if (P.hull) g.h(x0 + 4, x1 - 2, bot + 1, belly);
     if (P.strut && P.hwing) {
       var sx = P.hwing[0] + 6;
       for (var s = 0; s < h; s++) g.px(sx - Math.floor(s / 2), y + s, 'i');
@@ -262,6 +326,79 @@
     return g;
   }
 
+  function balloon() {
+    var g = new Grid();
+    var rows = [10, 14, 16, 18, 18, 18, 18, 17, 16, 14, 12, 10, 8, 6, 4];
+    rows.forEach(function (w, i) {
+      var x0 = 24 - (w >> 1);
+      g.h(x0, x0 + w - 1, 1 + i, i % 4 === 1 ? 'A' : 'w');
+      if (i > 1 && i < 13) { g.px(x0 + Math.round(w / 3), 1 + i, 'A'); g.px(x0 + w - 1 - Math.round(w / 3), 1 + i, 'A'); }
+    });
+    g.v(22, 16, 18, 'i');
+    g.v(25, 16, 18, 'i');
+    g.r(21, 19, 26, 21, 'e');  /* basket */
+    return g;
+  }
+
+  function blimp() {
+    var g = new Grid();
+    var rows = [[12, 34], [8, 38], [6, 40], [5, 41], [5, 41], [6, 40], [8, 38], [12, 34]];
+    rows.forEach(function (r, i) { g.h(r[0], r[1], 7 + i, i === 7 ? 'g' : 'w'); });
+    g.h(9, 37, 10, 'A');
+    g.r(6, 4, 9, 6, 'A');     /* top fin */
+    g.r(6, 15, 9, 17, 'A');   /* bottom fin */
+    g.r(21, 15, 28, 16, 'e'); /* gondola */
+    g.px(27, 15, 'b'); g.px(25, 15, 'b'); g.px(23, 15, 'b');
+    return g;
+  }
+
+  function flyingWing() {
+    var g = new Grid();
+    var rows = [[20, 30], [12, 38], [6, 43], [4, 44]];
+    rows.forEach(function (r, i) { g.h(r[0], r[1], 11 + i, i === 3 ? 'n' : 'm'); });
+    g.h(23, 28, 10, 'm');
+    g.h(26, 28, 11, 'c');
+    g.h(8, 40, 15, 'n');
+    g.h(14, 18, 10, 'm');  /* intake hump */
+    return g;
+  }
+
+  function chinook() {
+    var g = new Grid();
+    for (var y = 11; y <= 16; y++) {
+      var inR = y === 11 ? 3 : y === 12 ? 1 : y === 16 ? 1 : 0;
+      g.h(7, 41 - inR, y, y === 16 ? 'n' : 'm');
+    }
+    for (var r = 0; r < 4; r++) g.h(7 + r, 13, 10 - r, 'm');   /* rear pylon */
+    g.h(9, 39, 13, 'A');                                       /* stripe */
+    for (var wx = 17; wx <= 31; wx += 3) g.px(wx, 12, 'b');
+    g.r(36, 12, 38, 12, 'b');                                 /* windshield */
+    g.v(11, 5, 6, 'i'); g.v(36, 8, 10, 'i');                  /* masts */
+    g.h(0, 22, 4, 'r');                                        /* rear rotor */
+    g.h(25, 47, 7, 'r');                                       /* front rotor */
+    g.r(12, 17, 13, 18, 'i'); g.r(33, 17, 34, 18, 'i');       /* wheels */
+    return g;
+  }
+
+  function skycrane() {
+    var g = new Grid();
+    g.h(6, 33, 10, 'y');                                       /* spine */
+    g.h(6, 34, 11, 'y');
+    g.h(9, 33, 12, 'k');
+    for (var y = 9; y <= 15; y++) {                            /* cab up front */
+      var inR = y === 9 ? 3 : y === 10 ? 1 : y === 15 ? 2 : 0;
+      g.h(32, 41 - inR, y, y === 15 ? 'k' : 'y');
+    }
+    g.r(37, 10, 39, 11, 'b');
+    g.r(3, 7, 6, 12, 'A');                                     /* tail fin */
+    g.v(4, 4, 7, 'r'); g.h(2, 6, 5, 'r');                      /* tail rotor */
+    g.v(24, 8, 9, 'i');                                        /* mast */
+    g.h(5, 45, 7, 'r');                                        /* main rotor */
+    for (var l = 0; l < 7; l++) { g.px(16 - Math.floor(l / 3), 13 + l, 'i'); g.px(30 + Math.floor(l / 3), 13 + l, 'i'); }
+    g.h(12, 15, 20, 'i'); g.h(31, 34, 20, 'i');                /* feet */
+    return g;
+  }
+
   function outline(g) {
     var out = new Grid();
     out.a = g.a.slice();
@@ -280,6 +417,11 @@
     if (shape === 'heliS') return heli(true, false);
     if (shape === 'heliMil') return heli(false, true);
     if (shape === 'tilt') return tilt();
+    if (shape === 'balloon') return balloon();
+    if (shape === 'blimp') return blimp();
+    if (shape === 'wing') return flyingWing();
+    if (shape === 'chinook') return chinook();
+    if (shape === 'crane') return skycrane();
     return plane(SHAPES[shape] || SHAPES.narrow);
   }
 
@@ -313,5 +455,5 @@
     ctx.drawImage(sheet(shape, accent, sil), 0, 0);
   }
 
-  window.PlanedexSprites = { paint: paint, shapeFor: shapeFor, shapes: Object.keys(SHAPES).concat(['heli', 'heliS', 'heliMil', 'tilt']), W: W, H: H };
+  window.PlanedexSprites = { paint: paint, shapeFor: shapeFor, shapes: Object.keys(SHAPES).concat(['heli', 'heliS', 'heliMil', 'tilt', 'balloon', 'blimp', 'wing', 'chinook', 'crane']), W: W, H: H };
 })();

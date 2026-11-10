@@ -129,6 +129,7 @@
   --t-rotor:     #c2410c;
   --t-military:  #4a5a28;
   --t-fire:      #b91c1c;
+  --t-oddball:   #7a3fa0;
 
   --s1: #1d5cc8; --s2: #b8322a; --s3: #1d7d46; --s4: #6f36c4; --s5: #9a5800;
 
@@ -537,6 +538,7 @@ img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); ba
 .t-rotor { --tc: var(--t-rotor); }
 .t-military { --tc: var(--t-military); }
 .t-fire { --tc: var(--t-fire); }
+.t-oddball { --tc: var(--t-oddball); }
 
 .r1 { --rc: var(--r1); --rc-text: var(--r1-text); }
 .r2 { --rc: var(--r2); --rc-text: var(--r2-text); }
@@ -704,6 +706,10 @@ img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); ba
 .mission.done progress { --bar: var(--ok); }
 .m-side { display: grid; justify-items: end; gap: 4px; }
 .m-count { font: 700 0.85rem var(--pixel); }
+.tier { display: inline-block; padding: 1px 5px; border: 2px solid #000; color: #000; font: 700 0.58rem/1.3 var(--pixel); text-transform: uppercase; vertical-align: 2px; }
+.tier.t-easy { background: #9be7a8; }
+.tier.t-medium { background: #ffd84d; }
+.tier.t-hard { background: #ff8f80; }
 .xp-tag { padding: 2px 6px; background: var(--gold); color: var(--gold-ink); border: 2px solid #000; font: 700 0.6rem var(--pixel); white-space: nowrap; }
 
 .cotd-btn { display: grid; gap: 8px; width: 100%; padding: 0; border: 0; background: none; text-align: left; cursor: pointer; }
@@ -813,6 +819,26 @@ img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); ba
   box-shadow: inset -6px -6px 0 rgba(0, 0, 0, 0.18), inset 6px 6px 0 rgba(255, 255, 255, 0.45);
 }
 .medal.locked .medal-face { background: var(--win-2); color: var(--muted); box-shadow: inset -4px -4px 0 var(--lo); }
+.badge-art { display: block; width: 120px; max-width: 100%; height: auto; aspect-ratio: 40 / 34; margin: -4px auto 4px; image-rendering: pixelated; image-rendering: crisp-edges; }
+.medal.bronze { background: linear-gradient(180deg, rgba(222, 148, 85, 0.3), transparent 60%), var(--win); }
+.medal.silver { background: linear-gradient(180deg, rgba(163, 175, 189, 0.32), transparent 60%), var(--win); }
+.medal.gold { background: linear-gradient(180deg, rgba(247, 209, 84, 0.38), transparent 60%), var(--win); }
+.medal.platinum { background: linear-gradient(180deg, rgba(111, 194, 218, 0.32), transparent 60%), var(--win); }
+.medal.locked .medal-name { color: var(--muted); }
+.medal.locked .badge-art { opacity: 0.9; }
+.medal.bronze .medal-face { background: #d68c4a; color: #3a1a00; }
+.medal.silver .medal-face { background: #cdd7e4; color: #1f2b45; }
+.medal.gold .medal-face { background: var(--gold); color: var(--gold-ink); }
+.medal.platinum .medal-face { background: linear-gradient(135deg, #f2fbff, #8fd0ff 55%, #f2fbff); color: #10305c; }
+.medal.secret .medal-face { background: var(--edge); color: var(--win); font-size: 1.6rem; }
+.medal.platinum { box-shadow: 5px 5px 0 var(--drop), 0 0 0 3px #8fd0ff; }
+.pips { display: flex; justify-content: center; gap: 5px; margin: 2px 0; }
+.pip { width: 12px; height: 12px; border: 2px solid var(--edge); background: var(--win-2); }
+.pip.on.bronze { background: #d68c4a; }
+.pip.on.silver { background: #cdd7e4; }
+.pip.on.gold { background: var(--gold); }
+.pip.on.platinum { background: #8fd0ff; }
+.sec-h { margin: 8px 0 -6px; font: 700 0.85rem var(--pixel); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); }
 .medal-name { font-weight: 700; font-size: 1.05rem; }
 .medal-how { color: var(--muted); font-size: 0.92rem; }
 .medal-when { color: var(--ok); font: 700 0.7rem var(--pixel); text-transform: uppercase; }
@@ -838,12 +864,22 @@ img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); ba
 .stamp:nth-child(5n+3) { --sc: var(--s3); --rot: -1deg; }
 .stamp:nth-child(5n+4) { --sc: var(--s4); --rot: 2deg; }
 .stamp:nth-child(5n+5) { --sc: var(--s5); --rot: -2.5deg; }
+.st-top { display: flex; align-items: center; gap: 8px; }
 .st-code { font: 700 1.8rem/1 var(--pixel); }
+.flag { display: inline-block; width: 24px; height: 18px; object-fit: cover; border: 1px solid rgba(0, 0, 0, 0.3); vertical-align: -3px; background: var(--win-2); }
+.sk-name small .flag { width: 16px; height: 12px; margin-right: 4px; vertical-align: -1px; }
 .st-name { font-weight: 700; color: var(--ink); }
 .st-meta { color: var(--muted); font-size: 0.85rem; }
 .stickers { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 8px; list-style: none; margin: 0; padding: 0; }
 .sticker { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 6px 8px; border: 2px solid var(--edge); background: var(--win-2); }
-.sk-code { padding: 3px 5px; background: var(--edge); color: var(--win); font: 700 0.72rem var(--pixel); }
+.sk-code { display: grid; place-items: center; width: 64px; height: 36px; padding: 0 4px; border: 2px solid #000; background: var(--edge); color: #fff; font: 700 0.72rem var(--pixel); box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.25); }
+.sk-code.c0 { background: #c0392b; } .sk-code.c1 { background: #1f5fbf; } .sk-code.c2 { background: #12806f; }
+.sk-code.c3 { background: #8e44ad; } .sk-code.c4 { background: #d35400; } .sk-code.c5 { background: #2c3e50; }
+.sk-code.c6 { background: #16a085; } .sk-code.c7 { background: #b8860b; } .sk-code.c8 { background: #7f1d1d; }
+.sk-code.c9 { background: #0e7490; } .sk-code.c10 { background: #4d7c0f; } .sk-code.c11 { background: #9d174d; }
+.sk-logo { display: grid; place-items: center; width: 64px; height: 36px; padding: 3px 4px; background: #fff; border: 2px solid var(--edge); }
+.sk-logo.dark { background: #1d2333; }
+.sk-logo img { display: block; max-width: 100%; max-height: 100%; object-fit: contain; }
 .sk-name { font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
 .sk-name small { display: block; color: var(--muted); font-weight: 400; }
 .sk-n { font: 700 0.8rem var(--pixel); color: var(--muted); }
@@ -941,12 +977,40 @@ img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); ba
 .report-text.typing { cursor: pointer; }
 .report-text.typing::after { visibility: hidden; }
 
+/* ---- logbook ---------------------------------------------------------------------------- */
+
+.logbook { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.lb-entry .textbox p + p { margin-top: 10px; }
+.report-more { display: block; margin: 10px 0 0 auto; color: var(--muted); font: 700 0.72rem var(--pixel); text-transform: uppercase; text-decoration-color: currentColor; }
+.report-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
+.report-actions .report-more { margin: 0 0 0 auto; }
+.report-actions #report-voice:empty { display: none; }
+
+/* ---- the captain's readout ---------------------------------------------------------------- */
+
+.voice-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 8px 14px; border: 3px solid var(--edge);
+  background: var(--gold); color: #1c2b4f; font: 700 0.72rem var(--pixel); text-transform: uppercase; letter-spacing: 0.04em;
+  box-shadow: 3px 3px 0 var(--edge); cursor: pointer; }
+.voice-btn:hover { filter: brightness(1.05); }
+.voice-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--edge); }
+.voice-btn:disabled { cursor: progress; opacity: 0.85; }
+.voice-btn.playing { background: var(--cursor); color: #fff; }
+.voice-btn.small { min-height: 34px; margin-top: 10px; padding: 6px 10px; font-size: 0.66rem; }
+.voice-btn::before { content: ""; width: 14px; height: 12px; flex: none; background:
+  linear-gradient(currentColor, currentColor) 0 4px / 4px 4px no-repeat,
+  linear-gradient(currentColor, currentColor) 4px 2px / 3px 8px no-repeat,
+  linear-gradient(currentColor, currentColor) 9px 1px / 2px 2px no-repeat,
+  linear-gradient(currentColor, currentColor) 11px 3px / 2px 6px no-repeat,
+  linear-gradient(currentColor, currentColor) 9px 9px / 2px 2px no-repeat; }
+.cotd .credit { margin-top: 8px; }
+
 /* ---- photo credits ------------------------------------------------------------------------ */
 
 .credits .sheet-body { position: relative; padding: 16px; }
 .credits .win-title { padding-right: 44px; }
 .credit-list { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; font-size: 0.92rem; }
 .credit-list a { color: inherit; }
+.credit-list .credit-h { margin-top: 10px; font: 700 0.75rem var(--pixel); text-transform: uppercase; }
 
 /* ---- footer ---------------------------------------------------------------------------------- */
 

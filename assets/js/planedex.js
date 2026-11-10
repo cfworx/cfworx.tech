@@ -35,16 +35,20 @@
   var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   var MONTHS_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   var WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  var TABS = ['dex', 'today', 'wanted', 'families', 'badges', 'passport'];
-  var RARITY_XP = [0, 10, 25, 60, 150, 400];
+  var TABS = ['dex', 'today', 'wanted', 'families', 'badges', 'passport', 'logbook'];
+  var RARITY_XP = [0, 25, 75, 200, 500, 1500];
+  var ROMAN = ['I', 'II', 'III', 'IV', 'V'];
+  var FLAGS = '/tools/planedex/flags/';
+  var LOGOS = '/tools/planedex/logos/';
   var NARROW = window.matchMedia ? window.matchMedia('(max-width: 820px)') : { matches: false };
   var S = window.PlanedexSprites;
+  var BA = window.PlanedexBadges;
 
   var state = {
     data: null, byCode: {}, missingByCode: {}, tab: 'dex', sel: null,
     q: '', type: 'all', rarity: 0, sort: 'dex', show: 'all',
     seenBefore: null, loadedAt: 0, reveal: [], revealAt: 0,
-    photos: {}, airframes: {}, reportShown: null
+    photos: {}, airframes: {}, reportShown: null, logos: {}, logbook: null
   };
   var el = {};
 
@@ -223,15 +227,38 @@
     });
   }
 
+  // Catch of the day: swap in the photo of the exact plane, like its entry does.
+  function upgradeCotd(item) {
+    airframe(item.first.reg).then(function (ph) {
+      if (!ph) return;
+      var probe = new Image();
+      probe.onload = function () {
+        var card = el.today.querySelector('[data-cotd="' + item.code + '"]');
+        var stage = card && card.querySelector('.cotd-btn .stage');
+        if (!stage || card.querySelector('.credit')) return;
+        var tpl = document.createElement('template');
+        tpl.innerHTML = '<span class="stage small photo-stage is-airframe"><img class="photo-img" src="' + esc(ph.src) + '"'
+          + (ph.w && ph.h ? ' width="' + ph.w + '" height="' + ph.h + '"' : '') + ' alt="" decoding="async"></span>';
+        stage.replaceWith(tpl.content);
+        card.insertAdjacentHTML('beforeend', '<p class="credit"><b>' + esc(item.first.reg) + '</b> · <span aria-hidden="true">📷</span> '
+          + '<a href="' + esc(ph.link) + '" target="_blank" rel="noopener">' + esc(ph.by) + '</a> · Planespotters.net</p>');
+      };
+      probe.src = ph.src;
+    });
+  }
+
   function openCredits() {
     var list = $('pdx-credit-list');
     if (!list.hasChildNodes()) {
-      list.innerHTML = Object.keys(state.photos).map(function (code) { return [code, state.photos[code]]; })
-        .sort(function (a, b) { return a[1].name.localeCompare(b[1].name); })
-        .map(function (e) {
-          var p = e[1];
-          return '<li><b>' + esc(p.name) + '</b> <a href="' + esc(p.source) + '" target="_blank" rel="noopener">' + esc(p.by) + '</a> · ' + licenseHTML(p) + '</li>';
-        }).join('');
+      function line(p) {
+        return '<li><b>' + esc(p.name) + '</b> <a href="' + esc(p.source) + '" target="_blank" rel="noopener">' + esc(p.by) + '</a> · ' + licenseHTML(p) + '</li>';
+      }
+      function sorted(obj) {
+        return Object.keys(obj).map(function (k) { return obj[k]; }).sort(function (a, b) { return a.name.localeCompare(b.name); });
+      }
+      list.innerHTML = sorted(state.photos).map(line).join('')
+        + (Object.keys(state.logos).length ? '<li class="credit-h">Airline logos</li>' + sorted(state.logos).map(line).join('') : '')
+        + '<li class="credit-h">Flags</li><li><a href="https://github.com/lipis/flag-icons" target="_blank" rel="noopener">flag-icons</a> · MIT License</li>';
     }
     var dlg = $('pdx-credits');
     if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', '');
@@ -273,6 +300,10 @@
     }
     return {
       get on() { return on; },
+      context: ac,
+      // The two-note cabin chime before the captain talks. It plays even with
+      // sound effects off, since pressing play asked for sound.
+      chime: function () { tone(659, 0, 1.1, 'sine', 0.12); tone(523, 0.5, 1.4, 'sine', 0.12); },
       blip: function () { if (on) tone(880, 0, 0.045); },
       select: function () { if (on) { tone(660, 0, 0.05); tone(990, 0.05, 0.08); } },
       jingle: function () {
@@ -288,16 +319,81 @@
     };
   })();
 
+  /* ---- the captain's readout ------------------------------------------------- */
+  /* The API makes the MP3 with ElevenLabs the first time a day is played.
+     It plays through Web Audio, which the click unlocks, so it works on
+     phones without an <audio> element. */
+
+  var Voice = (function () {
+    var btn = null, src = null, label = '';
+    function idle() {
+      if (src) { try { src.onended = null; src.stop(); } catch (e) { /* already stopped */ } }
+      src = null;
+      if (btn) { btn.textContent = label; btn.disabled = false; btn.classList.remove('playing'); btn.removeAttribute('aria-pressed'); }
+      btn = null;
+    }
+    function fail(b, msg) {
+      if (btn !== b) return;
+      idle();
+      var keep = b.textContent;
+      b.textContent = msg;
+      b.disabled = true;
+      setTimeout(function () { b.textContent = keep; b.disabled = false; }, 4000);
+    }
+    function decode(ctx, buf) {
+      return new Promise(function (ok, bad) {
+        var p = ctx.decodeAudioData(buf, ok, bad);
+        if (p && p.then) p.then(ok, bad);
+      });
+    }
+    function play(b) {
+      if (btn === b) { idle(); return; }  // a second press stops it
+      idle();
+      var ctx = Sound.context();          // unlock audio inside the click
+      if (!ctx) { b.textContent = 'No sound on this device'; return; }
+      btn = b;
+      label = b.textContent;
+      b.textContent = 'Calling the flight deck…';
+      b.disabled = true;
+      fetch(API + '?voice=' + encodeURIComponent(b.getAttribute('data-day')) + '&v=' + encodeURIComponent(b.getAttribute('data-v') || ''))
+        .then(function (r) {
+          if (!r.ok) return r.json().catch(function () { return {}; }).then(function (j) { throw new Error(j.error || 'The radio is quiet. Try later'); });
+          return r.arrayBuffer();
+        })
+        .then(function (buf) { return decode(ctx, buf); })
+        .then(function (audio) {
+          if (btn !== b) return;
+          src = ctx.createBufferSource();
+          src.buffer = audio;
+          src.connect(ctx.destination);
+          src.onended = function () { if (btn === b) idle(); };
+          Sound.chime();
+          src.start(ctx.currentTime + 1.6);
+          b.disabled = false;
+          b.classList.add('playing');
+          b.setAttribute('aria-pressed', 'true');
+          b.textContent = '■ Stop';
+        })
+        .catch(function (e) { fail(b, (e && e.message && e.message.length < 60) ? e.message : 'The radio is quiet. Try later'); });
+    }
+    return { play: play, stop: idle };
+  })();
+
+  function voiceButton(day, at, cls, text) {
+    return '<button class="voice-btn' + (cls ? ' ' + cls : '') + '" type="button" data-day="' + esc(day) + '" data-v="' + esc(at || '') + '">' + esc(text) + '</button>';
+  }
+
   /* ---- header -------------------------------------------------------------- */
 
   function renderHeader(d) {
-    el.station.textContent = 'Catching planes with my 3 boys' + (d.since ? ' since ' + longDate(d.since) : '');
+    el.station.textContent = 'Catching planes with my boys' + (d.since ? ' since ' + longDate(d.since) : '');
     var L = d.level;
     el.lv.textContent = L.level;
     el.lvTitle.textContent = L.title;
-    el.xp.max = Math.max(1, L.next - L.prev);
-    el.xp.value = Math.max(0, L.xp - L.prev);
-    el.xpText.textContent = num(L.xp) + ' XP · ' + num(L.next - L.xp) + ' to LV ' + (L.level + 1);
+    var maxed = L.max && L.level >= L.max;
+    el.xp.max = maxed ? 1 : Math.max(1, L.next - L.prev);
+    el.xp.value = maxed ? 1 : Math.max(0, L.xp - L.prev);
+    el.xpText.textContent = maxed ? num(L.xp) + ' XP · MAX LEVEL!' : num(L.xp) + ' XP · ' + num(L.next - L.xp) + ' to LV ' + (L.level + 1);
     el.level.hidden = false;
     var t = d.totals;
     var known = t.known || t.species;
@@ -341,7 +437,10 @@
     var key = r.day + '|' + (r.at || '');
     if (state.reportShown === key) return;
     state.reportShown = key;
+    state.logbook = null;
     $('report-date').textContent = weekday(r.day) + ' · ' + fmtDay(r.day);
+    Voice.stop();
+    $('report-voice').innerHTML = r.voice ? voiceButton(r.day, r.at, '', "▶ Captain's readout") : '';
     var paras = String(r.text).split(/\n\s*\n/).map(function (t) { return t.trim(); }).filter(Boolean);
     var body = el.reportText;
     body.innerHTML = '';
@@ -511,7 +610,8 @@
     var missions = t.quests.map(function (q) {
       return '<li class="mission' + (q.done ? ' done' : '') + '">'
         + '<span class="box-check" aria-hidden="true">' + (q.done ? '✓' : '') + '</span>'
-        + '<div class="m-main"><p>' + (q.done ? '<span class="visually-hidden">Done: </span>' : '') + esc(q.text) + '</p>'
+        + '<div class="m-main"><p>' + (q.done ? '<span class="visually-hidden">Done: </span>' : '')
+        + (q.tier ? '<span class="tier t-' + esc(q.tier) + '">' + esc(q.tier === 'medium' ? 'Med' : q.tier) + '</span> ' : '') + esc(q.text) + '</p>'
         + '<progress max="' + q.need + '" value="' + Math.min(q.have, q.need) + '" aria-label="' + esc(q.text) + '"></progress></div>'
         + '<div class="m-side"><span class="m-count">' + num(Math.min(q.have, q.need)) + '/' + num(q.need) + '</span><span class="xp-tag">+' + q.xp + ' XP</span></div></li>';
     }).join('');
@@ -523,7 +623,7 @@
       var pic = photoOf(s.code)
         ? '<span class="stage small photo-stage">' + photoImg(s.code, '', true) + '</span>'
         : '<span class="stage small t-' + esc(s.types[0]) + '"><span class="cloud c1"></span>' + spriteTag(s.code, s.types, false, 'big') + '<span class="ground"></span></span>';
-      cotd = '<div class="win cotd"><p class="win-title">Catch of the day' + (t.catch.isNew ? ' <span class="tag-new">NEW!</span>' : '') + '</p>'
+      cotd = '<div class="win cotd" data-cotd="' + esc(s.code) + '"><p class="win-title">Catch of the day' + (t.catch.isNew ? ' <span class="tag-new">NEW!</span>' : '') + '</p>'
         + '<button class="cotd-btn" type="button" data-goto="' + esc(s.code) + '">' + pic
         + '<span class="cotd-name"><span class="plate-no">' + no(s.dex) + '</span> ' + esc(s.name) + '</span>'
         + '<span class="cotd-meta">' + typeChips(s.types) + stars(s.rarity) + '</span></button></div>';
@@ -558,6 +658,7 @@
       + '<p class="today-line"><b>' + num(t.planes) + '</b> planes today' + (t.newSpecies ? ' · <b>' + num(t.newSpecies) + '</b> new' : '') + '</p>'
       + '</div><div class="win radio"><p class="win-title">Radio log</p><ul class="log">' + log.join('') + '</ul></div></div>';
     paintSprites(el.today);
+    if (s && s.first && s.first.reg) upgradeCotd(s);
   }
 
   /* ---- wanted posters ------------------------------------------------------------ */
@@ -614,33 +715,115 @@
   /* ---- badges ---------------------------------------------------------------------------- */
 
   function renderBadges(d) {
-    var earned = d.badges.filter(function (b) { return b.earned; });
-    function tile(b) {
-      return '<div class="medal' + (b.earned ? '' : ' locked') + '">'
-        + '<span class="medal-face" aria-hidden="true">' + esc(b.emblem) + '</span>'
-        + '<p class="medal-name">' + esc(b.name) + '</p><p class="medal-how">' + esc(b.how) + '</p>'
-        + (b.earned ? '<p class="medal-when">Earned ' + esc(fmtDay(b.earned)) + '</p>'
-          : b.progress ? '<progress max="' + b.progress[1] + '" value="' + b.progress[0] + '" aria-label="' + esc(b.name) + ' progress"></progress><p class="medal-prog">' + num(b.progress[0]) + '/' + num(b.progress[1]) + '</p>'
-            : '<p class="medal-prog">LOCKED</p>')
+    var ladders = d.badges.filter(function (b) { return b.kind === 'ladder'; });
+    var singles = d.badges.filter(function (b) { return b.kind !== 'ladder' && !b.secret; });
+    var secrets = d.badges.filter(function (b) { return b.kind !== 'ladder' && b.secret; });
+    var MEDALS = ['bronze', 'silver', 'gold', 'platinum', 'platinum'];
+    function amount(b, n) { return b.unit === 'ft' ? num(n) + ' ft' : (b.lower ? String(n) : num(n)); }
+
+    function artTag(b, look, metal, ribbon) {
+      var a = BA ? BA.art(b.id) : ['star'];
+      return '<canvas class="badge-art" width="40" height="34" aria-hidden="true" data-look="' + look + '" data-icon="' + esc(a[0]) + '"'
+        + (a[1] ? ' data-tint="' + esc(a[1]) + '"' : '') + ' data-metal="' + esc(metal) + '"'
+        + (ribbon != null ? ' data-ribbon="' + ribbon + '"' : '') + '></canvas>';
+    }
+    function ladderTile(b, i) {
+      var got = b.earned.filter(Boolean).length;
+      var next = b.tiers[got];
+      var last = got ? b.earned[got - 1] : null;
+      var pips = b.tiers.map(function (t, i) {
+        return '<span class="pip' + (b.earned[i] ? ' on ' + MEDALS[i] : '') + '" title="' + esc(ROMAN[i] + ': ' + b.how.replace('{n}', amount(b, t))) + '"></span>';
+      }).join('');
+      var prog;
+      if (next == null) {
+        prog = '<p class="medal-when">All ' + b.tiers.length + ' tiers done!</p>';
+      } else if (b.lower) {
+        prog = '<p class="medal-prog">' + (b.value ? 'Oldest so far: ' + b.value : 'None yet') + '</p>';
+      } else {
+        prog = '<progress max="' + next + '" value="' + Math.min(b.value || 0, next) + '" aria-label="' + esc(b.name) + ' progress"></progress>'
+          + '<p class="medal-prog">' + amount(b, Math.min(b.value || 0, next)) + ' / ' + amount(b, next) + '</p>';
+      }
+      return '<div class="medal ladder' + (got ? ' ' + MEDALS[got - 1] : ' locked') + '">'
+        + artTag(b, 'medal', got ? MEDALS[got - 1] : 'steel', i)
+        + '<p class="medal-name">' + esc(b.name) + (got ? ' ' + ROMAN[got - 1] : '') + '</p>'
+        + '<p class="pips" role="img" aria-label="' + got + ' of ' + b.tiers.length + ' tiers">' + pips + '</p>'
+        + '<p class="medal-how">' + esc(next == null ? b.how.replace('{n}', amount(b, b.tiers[b.tiers.length - 1])) : b.how.replace('{n}', amount(b, next))) + '</p>'
+        + prog + (last && next != null ? '<p class="medal-when">' + ROMAN[got - 1] + ' earned ' + esc(fmtDay(last)) + '</p>' : '')
         + '</div>';
     }
-    el.badges.innerHTML = '<div class="win intro"><p class="win-title">Badges <span class="win-sub">' + earned.length + '/' + d.badges.length + '</span></p></div>'
-      + '<div class="medals">' + earned.map(tile).join('') + d.badges.filter(function (b) { return !b.earned; }).map(tile).join('') + '</div>';
+    function tile(b) {
+      var look = b.secret ? (b.earned ? 'star' : 'mystery') : 'wings';
+      return '<div class="medal' + (b.earned ? ' ' + esc(b.medal) : ' locked') + (b.secret && !b.earned ? ' secret' : '') + '">'
+        + artTag(b, look, b.earned ? b.medal : 'steel', null)
+        + '<p class="medal-name">' + esc(b.name) + '</p><p class="medal-how">' + esc(b.how) + '</p>'
+        + (b.earned ? '<p class="medal-when">Earned ' + esc(fmtDay(b.earned)) + '</p>' : '<p class="medal-prog">+' + num(b.xp) + ' XP</p>')
+        + '</div>';
+    }
+    function byEarned(list) {
+      return list.filter(function (b) { return b.earned; }).concat(list.filter(function (b) { return !b.earned; }));
+    }
+    var t = d.totals;
+    el.badges.innerHTML = '<div class="win intro"><p class="win-title">Badges <span class="win-sub">' + num(t.badges) + '/' + num(t.badgesTotal) + '</span></p></div>'
+      + '<h2 class="sec-h">Collections</h2><div class="medals">' + ladders.map(ladderTile).join('') + '</div>'
+      + '<h2 class="sec-h">Achievements</h2><div class="medals">' + byEarned(singles).map(tile).join('') + '</div>'
+      + '<h2 class="sec-h">Secret</h2><div class="medals">' + byEarned(secrets).map(tile).join('') + '</div>';
+    if (BA) el.badges.querySelectorAll('canvas.badge-art').forEach(function (c) { BA.paint(c); });
   }
 
   /* ---- passport ---------------------------------------------------------------------------- */
 
+  function flag(code) {
+    return '<img class="flag" src="' + FLAGS + esc(String(code).toLowerCase()) + '.webp" width="24" height="18" alt="" loading="lazy" decoding="async">';
+  }
+  // Airline stickers: the logo when there's a free one, else the code on a colored sticker.
+  function airlineBadge(a) {
+    var logo = state.logos[a.code];
+    if (logo) return '<span class="sk-logo' + (logo.dark ? ' dark' : '') + '"><img src="' + LOGOS + esc(logo.file) + '" alt="" loading="lazy" decoding="async"></span>';
+    var h = 0;
+    for (var i = 0; i < a.code.length; i++) h = (h * 31 + a.code.charCodeAt(i)) % 12;
+    return '<span class="sk-code c' + h + '">' + esc(a.code) + '</span>';
+  }
   function renderPassport(d) {
+    var names = {};
+    d.countries.forEach(function (c) { names[c.code] = c.name; });
     el.passport.innerHTML = '<div class="win intro"><p class="win-title">Passport <span class="win-sub">'
       + plural(d.countries.length, 'country', 'countries') + ' · ' + plural(d.airlines.length, 'airline', 'airlines') + '</span></p></div>'
       + '<div class="stamps">' + d.countries.map(function (c) {
-        return '<div class="stamp"><span class="st-code">' + esc(c.code) + '</span><span class="st-name">' + esc(c.name) + '</span>'
+        return '<div class="stamp"><span class="st-top">' + flag(c.code) + '<span class="st-code">' + esc(c.code) + '</span></span><span class="st-name">' + esc(c.name) + '</span>'
           + '<span class="st-meta">' + plural(c.count, 'plane', 'planes') + ' · ' + esc(fmtDay(c.first)) + '</span></div>';
       }).join('') + '</div>'
       + '<div class="win"><p class="win-title">Airline stickers</p><ul class="stickers">' + d.airlines.map(function (a) {
-        return '<li class="sticker"><span class="sk-code">' + esc(a.code) + '</span><span class="sk-name">' + esc(a.name)
-          + '<small>' + esc(a.country) + ' · first ' + esc(fmtDay(a.first)) + '</small></span><span class="sk-n">×' + num(a.count) + '</span></li>';
+        return '<li class="sticker">' + airlineBadge(a) + '<span class="sk-name">' + esc(a.name)
+          + '<small>' + flag(a.country) + ' first ' + esc(fmtDay(a.first)) + '</small></span><span class="sk-n">×' + num(a.count) + '</span></li>';
       }).join('') + '</ul></div>';
+  }
+
+  /* ---- logbook --------------------------------------------------------------------------------- */
+  /* Every morning report so far, newest first: a little diary of the
+     spotting adventure. Loaded the first time the tab is opened. */
+
+  function renderLogbook() {
+    var box = el.logbook;
+    if (state.logbook == null) {
+      box.innerHTML = '<p class="status-msg">Opening the logbook…</p>';
+      state.logbook = [];
+      fetch(API + '?logbook', { headers: { accept: 'application/json' } })
+        .then(function (r) { return r.ok ? r.json() : { reports: [] }; })
+        .catch(function () { return { reports: [] }; })
+        .then(function (j) { state.logbook = (j && j.reports) || []; state.logbookVoice = Boolean(j && j.voice); drawLogbook(); });
+      return;
+    }
+    drawLogbook();
+  }
+  function drawLogbook() {
+    var list = state.logbook || [];
+    el.logbook.innerHTML = '<div class="win intro"><p class="win-title">Logbook <span class="win-sub">'
+      + plural(list.length, 'report', 'reports') + '</span></p></div>'
+      + (list.length ? '<ol class="logbook">' + list.map(function (r) {
+        var paras = String(r.text || '').split(/\n\s*\n/).map(function (t) { return '<p>' + esc(t.trim()) + '</p>'; }).join('');
+        return '<li class="win lb-entry"><p class="win-title">' + esc(weekday(r.day) + ' · ' + longDate(r.day)) + '</p><div class="textbox">' + paras + '</div>'
+          + (state.logbookVoice ? voiceButton(r.day, r.at, 'small', '▶ Hear it') : '') + '</li>';
+      }).join('') + '</ol>' : '<p class="status-msg">The first report shows up tomorrow morning.</p>');
   }
 
   /* ---- new-catch reveal ------------------------------------------------------------------- */
@@ -710,6 +893,7 @@
       $('panel-' + t).hidden = !on || !state.data;
     });
     if (focus) $('tab-' + name).focus();
+    if (name === 'logbook' && state.data) renderLogbook();
     try { history.replaceState(null, '', name === 'dex' ? location.pathname : '#' + name); } catch (e) { /* not fatal */ }
   }
 
@@ -765,12 +949,23 @@
   var photosReady = null;
   function loadPhotos() {
     if (!photosReady) {
-      photosReady = fetch(PHOTOS + 'index.json', { headers: { accept: 'application/json' } })
+      photosReady = fetch(PHOTOS + 'index.json', { cache: 'no-cache', headers: { accept: 'application/json' } })
         .then(function (r) { return r.ok ? r.json() : {}; })
         .catch(function () { return {}; })
         .then(function (j) { state.photos = j && typeof j === 'object' ? j : {}; });
     }
     return photosReady;
+  }
+
+  var logosReady = null;
+  function loadLogos() {
+    if (!logosReady) {
+      logosReady = fetch(LOGOS + 'index.json', { cache: 'no-cache', headers: { accept: 'application/json' } })
+        .then(function (r) { return r.ok ? r.json() : {}; })
+        .catch(function () { return {}; })
+        .then(function (j) { state.logos = j && typeof j === 'object' ? j : {}; });
+    }
+    return logosReady;
   }
 
   function load() {
@@ -781,7 +976,7 @@
         if (!res.ok) throw new Error('http ' + res.status);
         return res.json();
       });
-    return Promise.all([data, loadPhotos()])
+    return Promise.all([data, loadPhotos(), loadLogos()])
       .then(function (both) {
         var d = both[0];
         if (!d || d.v !== 1 || !Array.isArray(d.species)) throw new Error('format');
@@ -839,13 +1034,15 @@
       today: $('panel-today'), wanted: $('panel-wanted'), families: $('panel-families'),
       badges: $('panel-badges'), passport: $('panel-passport'),
       sheet: $('pdx-detail'), sheetBody: $('pdx-detail-body'), reveal: $('pdx-reveal'), updated: $('pdx-updated'),
-      report: $('pdx-report'), reportText: $('report-text')
+      report: $('pdx-report'), reportText: $('report-text'), logbook: $('panel-logbook')
     };
     setupButtons();
     if (S) S.paint($('pdx-flyby'), 'B738', ['jet'], false);
     if (TABS.indexOf(location.hash.slice(1)) >= 0) state.tab = location.hash.slice(1);
 
     document.addEventListener('click', function (e) {
+      var v = e.target.closest('.voice-btn');
+      if (v) { Voice.play(v); return; }
       var t = e.target.closest('[data-code], [data-goto], [data-tab], [data-close], [data-rarity], [data-credits]');
       if (!t) return;
       if (t.hasAttribute('data-close')) { closeSheet(); return; }

@@ -57,5 +57,11 @@
   ! Content-Security-Policy
   ! Cross-Origin-Embedder-Policy
   Content-Security-Policy: default-src 'none'; script-src 'self'; connect-src 'self' https://api.planespotters.net; img-src 'self' https://t.plnspttrs.net; style-src 'self'; font-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
-/tools/planedex/photos/*
+# Photos, logos and flags keep their file names, so browsers can hold on
+# to them; the index.json lists next to them are checked on every visit.
+/tools/planedex/photos/*.webp
   Cache-Control: public, max-age=604800
+/tools/planedex/logos/*.webp
+  Cache-Control: public, max-age=604800
+/tools/planedex/flags/*.webp
+  Cache-Control: public, max-age=2592000
