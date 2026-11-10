@@ -1,0 +1,51 @@
+{{- /* My Computer (/computer/): everything on the site in one folder
+       window. Top-level folders come from sectionOrder in hugo.toml;
+       the programs are the desktop icons that aren't folders. */}}
+{{ define "bodyclass" }}page page-folder{{ end }}
+{{ define "main" }}
+<div class="window win-explorer is-max" id="win-main" data-task="My Computer" data-icon="computer">
+  {{ partial "win/titlebar.html" (dict "title" "My Computer" "icon" "computer") }}
+  {{ partial "win/explorer-bars.html" (dict "page" . "folder" true "icon" "computer") }}
+  <div class="win-body folder-view">
+    {{ partial "win/tree.html" . }}
+    <main id="main" class="file-pane view-large" data-view="large" tabindex="-1">
+      <header class="folder-info">
+        <img src="/icons/computer-32.png" alt="" width="32" height="32">
+        <div>
+          <h1>{{ .Title }}</h1>
+          <p class="blurb">{{ site.Params.description }}</p>
+        </div>
+      </header>
+      {{- $n := 0 }}
+      <table class="files">
+        <thead>
+          <tr><th scope="col" class="f-name" data-sort-key="name">Name</th><th scope="col" class="f-size" data-sort-key="size">Size</th><th scope="col" class="f-type" data-sort-key="type">Type</th><th scope="col" class="f-date" data-sort-key="date">Modified</th></tr>
+        </thead>
+        <tbody>
+          {{- range $slug := site.Params.sectionOrder }}
+          {{- with site.GetPage (printf "/%s" $slug) }}
+          {{- $n = add $n 1 }}
+          {{ partial "win/file-row.html" . }}
+          {{- end }}
+          {{- end }}
+          {{- range partial "desktop-items.html" . }}
+          {{- if and .url (not (in (slice "/computer/" "/notes/" "/homelab/" "/tools/") .url)) (not (strings.HasPrefix .url "/games/")) }}
+          {{- $n = add $n 1 }}
+          <tr>
+            <td class="f-name"><a href="{{ .url }}"{{ if .ext }} target="_blank" rel="noopener noreferrer"{{ end }}><img class="i16" src="/icons/{{ .icon }}-16.png" alt="" width="16" height="16"><img class="i32" src="/icons/{{ .icon }}-32.png" alt="" width="32" height="32" loading="lazy"><span>{{ .label }}</span></a></td>
+            <td class="f-size" data-sort="0"></td>
+            <td class="f-type">{{ if .ext }}Internet Shortcut{{ else }}Application{{ end }}</td>
+            <td class="f-date" data-sort=""></td>
+          </tr>
+          {{- end }}
+          {{- end }}
+        </tbody>
+      </table>
+    </main>
+  </div>
+  <div class="status-bar">
+    <p class="status-field status-grow">{{ $n }} object(s)</p>
+    <p class="status-field status-zone"><img src="/icons/computer-16.png" alt="" width="16" height="16">My Computer</p>
+  </div>
+</div>
+{{ end }}

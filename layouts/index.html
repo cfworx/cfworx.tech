@@ -1,68 +1,39 @@
+{{- /* The desktop. The icons come from baseof.html; this adds the
+       Welcome window. Anything written in content/_index.md shows at
+       the top of it. */}}
+{{ define "bodyclass" }}page page-home{{ end }}
 {{ define "main" }}
-{{- with .Content }}
-<section class="intro">
-{{ . }}
-</section>
-{{- end }}
-
-{{- /* Hidden until search.js enables it, so no dead controls without JS.
-       Two result sections: matching titles first, then matches found in
-       the body text of posts (with a snippet around the hit). */}}
-<div class="site-search" id="site-search" hidden>
-  <form role="search">
-    <label class="visually-hidden" for="search-input">Search posts</label>
-    <input id="search-input" type="search" placeholder="search posts" autocomplete="off" spellcheck="false">
-  </form>
-  <p id="search-count" class="search-count" role="status"></p>
-  <section id="search-title-section" hidden aria-labelledby="h-search-titles">
-    <h2 id="h-search-titles" class="search-section">Post titles</h2>
-    <ul id="search-title-results" class="postlist"></ul>
-  </section>
-  <section id="search-text-section" hidden aria-labelledby="h-search-text">
-    <h2 id="h-search-text" class="search-section">Inside posts</h2>
-    <ul id="search-text-results" class="postlist search-snippets"></ul>
-  </section>
+<div class="window win-welcome" id="win-main" data-task="Welcome" data-icon="start">
+  {{ partial "win/titlebar.html" (dict "title" "Welcome to CFWorx 98" "icon" "start" "inpage" true) }}
+  <main id="main" class="win-body welcome-body" tabindex="-1">
+    <div class="welcome-banner">
+      <picture><source srcset="/images/wizard-still.png" media="(prefers-reduced-motion: reduce)"><img class="wizard" src="/images/wizard.gif" alt="" width="80" height="72"></picture>
+      <div>
+        <h1><span class="visually-hidden">{{ site.Title }}: </span>Welcome</h1>
+        <p class="welcome-tag">{{ site.Params.tagline }}</p>
+      </div>
+    </div>
+    <div class="welcome-text">
+      {{- with .Content }}{{ . }}{{ else }}
+      <p>{{ site.Params.description }}</p>
+      {{- end }}
+      <p>Open an icon on the desktop, or press <b>Start</b> for everything. My <a href="/notes/">IT notes</a> live in folders, the <a href="/tools/">practice tools</a> and <a href="/games/">games</a> are programs, and the <b>Search</b> box on the taskbar looks through all of it.</p>
+    </div>
+    {{- with first 6 (where site.RegularPages "Section" "in" (slice "notes" "homelab")) }}
+    <fieldset class="group-box">
+      <legend>Recently added</legend>
+      <ul class="recent">
+        {{- range . }}
+        <li><img src="/icons/doc-16.png" alt="" width="16" height="16"><a href="{{ .RelPermalink }}">{{ .Title }}</a><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "1/2/2006" }}</time></li>
+        {{- end }}
+      </ul>
+    </fieldset>
+    {{- end }}
+    <p class="dialog-buttons">
+      <a class="btn btn-default" href="/computer/">Look around</a>
+      <button type="button" class="btn" data-cmd="find" hidden>Search...</button>
+      <button type="button" class="btn" data-win="close" hidden>Close</button>
+    </p>
+  </main>
 </div>
-
-{{- /* The five newest posts across all sections, so a first-time
-       visitor sees fresh work without opening any dropdowns. The tools
-       are permanent fixtures with their own block below, so they don't
-       count as "recent". */}}
-{{- with first 5 (where site.RegularPages "Section" "not in" (slice "" "tools")) }}
-<section class="post-block" aria-labelledby="h-recent">
-  <h2 id="h-recent">Recently added</h2>
-  {{ partial "postlist.html" . }}
-</section>
-{{- end }}
-
-{{- /* Tools live in the header nav (and llms.txt) but get no section
-       of their own on the home page. */}}
-{{- range $slug := site.Params.sectionOrder }}
-{{- if ne $slug "tools" }}
-{{- with site.GetPage (printf "/%s" $slug) }}
-<section class="post-block" aria-labelledby="h-{{ $slug }}">
-  <h2 id="h-{{ $slug }}"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-  {{- if .Sections }}
-  {{- /* Sections with subsections (certs) render one <details> per
-         subsection so every post stays visibly attached to its cert.
-         Native disclosure widget: no JS. All groups start closed;
-         control ordering with `weight` in each cert's _index.md. */}}
-  {{- /* Loose posts sitting directly in the section root list first,
-         above the collapsible groups. */}}
-  {{- with .RegularPages }}
-  {{ partial "postlist.html" . }}
-  {{- end }}
-  {{- range $i, $sub := .Sections }}
-  {{ partial "post-group.html" $sub }}
-  {{- end }}
-  {{- else }}
-  {{ partial "postlist.html" (first 5 .RegularPagesRecursive) }}
-  {{- if gt (len .RegularPagesRecursive) 5 }}
-  <p class="more"><a href="{{ .RelPermalink }}">all {{ len .RegularPagesRecursive }} {{ lower .Title }} notes &rarr;</a></p>
-  {{- end }}
-  {{- end }}
-</section>
-{{- end }}
-{{- end }}
-{{- end }}
 {{ end }}

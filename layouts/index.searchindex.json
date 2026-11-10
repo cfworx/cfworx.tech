@@ -1,6 +1,50 @@
-{{- /* Search index: every post's title, url, date and plain-text body.
-       Rebuilt on every build. The body ("text") is the rendered content
-       stripped of HTML, with whitespace collapsed, so search.js can
-       match inside posts and show a snippet around the hit. */ -}}
-{{- $posts := where site.RegularPages "Section" "ne" "" -}}
-[{{ range $i, $p := $posts }}{{ if $i }},{{ end }}{"title":{{ $p.Title | jsonify }},"url":{{ $p.RelPermalink | jsonify }},"date":{{ $p.Date.Format "2006-01-02" | jsonify }},"text":{{ $p.Plain | htmlUnescape | replaceRE `\s+` " " | jsonify }}}{{ end }}]
+{{- /* Search index (/index.json), rebuilt on every build and read by
+       assets/js/desktop.js. One entry per thing you can open:
+       - every note, lab, tool and game (title, url, date, the folder it
+         is in, and its plain text so search can look inside it);
+       - every folder;
+       - every desktop icon (desktop.js folds an icon into the page it
+         points at, so its label and keywords find that page too).
+       "kind" is note | lab | tool | game | folder | app. */ -}}
+{{- $kinds := dict "notes" "note" "homelab" "lab" "tools" "tool" "games" "game" -}}
+{{- $out := slice -}}
+{{- range where site.RegularPages "Section" "ne" "" -}}
+  {{- $icon := .Params.icon | default "doc" -}}
+  {{- if eq .Section "tools" }}{{ $icon = printf "tool-%s" (.Params.icon | default "cli") }}{{ if eq .Params.group "misc" }}{{ $icon = cond (eq .Params.icon "plane") "plane" "dvd" }}{{ end }}{{ end -}}
+  {{- if and (eq .Section "games") (not .Params.icon) }}{{ $icon = "dosgame" }}{{ end -}}
+  {{- $folder := slice -}}
+  {{- range .Ancestors.Reverse }}{{ if not .IsHome }}{{ $folder = $folder | append .Title }}{{ end }}{{ end -}}
+  {{- $out = $out | append (dict
+        "title" .Title
+        "url" .RelPermalink
+        "date" (.Date.Format "2006-01-02")
+        "kind" (index $kinds .Section | default "note")
+        "icon" $icon
+        "folder" (delimit $folder "\\")
+        "text" (.Plain | htmlUnescape | replaceRE `\s+` " ")) -}}
+{{- end -}}
+{{- range where site.Pages "Kind" "section" -}}
+  {{- $folder := slice -}}
+  {{- range .Ancestors.Reverse }}{{ if not .IsHome }}{{ $folder = $folder | append .Title }}{{ end }}{{ end -}}
+  {{- $out = $out | append (dict
+        "title" .Title
+        "url" .RelPermalink
+        "date" ""
+        "kind" "folder"
+        "icon" "folder"
+        "folder" (delimit $folder "\\")
+        "text" (or .Params.blurb .Description "")) -}}
+{{- end -}}
+{{- range partial "desktop-items.html" . -}}
+  {{- $out = $out | append (dict
+        "title" .label
+        "url" (.url | default "")
+        "app" (.app | default "")
+        "ext" (.ext | default false)
+        "date" ""
+        "kind" "app"
+        "icon" .icon
+        "folder" "Desktop"
+        "text" .keys) -}}
+{{- end -}}
+{{- $out | jsonify -}}

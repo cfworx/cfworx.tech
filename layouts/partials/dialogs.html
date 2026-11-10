@@ -1,0 +1,160 @@
+{{- /* Windows that desktop.js opens on top of any page: Find, Run, Help,
+       About, Shut Down, Recycle Bin and the message box. They sit in
+       inert <template> elements until asked for. */ -}}
+<template id="tpl-find">
+  <div class="window win-find" data-task="Find: All Files" data-icon="find">
+    {{ partial "win/titlebar.html" (dict "title" "Find: All Files" "icon" "find" "inpage" true) }}
+    <div class="win-body find-body">
+      <form class="find-form" role="search">
+        <div class="find-fields">
+          <p class="tabs"><span class="tab">Name &amp; Location</span></p>
+          <div class="tab-panel">
+            <label for="find-named">Named:</label>
+            <input id="find-named" class="field" type="text" autocomplete="off" spellcheck="false" enterkeyhint="search">
+            <label for="find-text">Containing text:</label>
+            <input id="find-text" class="field" type="text" autocomplete="off" spellcheck="false" enterkeyhint="search">
+            <label for="find-in">Look in:</label>
+            <select id="find-in" class="field">
+              <option value="">All of CFWorx (C:)</option>
+              <option value="note">IT Notes</option>
+              <option value="lab">Labs</option>
+              <option value="tool">IT Practice Tools</option>
+              <option value="game">Games</option>
+            </select>
+          </div>
+        </div>
+        <div class="find-buttons">
+          <button type="submit" class="btn btn-default">Find Now</button>
+          <button type="button" class="btn" disabled>Stop</button>
+          <button type="button" class="btn" data-find="new">New Search</button>
+          <img class="find-glass" src="/icons/find-32.png" alt="" width="32" height="32">
+        </div>
+      </form>
+      <div class="find-results field-box" tabindex="0">
+        <table class="files find-table">
+          <thead><tr><th scope="col">Name</th><th scope="col" class="f-folder">In Folder</th><th scope="col" class="f-type">Type</th><th scope="col" class="f-date">Modified</th></tr></thead>
+          <tbody id="find-rows"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="status-bar"><p class="status-field status-grow" id="find-status" role="status">Type a name or some text, then choose Find Now.</p></div>
+  </div>
+</template>
+
+<template id="tpl-run">
+  <div class="window win-dialog win-run" data-task="Run" data-icon="run">
+    {{ partial "win/titlebar.html" (dict "title" "Run" "icon" "run" "inpage" true) }}
+    <form class="win-body dialog-body" id="run-form">
+      <div class="msg">
+        <img src="/icons/run-32.png" alt="" width="32" height="32">
+        <p>Type the name of a program, folder, or note, and CFWorx will open it for you.</p>
+      </div>
+      <p class="run-row"><label for="run-input"><u>O</u>pen:</label><input id="run-input" class="field" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"></p>
+      <p class="dialog-buttons">
+        <button type="submit" class="btn btn-default">OK</button>
+        <button type="button" class="btn" data-win="close">Cancel</button>
+        <a class="btn" href="/computer/">Browse...</a>
+      </p>
+    </form>
+  </div>
+</template>
+
+<template id="tpl-shutdown">
+  <div class="window win-dialog win-shutdown" data-task="Shut Down" data-icon="shutdown">
+    {{ partial "win/titlebar.html" (dict "title" "Shut Down CFWorx" "icon" "shutdown" "inpage" true) }}
+    <form class="win-body dialog-body" id="shutdown-form">
+      <div class="msg">
+        <img src="/icons/shutdown-32.png" alt="" width="32" height="32">
+        <fieldset class="plain">
+          <legend>What do you want the computer to do?</legend>
+          <label class="radio"><input type="radio" name="sd" value="standby"><span>Stand by</span></label>
+          <label class="radio"><input type="radio" name="sd" value="shutdown" checked><span>Shut down</span></label>
+          <label class="radio"><input type="radio" name="sd" value="restart"><span>Restart</span></label>
+          <label class="radio"><input type="radio" name="sd" value="dos"><span>Restart in MS-DOS mode</span></label>
+        </fieldset>
+      </div>
+      <p class="dialog-buttons">
+        <button type="submit" class="btn btn-default">OK</button>
+        <button type="button" class="btn" data-win="close">Cancel</button>
+        <button type="button" class="btn" data-cmd="help">Help</button>
+      </p>
+    </form>
+  </div>
+</template>
+
+<template id="tpl-help">
+  <div class="window win-help" data-task="CFWorx Help" data-icon="help">
+    {{ partial "win/titlebar.html" (dict "title" "CFWorx Help" "icon" "help" "inpage" true) }}
+    <div class="win-body help-body field-box" tabindex="0">
+      <h2><img src="/icons/help-32.png" alt="" width="32" height="32">Getting around</h2>
+      <p>{{ site.Params.description }} It's dressed up as a late-90s desktop, but every note is still an ordinary page with its own address.</p>
+      <h3>Finding a note</h3>
+      <ul>
+        <li><b>Search</b> on the taskbar looks through every note, lab, tool and game as you type. Press <kbd>/</kbd> to jump to it.</li>
+        <li><b>Start &gt; Find</b> opens the full search window, where you can search by name, by text inside, or one folder at a time.</li>
+        <li><b>IT Notes</b> on the desktop opens the notes as folders: Networking, Security, Cloud and so on. The folder tree is on the left.</li>
+        <li><b>Start &gt; Documents</b> lists the newest notes.</li>
+      </ul>
+      <h3>Windows</h3>
+      <ul>
+        <li>Drag a window by its title bar. The three buttons minimize, maximize and close it; closing takes you back to the desktop.</li>
+        <li><b>Up</b> on the toolbar goes to the folder a note is in.</li>
+        <li>In a folder, <b>Views</b> switches between Large Icons, List and Details. Click a column heading to sort.</li>
+      </ul>
+      <h3>Keyboard</h3>
+      <ul>
+        <li><kbd>/</kbd> search &middot; <kbd>Esc</kbd> close a menu or dialog &middot; arrow keys move through menus.</li>
+      </ul>
+      <h3>Contact</h3>
+      <p>&copy; {{ now.Year }} CFWorx &middot; <a href="https://github.com/cfworx" target="_blank" rel="noopener noreferrer">GitHub</a> &middot; <a href="mailto:{{ site.Params.email }}">{{ site.Params.email }}</a></p>
+    </div>
+    <p class="dialog-buttons help-buttons"><button type="button" class="btn btn-default" data-win="close">OK</button></p>
+  </div>
+</template>
+
+<template id="tpl-about">
+  <div class="window win-dialog win-about" data-task="About CFWorx 98" data-icon="start">
+    {{ partial "win/titlebar.html" (dict "title" "About CFWorx 98" "icon" "start" "inpage" true) }}
+    <div class="win-body dialog-body">
+      <div class="msg">
+        <img class="wizard" src="/images/wizard-still.png" alt="" width="80" height="72">
+        <div>
+          <p><b>CFWorx 98</b><br>{{ site.Params.tagline }}</p>
+          <p>Built with Hugo, one hand-written stylesheet and a little JavaScript. No trackers, nothing loaded from anywhere else.</p>
+          <p>This product is licensed to:<br><b>Visitor</b></p>
+          <hr>
+          <p class="about-stats">Notes and labs on file: <b>{{ len (where site.RegularPages "Section" "in" (slice "notes" "homelab")) }}</b><br>System resources: <b>98% free</b></p>
+        </div>
+      </div>
+      <p class="dialog-buttons"><button type="button" class="btn btn-default" data-win="close">OK</button></p>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-recycle">
+  <div class="window win-recycle" data-task="Recycle Bin" data-icon="recycle">
+    {{ partial "win/titlebar.html" (dict "title" "Recycle Bin" "icon" "recycle" "inpage" true) }}
+    <div class="win-body field-box recycle-body">
+      <p class="empty-folder">Nothing in here. Every note made the cut.</p>
+    </div>
+    <div class="status-bar"><p class="status-field status-grow">0 object(s)</p><p class="status-field">0 bytes</p></div>
+  </div>
+</template>
+
+<template id="tpl-msg">
+  <div class="window win-dialog win-msg" data-task="CFWorx" data-icon="error">
+    {{ partial "win/titlebar.html" (dict "title" "CFWorx" "icon" "error" "inpage" true) }}
+    <div class="win-body dialog-body">
+      <div class="msg">
+        <img class="msg-icon" src="/icons/error-32.png" alt="" width="32" height="32">
+        <p class="msg-text"></p>
+      </div>
+      <p class="dialog-buttons"><button type="button" class="btn btn-default" data-win="close">OK</button></p>
+    </div>
+  </div>
+</template>
+
+<div class="shutdown-screen" id="shutdown-screen" hidden>
+  <p>It's now safe to turn off<br>your computer.</p>
+  <button type="button" class="shutdown-wake">Click anywhere to turn it back on</button>
+</div>

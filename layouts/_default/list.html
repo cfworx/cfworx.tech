@@ -1,25 +1,54 @@
+{{- /* A section is a folder: an Explorer window with the folder tree on
+       the left and this folder's contents on the right (subfolders
+       first, then documents). Used by /notes/, /homelab/, /tools/,
+       /games/ and everything under them. */}}
+{{ define "bodyclass" }}page page-folder{{ end }}
 {{ define "main" }}
-<article class="section-page">
-  <header class="post-header">
-    <h1>{{ .Title }}</h1>
-    {{- with .Params.blurb }}
-    <p class="blurb">{{ . }}</p>
-    {{- end }}
-  </header>
-  {{ .Content }}
-
-  {{- if .Sections }}
-  <ul class="subsections">
-    {{- range .Sections }}
-    {{- $n := len .RegularPagesRecursive }}{{ $w := .Params.countword | default "note" }}
-    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a> ({{ $n }} {{ $w }}{{ if ne $n 1 }}s{{ end }})</li>
-    {{- end }}
-  </ul>
-  {{- end }}
-
-  {{- range .RegularPagesRecursive.GroupByDate "2006" }}
-  <h2 class="year">{{ .Key }}</h2>
-  {{ partial "postlist.html" .Pages }}
-  {{- end }}
-</article>
+{{- $folders := .Sections -}}
+{{- $files := .RegularPages -}}
+{{- /* DVD Tracker and Planedex have their own desktop icons, so the
+       practice-tools folder lists only the practice tools. */ -}}
+{{- if eq .Section "tools" }}{{ $files = (where $files "Params.group" "ne" "misc").ByTitle }}{{ end -}}
+{{- $view := .Params.view | default (cond (and (gt (len $files) 0) (not (in (slice "tools" "games") .Section))) "details" "large") -}}
+<div class="window win-explorer is-max" id="win-main" data-task="Exploring - {{ .Title }}" data-icon="folder-open">
+  {{ partial "win/titlebar.html" (dict "title" (printf "Exploring - %s" .Title) "icon" "folder-open") }}
+  {{ partial "win/explorer-bars.html" (dict "page" . "folder" true) }}
+  <div class="win-body folder-view">
+    {{ partial "win/tree.html" . }}
+    <main id="main" class="file-pane view-{{ $view }}" data-view="{{ $view }}" tabindex="-1">
+      <header class="folder-info">
+        <img src="/icons/{{ .Params.icon | default "folder-open" }}-32.png" alt="" width="32" height="32">
+        <div>
+          <h1>{{ .Title }}</h1>
+          {{- with or .Params.blurb .Description }}
+          <p class="blurb">{{ . }}</p>
+          {{- end }}
+        </div>
+      </header>
+      {{- with .Content }}<div class="folder-readme">{{ . }}</div>{{ end }}
+      {{- if or $folders $files }}
+      <table class="files">
+        <thead>
+          <tr><th scope="col" class="f-name" data-sort-key="name">Name</th><th scope="col" class="f-size" data-sort-key="size">Size</th><th scope="col" class="f-type" data-sort-key="type">Type</th><th scope="col" class="f-date" data-sort-key="date">Modified</th></tr>
+        </thead>
+        <tbody>
+          {{- range $folders }}
+          {{ partial "win/file-row.html" . }}
+          {{- end }}
+          {{- range $files }}
+          {{ partial "win/file-row.html" . }}
+          {{- end }}
+        </tbody>
+      </table>
+      {{- else }}
+      <p class="empty-folder">This folder is empty.</p>
+      {{- end }}
+    </main>
+  </div>
+  {{- $n := add (len $folders) (len $files) }}
+  <div class="status-bar">
+    <p class="status-field status-grow">{{ $n }} object(s)</p>
+    <p class="status-field status-zone"><img src="/icons/computer-16.png" alt="" width="16" height="16">My Computer</p>
+  </div>
+</div>
 {{ end }}

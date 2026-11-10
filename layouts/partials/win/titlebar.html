@@ -1,0 +1,19 @@
+{{- /* A window's title bar. Input: dict with title, icon (name in
+       /icons/), close (where the X goes; default the desktop).
+       Minimize and maximize ship hidden: desktop.js reveals them. The X
+       is a plain link, so it works with JavaScript off. Windows that
+       desktop.js opens on top of a page (Find, Run, Help...) pass
+       inpage: their X is a button that just closes them. */ -}}
+<div class="title-bar">
+  <img class="title-icon" src="/icons/{{ .icon | default "doc" }}-16.png" alt="" width="16" height="16">
+  <span class="title-text">{{ .title }}</span>
+  <span class="title-controls">
+    <button type="button" class="tb-btn tb-min" data-win="min" aria-label="Minimize" title="Minimize" hidden></button>
+    <button type="button" class="tb-btn tb-max" data-win="max" aria-label="Maximize" title="Maximize" hidden></button>
+    {{- if .inpage }}
+    <button type="button" class="tb-btn tb-close" data-win="close" aria-label="Close" title="Close"></button>
+    {{- else }}
+    <a class="tb-btn tb-close" href="{{ .close | default "/" }}" aria-label="Close" title="Close"></a>
+    {{- end }}
+  </span>
+</div>

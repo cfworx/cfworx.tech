@@ -1,8 +1,9 @@
-{{- /* Metadata plus at most one small same-origin script per page:
-       search on the home page, and any tool script a page lists in its
-       `scripts` front matter (e.g. tools/subnetting). */ -}}
+{{- /* Metadata, the one stylesheet, and the desktop script. Pages add
+       their own scripts through `scripts` in front matter (the practice
+       tools and the games). Everything is same-origin: the site's
+       Content-Security-Policy allows nothing else. */ -}}
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 {{- $isPost := and .IsPage (ne .Section "") }}
 {{- $title := printf "%s · %s" .Title site.Title }}
 {{- if .IsHome }}{{ $title = printf "%s - %s" site.Title site.Params.tagline }}{{ end }}
@@ -29,29 +30,23 @@
 <meta name="twitter:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
 <meta name="twitter:description" content="{{ $desc }}">
 <meta name="twitter:image" content="{{ "og-card.png" | absURL }}">
-<meta name="theme-color" content="#faf9f5">
+<meta name="theme-color" content="#c0c0c0">
+<meta name="color-scheme" content="light">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 {{- /* Guarded with `with`/`if` so a build never dies if an asset file is
-       momentarily missing (e.g. mid-sync in OneDrive). */ -}}
-{{- /* Theme picker runs before the stylesheet so the dark/light
-       attribute is set before first paint. */ -}}
-{{- with resources.Get "js/theme.js" }}
-{{- $js := . | fingerprint }}
-<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
-{{- end }}
-{{- $main := resources.Get "css/main.css" }}
+       momentarily missing. */ -}}
+{{- $win := resources.Get "css/win98.css" }}
+{{- $content := resources.Get "css/content.css" }}
 {{- $chroma := resources.Get "css/chroma.css" }}
-{{- if and $main $chroma }}
-{{- $css := slice $main $chroma | resources.Concat "css/site.css" | fingerprint }}
+{{- if and $win $content $chroma }}
+{{- $css := slice $win $content $chroma | resources.Concat "css/site.css" | fingerprint }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
 {{- end }}
-{{- if .IsHome }}
-{{- with resources.Get "js/search.js" }}
+{{- with resources.Get "js/desktop.js" }}
 {{- $js := . | fingerprint }}
 <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
-{{- end }}
 {{- end }}
 {{- if .IsPage }}
 {{- with resources.Get "js/lightbox.js" }}

@@ -1,0 +1,96 @@
+{{- /* Menu bar, toolbar and address bar of an Explorer window. Input:
+       dict with page, folder (true on folder views), file (the last,
+       unlinked part of the address on document pages). The menus need
+       JavaScript, so the menu bar ships hidden; the toolbar's Up and
+       Home and the address bar are plain links. */ -}}
+{{- $p := .page -}}
+{{- $up := partial "win/up.html" $p -}}
+<div class="menu-bar" hidden>
+  <div class="menu-wrap">
+    <button type="button" class="menu-btn" aria-haspopup="true" aria-expanded="false"><u>F</u>ile</button>
+    <ul class="menu" hidden>
+      <li><button type="button" class="menu-item" data-cmd="print"{{ if .folder }} disabled{{ end }}>Print...</button></li>
+      <li class="sep"></li>
+      <li><a class="menu-item" href="/">Close</a></li>
+    </ul>
+  </div>
+  <div class="menu-wrap">
+    <button type="button" class="menu-btn" aria-haspopup="true" aria-expanded="false"><u>E</u>dit</button>
+    <ul class="menu" hidden>
+      <li><button type="button" class="menu-item" data-cmd="copy-link">Copy Link</button></li>
+      <li><button type="button" class="menu-item" data-cmd="select-all">Select All</button></li>
+    </ul>
+  </div>
+  <div class="menu-wrap">
+    <button type="button" class="menu-btn" aria-haspopup="true" aria-expanded="false"><u>V</u>iew</button>
+    <ul class="menu" hidden>
+      <li><button type="button" class="menu-item" data-cmd="view-large" data-check="view"{{ if not .folder }} disabled{{ end }}>Large Icons</button></li>
+      <li><button type="button" class="menu-item" data-cmd="view-list" data-check="view"{{ if not .folder }} disabled{{ end }}>List</button></li>
+      <li><button type="button" class="menu-item" data-cmd="view-details" data-check="view"{{ if not .folder }} disabled{{ end }}>Details</button></li>
+      <li class="sep"></li>
+      <li><button type="button" class="menu-item" data-cmd="refresh">Refresh</button></li>
+    </ul>
+  </div>
+  <div class="menu-wrap">
+    <button type="button" class="menu-btn" aria-haspopup="true" aria-expanded="false"><u>G</u>o</button>
+    <ul class="menu" hidden>
+      <li><button type="button" class="menu-item" data-cmd="back">Back</button></li>
+      <li><button type="button" class="menu-item" data-cmd="forward">Forward</button></li>
+      <li><a class="menu-item" href="{{ $up }}">Up One Level</a></li>
+      <li class="sep"></li>
+      <li><a class="menu-item" href="/">Desktop</a></li>
+      <li><a class="menu-item" href="/computer/">My Computer</a></li>
+      <li class="sep"></li>
+      <li><button type="button" class="menu-item" data-cmd="find">Search...</button></li>
+    </ul>
+  </div>
+  <div class="menu-wrap">
+    <button type="button" class="menu-btn" aria-haspopup="true" aria-expanded="false">F<u>a</u>vorites</button>
+    <ul class="menu" hidden>
+      <li><a class="menu-item" href="/notes/">IT Notes</a></li>
+      <li><a class="menu-item" href="/homelab/">Labs</a></li>
+      <li><a class="menu-item" href="/tools/">IT Practice Tools</a></li>
+      <li><a class="menu-item" href="/games/">Games</a></li>
+      <li class="sep"></li>
+      <li><a class="menu-item" href="https://github.com/cfworx" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+      <li><a class="menu-item" href="https://spelunkr.tv/" target="_blank" rel="noopener noreferrer">Watch TV</a></li>
+    </ul>
+  </div>
+  <div class="menu-wrap">
+    <button type="button" class="menu-btn" aria-haspopup="true" aria-expanded="false"><u>H</u>elp</button>
+    <ul class="menu" hidden>
+      <li><button type="button" class="menu-item" data-cmd="help">Help Topics</button></li>
+      <li class="sep"></li>
+      <li><button type="button" class="menu-item" data-cmd="about">About CFWorx 98</button></li>
+    </ul>
+  </div>
+</div>
+<div class="toolbar">
+  <button type="button" class="tool-btn" data-cmd="back" hidden><img src="/icons/back-32.png" alt="" width="24" height="24"><span>Back</span></button>
+  <button type="button" class="tool-btn" data-cmd="forward" hidden><img src="/icons/forward-32.png" alt="" width="24" height="24"><span>Forward</span></button>
+  <a class="tool-btn" href="{{ $up }}"><img src="/icons/up-32.png" alt="" width="24" height="24"><span>Up</span></a>
+  <span class="tool-sep"></span>
+  <a class="tool-btn" href="/"><img src="/icons/desktop-32.png" alt="" width="24" height="24"><span>Desktop</span></a>
+  <button type="button" class="tool-btn" data-cmd="find" hidden><img src="/icons/find-32.png" alt="" width="24" height="24"><span>Search</span></button>
+  {{- if .folder }}
+  <button type="button" class="tool-btn" data-cmd="view-cycle" hidden><img src="/icons/views-32.png" alt="" width="24" height="24"><span>Views</span></button>
+  {{- else }}
+  <button type="button" class="tool-btn" data-cmd="print" hidden><img src="/icons/printer-32.png" alt="" width="24" height="24"><span>Print</span></button>
+  {{- end }}
+</div>
+<nav class="address-bar" aria-label="Address">
+  <span class="address-label">Address</span>
+  <span class="address-field">
+    <img src="/icons/{{ .icon | default "folder-open" }}-16.png" alt="" width="16" height="16">
+    <span class="address-path">
+      {{- range $i, $c := partial "win/crumbs.html" $p -}}
+      <a href="{{ $c.url }}">{{ $c.title }}</a><span class="sl">\</span>
+      {{- end -}}
+      {{- if .folder -}}
+      <span aria-current="page">{{ $p.Title }}</span>
+      {{- else -}}
+      <span aria-current="page">{{ .file }}</span>
+      {{- end -}}
+    </span>
+  </span>
+</nav>

@@ -2,7 +2,7 @@
 # Docs: https://developers.cloudflare.com/pages/configuration/headers/
 #
 # The CSP is strict: scripts and fetch() only from this origin (that
-# covers the search script and its /index.json index), styles and images
+# covers the desktop script and its /index.json search index), styles and images
 # only from this origin, nothing loaded from anywhere else. The
 # <script type="application/ld+json"> SEO blocks are inert data and are
 # not affected by script-src.
@@ -28,6 +28,16 @@
   Cross-Origin-Resource-Policy: same-origin
   X-Permitted-Cross-Domain-Policies: none
 
+# The DOS games (pages under /games/) run in an emulator
+# that is WebAssembly inside a web worker. That needs two things the
+# strict policy above doesn't give: permission to compile WebAssembly
+# ('wasm-unsafe-eval', which allows nothing else: no eval(), no inline
+# script) and a worker started from a blob: URL. Everything is still
+# loaded from this site only (static/dos/). The game pages alone get it.
+/games/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self'; img-src 'self'; style-src 'self'; font-src 'self'; manifest-src 'self'; worker-src 'self' blob:; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+
 # Fingerprinted assets: the filename changes when the content changes,
 # so these can be cached forever.
 /css/*
@@ -37,6 +47,15 @@
 # Self-hosted fonts carry their version in the file name.
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Desktop icons, the DOS emulator and games, and the original shareware
+# archives keep their file names; a week is plenty.
+/icons/*
+  Cache-Control: public, max-age=604800
+/dos/*
+  Cache-Control: public, max-age=604800
+/downloads/*
+  Cache-Control: public, max-age=604800
 
 /favicon.svg
   Cache-Control: public, max-age=604800

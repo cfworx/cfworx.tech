@@ -1,0 +1,29 @@
+{{- /* One row of a folder listing. Input: a page (a folder or a
+       document). The same row draws as Details, List or Large Icons;
+       the view is only CSS. Icon and type come from front matter
+       (icon, filetype), with sensible defaults per section. */ -}}
+{{- $folder := .IsSection -}}
+{{- $icon := .Params.icon -}}
+{{- $type := .Params.filetype -}}
+{{- if $folder }}
+  {{- $icon = $icon | default "folder" }}{{ $type = "File Folder" -}}
+{{- else if eq .Section "tools" }}
+  {{- $icon = printf "tool-%s" ($icon | default "cli") }}{{ $type = $type | default "Practice Tool" -}}
+{{- else if eq .Section "homelab" }}
+  {{- $icon = $icon | default "doc" }}{{ $type = $type | default "Lab Write-up" -}}
+{{- else }}
+  {{- $icon = $icon | default "doc" }}{{ $type = $type | default "Text Document" -}}
+{{- end }}
+<tr>
+  <td class="f-name"><a href="{{ .RelPermalink }}"><img class="i16" src="/icons/{{ $icon }}-16.png" alt="" width="16" height="16"><img class="i32" src="/icons/{{ $icon }}-32.png" alt="" width="32" height="32" loading="lazy"><span>{{ .Title }}</span></a></td>
+  {{- if $folder }}
+  {{- $n := len .RegularPagesRecursive }}{{ $w := .Params.countword | default "note" }}
+  <td class="f-size" data-sort="{{ $n }}">{{ $n }} {{ $w }}{{ if ne $n 1 }}s{{ end }}</td>
+  {{- else }}
+  {{- $kb := add (div (len .Plain) 1024) 1 }}
+  <td class="f-size" data-sort="{{ len .Plain }}">{{ with .Params.size }}{{ . }}{{ else }}{{ $kb }}KB{{ end }}</td>
+  {{- end }}
+  <td class="f-type">{{ $type }}</td>
+  {{- $d := .Date }}{{ if $folder }}{{ with first 1 .RegularPagesRecursive.ByDate.Reverse }}{{ range . }}{{ $d = .Date }}{{ end }}{{ end }}{{ end }}
+  <td class="f-date" data-sort="{{ $d.Format "2006-01-02" }}">{{ if not $d.IsZero }}<time datetime="{{ $d.Format "2006-01-02" }}">{{ $d.Format "1/2/2006" }}</time>{{ end }}</td>
+</tr>

@@ -1,0 +1,50 @@
+{{- /* Minesweeper (/games/minesweeper/). The whole game is drawn on one
+       <canvas> by assets/js/minesweeper.js, pixel for pixel, then scaled
+       up in whole steps so it stays sharp. */}}
+{{ define "bodyclass" }}page page-app page-game{{ end }}
+{{ define "main" }}
+<div class="window win-app win-mines" id="win-main" data-task="Minesweeper" data-icon="mine">
+  {{ partial "win/titlebar.html" (dict "title" "Minesweeper" "icon" "mine" "close" "/games/") }}
+  <div class="menu-bar" hidden>
+    <div class="menu-wrap">
+      <button type="button" class="menu-btn" aria-haspopup="true" aria-expanded="false"><u>G</u>ame</button>
+      <ul class="menu" hidden>
+        <li><button type="button" class="menu-item" data-mines="new">New<span class="accel">F2</span></button></li>
+        <li class="sep"></li>
+        <li><button type="button" class="menu-item" data-mines="beginner">Beginner</button></li>
+        <li><button type="button" class="menu-item" data-mines="intermediate">Intermediate</button></li>
+        <li><button type="button" class="menu-item" data-mines="expert">Expert</button></li>
+        <li class="sep"></li>
+        <li><button type="button" class="menu-item" data-mines="marks">Marks (?)</button></li>
+        <li><button type="button" class="menu-item" data-mines="big">Large tiles</button></li>
+        <li class="sep"></li>
+        <li><button type="button" class="menu-item" data-mines="times">Best Times...</button></li>
+        <li class="sep"></li>
+        <li><a class="menu-item" href="/games/">Exit</a></li>
+      </ul>
+    </div>
+    <div class="menu-wrap">
+      <button type="button" class="menu-btn" aria-haspopup="true" aria-expanded="false"><u>H</u>elp</button>
+      <ul class="menu" hidden>
+        <li><button type="button" class="menu-item" data-mines="howto">How to Play</button></li>
+        <li class="sep"></li>
+        <li><button type="button" class="menu-item" data-cmd="about">About CFWorx 98</button></li>
+      </ul>
+    </div>
+  </div>
+  <main id="main" class="win-body game-body" tabindex="-1">
+    <h1 class="visually-hidden">{{ .Title }}</h1>
+    <canvas id="mines" class="mines-canvas" width="164" height="207" tabindex="0" aria-label="Minesweeper board. Left click uncovers a square, right click or a long press plants a flag.">Minesweeper needs JavaScript and a browser with canvas.</canvas>
+    <div class="game-touchbar" id="mines-touchbar" hidden>
+      <label class="visually-hidden" for="mines-level">Level</label>
+      <select id="mines-level" class="field">
+        <option value="beginner">Beginner</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="expert">Expert</option>
+      </select>
+      <button type="button" class="btn" id="mines-flagmode" aria-pressed="false">Flag mode: off</button>
+    </div>
+    <noscript><p class="game-note">Minesweeper needs JavaScript: the game runs entirely in your browser.</p></noscript>
+  </main>
+</div>
+{{ end }}

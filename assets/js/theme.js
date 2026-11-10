@@ -1,4 +1,5 @@
-/* Dark-mode toggle. The site is light by default; the toggle stores
+/* Dark-mode toggle, now used only by the DVD Tracker (layouts/tools/dvds.html);
+   the desktop itself has one look. The page is light by default; the toggle stores
    the visitor's choice in localStorage and it sticks. Loaded without
    `defer`, before the stylesheet, so a returning dark-mode visitor
    never sees a flash of light theme. */

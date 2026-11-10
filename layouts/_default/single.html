@@ -1,40 +1,55 @@
+{{- /* A note or lab write-up: the same Explorer window as a folder, with
+       the document in place of the file list (Windows 98 opened pages
+       inside the folder window, too). */}}
+{{ define "bodyclass" }}page page-doc{{ end }}
 {{ define "main" }}
-<article>
-  <header class="post-header">
-    <h1>{{ .Title }}</h1>
-    {{- if ne .Section "" }}
-    <p class="post-meta">
-      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
-      &middot; in <a href="{{ .Parent.RelPermalink }}">{{ .Parent.Title }}</a>
-      {{- if ne (.Lastmod.Format "2006-01-02") (.Date.Format "2006-01-02") }}
-      &middot; updated <time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "January 2, 2006" }}</time>
+{{- $file := "" }}{{ with .File }}{{ $file = printf "%s.htm" .ContentBaseName }}{{ end }}
+<div class="window win-explorer is-max" id="win-main" data-task="{{ .Title }}" data-icon="doc">
+  {{ partial "win/titlebar.html" (dict "title" .Title "icon" "doc") }}
+  {{ partial "win/explorer-bars.html" (dict "page" . "folder" false "file" $file "icon" "doc") }}
+  <main id="main" class="win-body doc-view" tabindex="-1">
+    <article class="doc">
+      <header class="post-header">
+        <h1>{{ .Title }}</h1>
+        {{- if ne .Section "" }}
+        <p class="post-meta">
+          <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+          &middot; in <a href="{{ .Parent.RelPermalink }}">{{ .Parent.Title }}</a>
+          {{- if ne (.Lastmod.Format "2006-01-02") (.Date.Format "2006-01-02") }}
+          &middot; updated <time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "January 2, 2006" }}</time>
+          {{- end }}
+        </p>
+        {{- end }}
+      </header>
+      {{- /* Table of contents on lab posts with three or more headings.
+             Native <details>, open by default, no JS. */ -}}
+      {{- if eq .Section "homelab" }}
+      {{- $toc := .TableOfContents }}
+      {{- if ge (len (findRE "<li>" $toc)) 3 }}
+      <details class="toc" open>
+        <summary>Contents</summary>
+        {{ $toc }}
+      </details>
       {{- end }}
-    </p>
-    {{- end }}
-  </header>
-  {{- /* Table of contents on lab posts with three or more headings.
-         Native <details>, open by default, no JS. */ -}}
-  {{- if eq .Section "homelab" }}
-  {{- $toc := .TableOfContents }}
-  {{- if ge (len (findRE "<li>" $toc)) 3 }}
-  <details class="toc" open>
-    <summary>Contents</summary>
-    {{ $toc }}
-  </details>
-  {{- end }}
-  {{- end }}
-  {{ .Content }}
-</article>
-{{- if ne .Section "" }}
-{{- if or .PrevInSection .NextInSection }}
-<nav class="post-nav" aria-label="More in {{ .Parent.Title }}">
-  {{- with .NextInSection }}
-  <a class="newer" href="{{ .RelPermalink }}">&larr; newer: {{ .Title }}</a>
-  {{- end }}
-  {{- with .PrevInSection }}
-  <a class="older" href="{{ .RelPermalink }}">older: {{ .Title }} &rarr;</a>
-  {{- end }}
-</nav>
-{{- end }}
-{{- end }}
+      {{- end }}
+      {{ .Content }}
+      {{- if ne .Section "" }}
+      {{- if or .PrevInSection .NextInSection }}
+      <nav class="post-nav" aria-label="More in {{ .Parent.Title }}">
+        {{- with .NextInSection }}
+        <a class="newer" href="{{ .RelPermalink }}">&larr; newer: {{ .Title }}</a>
+        {{- end }}
+        {{- with .PrevInSection }}
+        <a class="older" href="{{ .RelPermalink }}">older: {{ .Title }} &rarr;</a>
+        {{- end }}
+      </nav>
+      {{- end }}
+      {{- end }}
+    </article>
+  </main>
+  <div class="status-bar">
+    <p class="status-field status-grow">Done</p>
+    <p class="status-field status-zone"><img src="/icons/computer-16.png" alt="" width="16" height="16">My Computer</p>
+  </div>
+</div>
 {{ end }}

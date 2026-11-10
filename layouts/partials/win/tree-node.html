@@ -1,0 +1,21 @@
+{{- /* One folder in the "All Folders" tree, and (recursively) the
+       folders inside it. Native <details>, so the +/- boxes work with
+       JavaScript off. Input: dict with node, current. */ -}}
+{{- $n := .node -}}{{- $cur := .current -}}
+{{- $here := eq $n $cur -}}
+{{- $open := or $here ($n.IsAncestor $cur) -}}
+{{- $icon := cond $open "folder-open" "folder" -}}
+{{- if $n.Sections }}
+<li>
+  <details{{ if $open }} open{{ end }}>
+    <summary><a href="{{ $n.RelPermalink }}"{{ if $here }} aria-current="page"{{ end }}><img src="/icons/{{ $icon }}-16.png" alt="" width="16" height="16">{{ $n.Title }}</a></summary>
+    <ul>
+      {{- range $n.Sections }}
+      {{ partial "win/tree-node.html" (dict "node" . "current" $cur) }}
+      {{- end }}
+    </ul>
+  </details>
+</li>
+{{- else }}
+<li class="leaf"><a href="{{ $n.RelPermalink }}"{{ if $here }} aria-current="page"{{ end }}><img src="/icons/{{ $icon }}-16.png" alt="" width="16" height="16">{{ $n.Title }}</a></li>
+{{- end }}

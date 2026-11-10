@@ -1,0 +1,11 @@
+{{- /* Desktop icons. Real links (single click, the way Windows 98's
+       "Web style" desktop worked), so they also work without JavaScript. */ -}}
+<nav class="desktop-icons" aria-label="Desktop">
+  {{- range partial "desktop-items.html" . }}
+  {{- if .app }}
+  <button class="dicon" type="button" data-cmd="{{ .app }}" hidden><img src="/icons/{{ .icon }}-32.png" alt="" width="32" height="32"><span>{{ .label }}</span></button>
+  {{- else }}
+  <a class="dicon" href="{{ .url }}"{{ if .ext }} target="_blank" rel="noopener noreferrer"{{ end }}><img src="/icons/{{ .icon }}-32.png" alt="" width="32" height="32"><span>{{ .label }}</span></a>
+  {{- end }}
+  {{- end }}
+</nav>

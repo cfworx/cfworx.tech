@@ -1,0 +1,426 @@
+/* ==========================================================================
+   cfworx.tech: reading styles. Everything inside a window's white page:
+   notes and lab write-ups (.doc), the practice tools (.tool), code
+   blocks, tables, the image lightbox.
+
+   - Helvetica/Arial for reading, real monospace for terminal output.
+   - Links are the classic blue and "you've read this" purple.
+   - The short blue cable under each heading is a patch cord ending in
+     an RJ45 plug (static/images/rj45-plug.svg).
+   - All colour pairs meet WCAG 2.1 AA contrast.
+   ========================================================================== */
+
+:root {
+  --ink:          #000000;
+  --muted:        #555555;   /* secondary text, 7.5:1 on white */
+  --link:         #0000ee;
+  --link-hover:   #0000aa;
+  --link-visited: #551a8b;
+  --rule:         #c0c0c0;   /* hairlines */
+  --box:          #f0f0f0;   /* code / quote background */
+  --box-border:   #c0c0c0;
+  --enet:         #0057b8;   /* patch-cable blue */
+  --ok:           #006400;   /* quiz "correct" */
+  --bad:          #a80000;   /* quiz "wrong" */
+  --mark:         #ffff00;
+  --mark-ink:     #000000;
+
+  --sans: Arial, Helvetica, "Liberation Sans", sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          'Liberation Mono', 'Courier New', monospace;
+}
+
+/* ---- the page inside a document window ---------------------------------- */
+
+.doc-view { scroll-padding-top: 1rem; }
+
+.doc {
+  max-width: 50rem;
+  margin: 0 auto;
+  padding: 0.4rem 1.6rem 3rem;
+  color: var(--ink);
+  font: 17px/1.6 var(--sans);
+}
+
+.doc h1, .doc h2, .doc h3, .doc h4, .doc h5, .doc h6 {
+  font-family: var(--sans);
+  line-height: 1.3;
+  overflow-wrap: break-word;
+  margin-top: 1.3em;
+}
+.doc h1 { font-size: 1.9rem; }
+.doc h2 { font-size: 1.55rem; font-weight: normal; }
+.doc h3, .doc h4, .doc h5, .doc h6 { font-size: 1.3rem; font-weight: normal; }
+.doc p { line-height: 1.5; margin-block: 1em; }
+.doc figcaption p { font-style: italic; }
+
+.doc a { color: var(--link); text-decoration: underline; text-underline-offset: 2px; }
+.doc a:visited { color: var(--link-visited); }
+.doc a:hover { color: var(--link-hover); }
+.doc :focus-visible { outline: 1px dotted #000; outline-offset: 2px; }
+.doc ::selection, .tool ::selection { background: #000080; color: #fff; }
+.doc :target { scroll-margin-top: 1rem; }
+
+.doc img { max-width: 100%; height: auto; border: 1px solid var(--rule); image-rendering: auto; }
+
+.doc ul, .doc ol { padding-left: 1.4em; }
+.doc li { margin: 0.45em 0; }
+.doc hr { border: 0; border-top: 1px solid #808080; border-bottom: 1px solid #fff; margin: 2rem 0; }
+
+.post-header h1 { font-size: 1.9rem; margin: 1.1rem 0 0.35rem; }
+.post-meta { font: 0.8rem var(--sans); color: var(--muted); margin: 0 0 1.4rem; }
+.doc .post-meta a, .doc .post-meta a:visited { color: var(--muted); }
+.doc .post-meta a:hover { color: var(--link-hover); }
+
+.doc h2 { margin: 1.3em 0 0.5rem; }
+.doc h3 { margin: 1.3em 0 0.4rem; }
+
+/* A short blue patch cable under each post heading, ending in an RJ45
+   plug (a real SVG: clear body, gold pins, latch tab, and the blue
+   cable showing through the plastic). Standard patch-cable blue
+   (#0057b8) in both themes, because cables don't change color in the
+   dark. */
+.doc h2,
+.doc h3 {
+  width: fit-content;   /* so the cable below runs the length of the text */
+}
+
+.doc h2::after,
+.doc h3::after {
+  content: "";
+  display: block;
+  width: 100%;
+  min-width: 4.5rem;    /* room for the plug even under a short heading */
+  height: 14px;
+  margin-top: 0.35rem;
+  background-image:
+    url('/images/rj45-plug.svg'),
+    linear-gradient(#0057b8, #0057b8);
+  background-repeat: no-repeat;
+  background-size: 28px 14px, calc(100% - 20px) 4px;
+  background-position: right center, left center;
+}
+
+.doc h3::after {
+  height: 12px;
+  background-size: 24px 12px, calc(100% - 17px) 3px;
+}
+
+@media print {
+  .doc h2::after, .doc h3::after { display: none; }
+}
+
+/* ---- table of contents (lab posts) ----------------------------------------
+   Native <details>, open by default, built by Hugo from the ## and ###
+   headings (see [markup.tableOfContents] in hugo.toml). Same triangle
+   marker as the home-page post groups. */
+
+.toc {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 1.7rem;
+  padding: 0.5rem 1rem 0.6rem;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  font: 0.85rem var(--sans);
+}
+
+.toc summary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55em;
+  cursor: pointer;
+  font-weight: 700;
+  list-style: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.toc summary::-webkit-details-marker { display: none; } /* Safari */
+.toc summary::before {
+  content: "\25B8";               /* right-pointing triangle */
+  color: var(--enet);
+  font-size: 0.8em;
+  line-height: 1;
+  flex: none;
+}
+.toc[open] summary::before { content: "\25BE"; }
+.toc summary:hover { color: var(--enet); }
+
+/* Reset the hanging-marker list style that article lists use. */
+.toc ul {
+  list-style: none;
+  margin: 0.45rem 0 0;
+  padding-left: 1.15em;
+}
+.toc ul ul { margin-top: 0.1rem; padding-left: 1.1em; }
+.toc li { margin: 0.28em 0; }
+.toc a { text-decoration: none; }
+.toc a:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media print { .toc { display: none; } }
+
+blockquote {
+  margin: 1.1em 0;
+  padding-left: 1em;
+  border-left: 4px solid #ccc;
+  font-style: italic;
+}
+blockquote p { margin: 0.5em 0; }
+
+/* code blocks */
+
+pre {
+  background: var(--box);
+  border: 1px solid var(--box-border);
+  border-radius: 3px;
+  padding: 0.8rem 1rem;
+  overflow-x: auto;
+  font: 0.9rem/1.55 var(--mono);
+  margin: 1.1em 0;
+}
+code {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  background: var(--box);
+  border: 1px solid var(--box-border);
+  border-radius: 2px;
+  padding: 0.06em 0.3em;
+}
+pre code {
+  font-size: 1em;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.highlight { margin: 1.1em 0; }
+.highlight pre { margin: 0; }
+
+/* ---- console windows (render-codeblock hook) ---------------------------
+   Fenced code blocks render inside a window frame whose look follows
+   the language. The console interiors stay dark in BOTH site themes
+   (a terminal is dark either way); only the frame adapts. */
+
+.term {
+  margin: 1.1em 0;
+  border: 1px solid var(--box-border);
+  border-radius: 7px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+}
+.term .highlight { margin: 0; }
+.term pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  white-space: pre-wrap;      /* long lines wrap instead of clipping */
+  overflow-wrap: anywhere;    /* even unbroken UNC paths and URLs */
+}
+
+.term-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.45em 0.85em;
+  font: 700 0.72rem var(--sans);
+  -webkit-user-select: none;
+  user-select: none;
+}
+.term-title { letter-spacing: 0.04em; }
+
+/* macOS-style traffic lights for shell / generic consoles */
+.term-dots {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff5f57;
+  box-shadow: 17px 0 0 #febc2e, 34px 0 0 #28c840;
+  margin-right: 38px;   /* the shadows extend 34px past the span */
+}
+
+/* Text selection inside the dark consoles: translucent white, so the
+   token colors stay readable while selected. */
+.term pre ::selection,
+.term pre::selection { background: rgba(255, 255, 255, 0.25); }
+
+.term-copy {
+  margin-left: auto;
+  font: 700 0.68rem var(--sans);
+  letter-spacing: 0.05em;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 3px;
+  padding: 0.15em 0.6em;
+  cursor: pointer;
+  opacity: 0.85;
+}
+.term-copy:hover { opacity: 1; background: rgba(255, 255, 255, 0.16); }
+.term-copy:disabled { cursor: default; }
+.term-powershell .term-copy { margin-right: 0.9em; }
+
+/* bash / shells: dark terminal */
+.term-bash .term-bar { background: #2e2e2e; color: #c9c9c9; }
+.term-bash pre { background: #1b1b1b; color: #e6e6e6; }
+
+/* generic console (plain text output, registry dumps, error text) */
+.term-generic .term-bar { background: #34333c; color: #c9c9c9; }
+.term-generic pre { background: #211f26; color: #e2e0e7; }
+
+/* World of Warcraft: gold-trimmed console, system-message gold text */
+.term-wow {
+  border: 2px solid #a17d2a;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2), inset 0 0 0 1px #5c4415;
+}
+.term-wow .term-bar {
+  background: linear-gradient(#4a3413, #241a08);
+  color: #ffd100;
+}
+.term-wow pre { background: #120d08; color: #ffd100; }
+
+/* PowerShell: the classic blue console */
+.term-powershell .term-bar { background: #0a3069; color: #ffffff; }
+.term-powershell .term-winbtns {
+  margin-left: auto;
+  font-weight: 400;
+  opacity: 0.85;
+}
+.term-powershell pre { background: #012456; color: #eeedf0; }
+
+/* tiny inline animated GIFs, the 90s way (see the render-image hook) */
+.gif-icon {
+  display: inline-block;
+  height: 1.15em;
+  width: auto;
+  border: 0;
+  vertical-align: -0.18em;
+  image-rendering: pixelated;
+}
+
+/* ---- image lightbox (lightbox.js) -------------------------------------- */
+
+.doc a:has(> img) { cursor: zoom-in; }
+
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;      /* above the taskbar and any window */
+  display: flex;
+  overflow: auto;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.93);
+  cursor: zoom-out;
+  -webkit-overflow-scrolling: touch;
+}
+
+.lightbox-img {
+  max-width: 96vw;
+  max-height: 92vh;
+  width: auto;
+  height: auto;
+  border: none;
+  margin: auto;
+  cursor: zoom-in;
+}
+
+/* Second tap/click: actual pixels, pan by scrolling the overlay. */
+.lightbox-img.zoomed {
+  max-width: none;
+  max-height: none;
+  cursor: zoom-out;
+}
+
+@media (max-width: 40rem) {
+  .lightbox { padding: 0.75rem; }
+}
+
+.lightbox-close {
+  position: fixed;
+  top: 0.5rem;
+  right: 0.9rem;
+  border: 0;
+  background: none;
+  color: #fff;
+  font-size: 2.6rem;
+  line-height: 1;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+}
+
+.lightbox-close:hover { color: #bbb; }
+
+body.lightbox-open { overflow: hidden; }
+
+/* tables */
+
+.doc table { border-collapse: collapse; font-size: 0.92em; margin: 1.1em 0; display: block; max-width: 100%; overflow-x: auto; }
+.doc th { font: 700 0.85em var(--sans); text-align: left; border-bottom: 2px solid var(--ink); padding: 0.3em 1em 0.3em 0; }
+.doc td { border-bottom: 1px solid var(--rule); padding: 0.35em 1em 0.35em 0; vertical-align: top; }
+
+/* prev / next */
+
+.post-nav {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin-top: 2.6rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--rule);
+  font: 0.85rem var(--sans);
+}
+.post-nav .older { margin-left: auto; text-align: right; }
+
+/* ---- practice tools (/tools/*) ------------------------------------------------
+   A program window: the question sits in a group box, the answer goes
+   in a sunken field, and Submit is the default button. The quiz ships
+   hidden in the HTML; quiz-engine.js reveals it. */
+
+.tool { font-size: 13px; line-height: 1.45; }
+.tool-header { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+.tool-header img { flex: none; width: 32px; height: 32px; }
+.tool-header h1 { margin: 0; font: bold 18px/1.2 var(--ui-font); }
+.tool-header .post-meta { margin: 2px 0 0; font: inherit; color: #404040; }
+.tool code {
+  font-family: var(--mono);
+  font-size: 13px;
+  background: #fff;
+  box-shadow: inset -1px -1px #fff, inset 1px 1px #808080;
+  padding: 1px 5px;
+}
+
+.quiz { margin: 10px 0 0; }
+.quiz-progress { margin: 0 0 4px; color: #404040; }
+.quiz .group-box { margin: 6px 0 0; padding: 8px 12px 12px; }
+.quiz-question { margin: 4px 0 12px; font-size: 15px; line-height: 1.6; }
+.quiz-question code { white-space: nowrap; font-size: 15px; }
+/* very long chips (full IPv6 addresses, dotted-binary quads) may wrap
+   on narrow screens instead of overflowing the page */
+.quiz code.q-long { white-space: normal; word-break: break-all; }
+.quiz input[type="text"] { width: 100%; max-width: 26rem; font: 15px var(--mono); min-height: 26px; }
+.quiz-buttons { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.quiz-feedback { margin: 10px 2px 0; min-height: 3.2em; font-size: 14px; }   /* reserve the lines so the window doesn't jump */
+.quiz-feedback.ok { color: var(--ok); }
+.quiz-feedback.no { color: var(--bad); }
+.quiz-feedback code { white-space: nowrap; font-size: 14px; }
+
+@media (max-width: 700px) {
+  .doc { padding: 0.2rem 0.9rem 2.5rem; font-size: 16px; }
+  .post-header h1 { font-size: 1.6rem; }
+  .doc h2 { font-size: 1.35rem; }
+  .doc h3, .doc h4 { font-size: 1.18rem; }
+  .tool { font-size: 15px; }
+  .quiz-question, .quiz-question code { font-size: 17px; }
+  .quiz input[type="text"] { font-size: 17px; max-width: none; }
+  .quiz-buttons .btn { flex: 1 1 auto; }
+}
+
+@media print {
+  .doc h2::after, .doc h3::after { display: none; }
+  .doc { max-width: none; padding: 0; color: #000; }
+  .doc a, .doc a:visited { color: #000; }
+}

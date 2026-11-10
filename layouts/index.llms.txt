@@ -2,9 +2,10 @@
 
 > {{ site.Params.description }}
 
-CFWorx is the personal knowledge base of Cory, an IT professional. Posts
-are study notes written to be re-read: clear, self-contained explanations
-of one topic at a time.
+CFWorx is the personal site of Cory, an IT professional. It is laid out
+like a late-90s desktop and holds the things he likes: IT study notes and
+lab write-ups (written to be re-read: clear, self-contained explanations
+of one topic at a time), practice tools, and games.
 
 ## Sections
 {{ range $slug := site.Params.sectionOrder }}{{ with site.GetPage (printf "/%s" $slug) }}- [{{ .Title }}]({{ .Permalink }}){{ with or .Params.blurb .Description }}: {{ . }}{{ end }}

@@ -121,10 +121,10 @@ browser tab.
 
 ## Ongoing publishing
 
-```powershell
-hugo new work/what-dhcp-taught-me.md
-# write it, set draft: false, then
-git add . && git commit -m "post: what DHCP taught me" && git push
+```sh
+hugo new notes/networking/what-dhcp-taught-me.md
+# write it, set draft: false, check it with `hugo server`, then
+git add . && git commit -m "note: what DHCP taught me" && git push
 ```
 
 Cloudflare rebuilds and deploys automatically. That's the whole pipeline.

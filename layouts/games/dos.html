@@ -1,0 +1,74 @@
+{{- /* One DOS shareware game (/games/<name>/). Front matter:
+       bundle   -> the packed game in static/dos/ (made by
+                   scripts/win98/make_jsdos.py); leave it out for a
+                   download-only title
+       download -> the original archive in static/downloads/
+       mouse    -> "lock" (captured, for first-person games), "point"
+                   (follows the pointer) or "none"
+       autokeys -> key presses typed for you at start-up, to get past a
+                   set-up screen (see dosplayer.js)
+       novert   -> true to ignore up/down mouse movement (in the old
+                   shooters it walks you forward and back)
+       The game runs in the DOS emulator in static/dos/emu/, started by
+       assets/js/dosplayer.js as soon as the page opens. */}}
+{{ define "bodyclass" }}page page-app page-game{{ end }}
+{{ define "main" }}
+<div class="window win-app win-dos" id="win-main" data-task="{{ .Title }}" data-icon="{{ .Params.icon | default "dosgame" }}">
+  {{ partial "win/titlebar.html" (dict "title" .Title "icon" (.Params.icon | default "dosgame") "close" .Parent.RelPermalink) }}
+  <main id="main" class="win-body dos-body" tabindex="-1">
+    {{- with .Params.bundle }}
+    <div class="dos-screen" id="dos" data-bundle="{{ . }}" data-mouse="{{ $.Params.mouse | default "lock" }}" data-novert="{{ if $.Params.novert }}1{{ end }}"{{ with $.Params.autokeys }} data-autokeys="{{ . }}"{{ end }}>
+      <canvas id="dos-canvas" width="640" height="400" tabindex="0" aria-label="{{ $.Title }}, running in a DOS emulator"></canvas>
+      <div class="dos-cover" id="dos-cover">
+        <p>{{ $.Title }}</p>
+        <p class="dos-prompt">C:\&gt;</p>
+        <div class="dos-progress" id="dos-progress" hidden><span></span></div>
+        <p id="dos-msg" role="status"></p>
+        <button type="button" class="btn btn-default" id="dos-play" hidden>Play</button>
+        <noscript><p>The game runs in a DOS emulator in your browser, which needs JavaScript. The download below works without it.</p></noscript>
+      </div>
+    </div>
+    {{- end }}
+    <div class="dos-bar">
+      {{- if .Params.bundle }}
+      <button type="button" class="btn" id="dos-full" hidden>Full screen</button>
+      <button type="button" class="btn" id="dos-keys-toggle" aria-pressed="false" hidden>Touch keys</button>
+      <button type="button" class="btn" id="dos-reset" hidden>Restart</button>
+      {{- end }}
+      <span class="dos-spacer"></span>
+      {{- with .Params.download }}
+      <a class="btn" href="{{ . }}" download>Download{{ with $.Params.downloadsize }} ({{ . }}){{ end }}</a>
+      {{- end }}
+    </div>
+    {{- if .Params.bundle }}
+    <div class="dos-keys" id="dos-keys">
+      <button type="button" class="btn" data-key="Escape">Esc</button>
+      <button type="button" class="btn" data-key="Enter">Enter</button>
+      <button type="button" class="btn" data-key="Space">Space</button>
+      <button type="button" class="btn" data-key="ControlLeft">Ctrl</button>
+      <button type="button" class="btn" data-key="AltLeft">Alt</button>
+      <button type="button" class="btn" data-key="ShiftLeft">Shift</button>
+      <button type="button" class="btn" data-key="KeyY">Y</button>
+      <button type="button" class="btn" data-key="KeyN">N</button>
+      <button type="button" class="btn" data-key="ArrowLeft">&larr;</button>
+      <button type="button" class="btn" data-key="ArrowUp">&uarr;</button>
+      <button type="button" class="btn" data-key="ArrowDown">&darr;</button>
+      <button type="button" class="btn" data-key="ArrowRight">&rarr;</button>
+    </div>
+    {{- end }}
+    <div class="dos-info">
+      <h1>{{ .Title }}</h1>
+      <dl>
+        {{- with .Params.publisher }}<dt>From</dt><dd>{{ . }}</dd>{{ end }}
+        {{- with .Params.year }}<dt>Released</dt><dd>{{ . }}</dd>{{ end }}
+        {{- with .Params.version }}<dt>Version</dt><dd>{{ . }}</dd>{{ end }}
+        {{- with .Params.controls }}<dt>Controls</dt><dd>{{ . }}</dd>{{ end }}
+      </dl>
+      {{ .Content }}
+    </div>
+  </main>
+  <div class="status-bar">
+    <p class="status-field status-grow" id="dos-status">{{ if .Params.bundle }}Starting...{{ else }}Download only.{{ end }}</p>
+  </div>
+</div>
+{{ end }}

@@ -1,0 +1,37 @@
+{{- /* Ski Run (/games/ski/): an original downhill game drawn on a
+       <canvas> by assets/js/ski.js. */}}
+{{ define "bodyclass" }}page page-app page-game{{ end }}
+{{ define "main" }}
+<div class="window win-app win-ski" id="win-main" data-task="Ski Run" data-icon="ski">
+  {{ partial "win/titlebar.html" (dict "title" "Ski Run" "icon" "ski" "close" "/games/") }}
+  <div class="menu-bar" hidden>
+    <div class="menu-wrap">
+      <button type="button" class="menu-btn" aria-haspopup="true" aria-expanded="false"><u>G</u>ame</button>
+      <ul class="menu" hidden>
+        <li><button type="button" class="menu-item" data-ski="new">New Run<span class="accel">F2</span></button></li>
+        <li><button type="button" class="menu-item" data-ski="pause">Pause<span class="accel">P</span></button></li>
+        <li class="sep"></li>
+        <li><a class="menu-item" href="/games/">Exit</a></li>
+      </ul>
+    </div>
+    <div class="menu-wrap">
+      <button type="button" class="menu-btn" aria-haspopup="true" aria-expanded="false"><u>H</u>elp</button>
+      <ul class="menu" hidden>
+        <li><button type="button" class="menu-item" data-ski="howto">How to Play</button></li>
+        <li class="sep"></li>
+        <li><button type="button" class="menu-item" data-cmd="about">About CFWorx 98</button></li>
+      </ul>
+    </div>
+  </div>
+  <main id="main" class="win-body game-body ski-body" tabindex="-1">
+    <h1 class="visually-hidden">{{ .Title }}</h1>
+    <canvas id="ski" class="ski-canvas" width="320" height="240" tabindex="0" aria-label="Ski Run. Steer with the mouse, the arrow keys, or by touching either side of the slope.">Ski Run needs JavaScript and a browser with canvas.</canvas>
+    <div class="ski-hud" id="ski-hud" hidden></div>
+    <p class="ski-banner" id="ski-banner" hidden></p>
+    <noscript><p class="game-note">Ski Run needs JavaScript: the game runs entirely in your browser.</p></noscript>
+  </main>
+  <div class="status-bar">
+    <p class="status-field status-grow" id="ski-status">Steer with the mouse or the arrow keys. Hold Space (or a second finger) to tuck and go faster.</p>
+  </div>
+</div>
+{{ end }}

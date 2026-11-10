@@ -3,12 +3,17 @@
 <head>
 {{- partial "head.html" . }}
 </head>
-<body>
+{{- /* Every page is the same desktop: wallpaper and icons, one window
+       holding the page (the "main" block), the taskbar and the Start
+       menu. Pages are still ordinary pages with their own URLs. */}}
+<body class="{{ block "bodyclass" . }}page{{ end }}">
 <a class="skip" href="#main">Skip to content</a>
-{{- partial "site-header.html" . }}
-<main id="main">
-{{- block "main" . }}{{ end }}
-</main>
-{{- partial "site-footer.html" . }}
+<div class="desktop" id="desktop">
+{{ partial "desktop-icons.html" . }}
+{{ block "main" . }}{{ end }}
+</div>
+{{ partial "taskbar.html" . }}
+{{ partial "start-menu.html" . }}
+{{ partial "dialogs.html" . }}
 </body>
 </html>
