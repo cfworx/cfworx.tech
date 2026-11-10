@@ -578,3 +578,21 @@
       - "Wano Country"
       - "Egghead"
       - "Elbaph"
+
+- name: "Dumb and Dumber"
+  films:
+    - { title: "Dumb and Dumber", year: 1994 }
+    - { title: "Dumb and Dumberer: When Harry Met Lloyd", year: 2003 }
+    - { title: "Dumb and Dumber To", year: 2014 }
+
+- name: "Daredevil"
+  films:
+    - { title: "Daredevil", year: 2003 }
+    - { title: "Elektra", year: 2005 }
+
+- name: "James Bond (Pierce Brosnan)"
+  films:
+    - { title: "GoldenEye", year: 1995 }
+    - { title: "Tomorrow Never Dies", year: 1997 }
+    - { title: "The World Is Not Enough", year: 1999 }
+    - { title: "Die Another Day", year: 2002 }
