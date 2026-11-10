@@ -1094,8 +1094,7 @@
   }
 
   function renderPicks() {
-    var total = shelves.reduce(function (n, x) { return n + x.films.length; }, 0);
-    var html = '<p class="hunt-intro">' + plural(total, 'film') + ' you don\u2019t have yet, picked from what\u2019s on your shelves. Tap one for details and IMDb.</p>';
+    var html = '';
     shelves.forEach(function (x) {
       var why = becauseText(x);
       html += '<section class="group pick-shelf"><h2>' + esc(x.name) + '</h2>' +
