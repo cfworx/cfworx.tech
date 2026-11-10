@@ -62,8 +62,8 @@
 
   // Sky color at the top and at the horizon, by sun altitude.
   var GRADE = [
-    [-12, '#08122b', '#1a2b57'],
-    [-7, '#0f1c45', '#2e2c5c'],
+    [-12, '#04091a', '#0b1530'],
+    [-7, '#0a1638', '#221f48'],
     [-3, '#24387a', '#a9597a'],
     [0, '#3d6ab0', '#f08d68'],
     [4, '#5a9ee0', '#ffd49c'],
@@ -207,11 +207,11 @@
     var day = clamp((sun + 6) / 12, 0, 1);
     var dusk = clamp(1 - Math.abs(sun - 1) / 6, 0, 1);
     var grey = clamp((wx.cover - 60) / 40, 0, 1) * 0.7 + (wx.kind === 'rain' || wx.kind === 'storm' ? 0.3 : 0);
-    var body = mix(hex('#3b4a70'), hex('#ffffff'), day);
-    var shade = mix(hex('#2a3557'), hex('#d8e3f0'), day);
-    var lit = mix(hex('#5c6f9c'), hex('#ffffff'), day);
-    body = mix(body, mix(hex('#2f394f'), hex('#b9c4cf'), day), clamp(grey, 0, 1));
-    shade = mix(shade, mix(hex('#222a3c'), hex('#909dab'), day), clamp(grey, 0, 1));
+    var body = mix(hex('#2a3555'), hex('#ffffff'), day);
+    var shade = mix(hex('#1d2541'), hex('#d8e3f0'), day);
+    var lit = mix(hex('#45557d'), hex('#ffffff'), day);
+    body = mix(body, mix(hex('#1e2535'), hex('#b9c4cf'), day), clamp(grey, 0, 1));
+    shade = mix(shade, mix(hex('#151b28'), hex('#909dab'), day), clamp(grey, 0, 1));
     if (dusk > 0 && grey < 0.8) {  // sunset light on the clouds
       body = mix(body, hex('#ffc9b8'), dusk * 0.55);
       shade = mix(shade, hex('#c07a95'), dusk * 0.5);
@@ -254,7 +254,7 @@
       stars.push({ x: rand(), y: rand() * 0.78, big: rand() < 0.1, tw: rand() < 0.35, ph: rand() * 20 });
     }
     clouds = [];
-    var per = W / 100 * (1 + wx.cover / 100 * 6);
+    var per = W / 100 * (1 + wx.cover / 100 * 2.5);   // a few clouds, not a blanket
     [[0, 0.55], [1, 1]].forEach(function (layer) {
       var count = Math.max(1, Math.round(per * (layer[0] ? 0.6 : 0.8)));
       for (var j = 0; j < count; j++) {
@@ -264,7 +264,7 @@
         clouds.push({
           near: near, w: w, h: h, m: cloudMask(w, h),
           x: rand() * (W + w) - w,
-          y: (near ? 0.1 + rand() * 0.62 : 0.04 + rand() * 0.5) * H,
+          y: (near ? 0.05 + rand() * 0.22 : 0.02 + rand() * 0.16) * H,   // up in the top part of the sky only
           v: (near ? 1.3 + rand() * 0.9 : 0.6 + rand() * 0.5) * (0.6 + Math.min(wx.wind, 30) / 15),
           a: layer[1] * (near ? 1 : 0.8)
         });
@@ -272,10 +272,11 @@
     });
     drops = [];
     var k = wx.kind;
-    n = k === 'rain' || k === 'storm' ? W * H / 28 : k === 'drizzle' ? W * H / 60 : k === 'snow' ? W * H / 40 : 0;
-    n = Math.min(1600, Math.round(n * wx.intensity));
+    // Kept sparse, slow and faint on purpose: lots of fast streaks behind the page made people dizzy.
+    n = k === 'rain' || k === 'storm' ? W * H / 450 : k === 'drizzle' ? W * H / 700 : k === 'snow' ? W * H / 150 : 0;
+    n = Math.min(k === 'snow' ? 260 : 200, Math.round(n * Math.min(wx.intensity, 1.3)));
     for (i = 0; i < n; i++) {
-      drops.push({ x: rand() * W, y: rand() * H, v: k === 'snow' ? 6 + rand() * 6 : k === 'drizzle' ? 40 + rand() * 20 : 70 + rand() * 40,
+      drops.push({ x: rand() * W, y: rand() * H, v: k === 'snow' ? 4 + rand() * 4 : k === 'drizzle' ? 14 + rand() * 6 : 22 + rand() * 10,
         ph: rand() * 6.28, big: rand() < 0.15 });
     }
     recolor();
@@ -339,11 +340,11 @@
       if (wx.windX > 0 && cl.x > W) cl.x = -cl.w;
       if (wx.windX < 0 && cl.x < -cl.w) cl.x = W;
     }
-    var k = wx.kind, slant = wx.windX * Math.min(wx.wind, 40) / 4;
+    var k = wx.kind, slant = wx.windX * Math.min(wx.wind, 12) / 6;   // a gentle lean, never a sideways blast
     for (i = 0; i < drops.length; i++) {
       var d = drops[i];
       d.y += d.v * dt;
-      d.x += (k === 'snow' ? Math.sin(now / 900 + d.ph) * 3 + slant * 0.6 : slant) * dt;
+      d.x += (k === 'snow' ? Math.sin(now / 1400 + d.ph) * 1.5 + slant * 0.5 : slant) * dt;
       if (d.y > H) { d.y -= H + 3; d.x = rand() * W; }
       if (d.x > W) d.x -= W; else if (d.x < 0) d.x += W;
     }
@@ -357,7 +358,7 @@
     }
     if (k === 'storm' && !still && now > nextFlash) {
       flashUntil = now + 140;
-      nextFlash = now + 7000 + rand() * 12000;
+      nextFlash = now + 20000 + rand() * 25000;
     }
   }
 
@@ -367,8 +368,8 @@
     var sky = skyColors(sun);
     var grey = clamp((wx.cover - 55) / 45, 0, 1) * 0.6 + (wx.kind === 'rain' || wx.kind === 'storm' ? 0.2 : 0) + (wx.kind === 'fog' ? 0.35 : 0);
     var day = clamp((sun + 6) / 12, 0, 1);
-    var top = mix(sky[0], mix(hex('#141a28'), hex('#9fb0c2'), day), clamp(grey, 0, 0.85));
-    var low = mix(sky[1], mix(hex('#252d3b'), hex('#d6dee6'), day), clamp(grey, 0, 0.85));
+    var top = mix(sky[0], mix(hex('#0a0e17'), hex('#9fb0c2'), day), clamp(grey, 0, 0.85));
+    var low = mix(sky[1], mix(hex('#121822'), hex('#d6dee6'), day), clamp(grey, 0, 0.85));
     if (wx.aqi != null && wx.aqi > 100) {  // wildfire smoke turns the sky brown
       var smoke = clamp((wx.aqi - 100) / 250, 0, 0.6);
       top = mix(top, mix(hex('#3a2a1c'), hex('#c79a62'), day), smoke);
@@ -404,7 +405,7 @@
     }
     // a gray cloud deck when it's overcast
     if (wx.cover >= 80) {
-      var deck = mix(hex('#262f45'), hex('#c3ccd6'), day);
+      var deck = mix(hex('#161c2a'), hex('#c3ccd6'), day);
       var deep = Math.round(H * (0.12 + (wx.cover - 80) / 20 * 0.16));
       ctx.fillStyle = css(deck, 0.9);
       ctx.fillRect(0, 0, W, deep);
@@ -430,12 +431,12 @@
     // rain, drizzle or snow
     if (drops.length) {
       var k = wx.kind;
-      ctx.fillStyle = k === 'snow' ? (night ? 'rgba(225,235,255,0.85)' : 'rgba(255,255,255,0.95)')
-        : (night ? 'rgba(150,175,220,0.55)' : 'rgba(225,238,255,0.7)');
+      ctx.fillStyle = k === 'snow' ? (night ? 'rgba(225,235,255,0.7)' : 'rgba(255,255,255,0.85)')
+        : (night ? 'rgba(150,175,220,0.3)' : 'rgba(225,238,255,0.45)');
       for (i = 0; i < drops.length; i++) {
         var d = drops[i];
         if (k === 'snow') ctx.fillRect(Math.floor(d.x), Math.floor(d.y), d.big ? 2 : 1, d.big ? 2 : 1);
-        else ctx.fillRect(Math.floor(d.x), Math.floor(d.y), 1, k === 'drizzle' ? 2 : 3);
+        else ctx.fillRect(Math.floor(d.x), Math.floor(d.y), 1, k === 'drizzle' ? 1 : 2);
       }
     }
     // fog: a soft white veil with slow bands
@@ -451,7 +452,7 @@
     }
     // lightning: one soft flash, never strobing
     if (now < flashUntil) {
-      ctx.fillStyle = 'rgba(255,255,255,0.28)';
+      ctx.fillStyle = 'rgba(255,255,255,0.14)';
       ctx.fillRect(0, 0, W, H);
     }
   }

@@ -1302,62 +1302,66 @@
       };
     }
 
+    // The show's pace, in seconds (relative to the snap): slow enough to follow.
+    var POP = 2.4, RISE = 0.7, FLASH = 0.45, SHRINK = 1.0, SLIDE = 0.9, CHEER_FOR = 3.2, DUCK = 0.7;
+
     function frame(now) {
       var m = run.m, t = (now - run.t0) / 1000;
       ctx.clearRect(0, 0, W, H);
       var px = -52 + t * run.v;                     // plane's left edge
       var kid = m.kidX;
       var snapAt = kid == null ? Infinity : (kid - 26 - 48 + 52) / run.v;   // nose about 26px from the kid
+      var cheerAt = snapAt + SHRINK + SLIDE, duckAt = cheerAt + CHEER_FOR;
       var risen = 0, pose = AIM, done = false;
       if (kid != null) {
-        var popAt = snapAt - 1.1;
-        if (t > popAt) risen = Math.min(1, (t - popAt) / 0.25);
-        if (t > snapAt + 2.6) risen = Math.max(0, 1 - (t - snapAt - 2.6) / 0.3);
+        var popAt = snapAt - POP;
+        if (t > popAt) risen = Math.min(1, (t - popAt) / RISE);
+        if (t > duckAt) risen = Math.max(0, 1 - (t - duckAt) / DUCK);
       }
       // the plane, then the capture
       if (t < snapAt) {
         ctx.drawImage(planeImg, Math.round(px), m.planeY);
-      } else if (t < snapAt + 0.4) {
-        var k = (t - snapAt) / 0.4;                 // shrink into the lens
+      } else if (t < snapAt + SHRINK) {
+        var k = (t - snapAt) / SHRINK;              // shrink into the lens
         var sx = -52 + snapAt * run.v, lens = [kid + 1, m.ground - 20 * risen + 9];
         var w = Math.max(2, Math.round(48 * (1 - k))), hh = Math.max(1, Math.round(24 * (1 - k)));
         var x = Math.round(sx + (lens[0] - sx - 24) * k + 24 - w / 2), y = Math.round(m.planeY + (lens[1] - m.planeY - 12) * k + 12 - hh / 2);
-        ctx.globalAlpha = (Math.floor(k * 8) % 2) ? 0.55 : 1;
+        ctx.globalAlpha = (Math.floor(k * 6) % 2) ? 0.6 : 1;
         ctx.drawImage(planeImg, x, y, w, hh);
         ctx.globalAlpha = 1;
       }
       if (kid != null && risen > 0) {
         var ky = Math.round(m.ground - 20 * risen);
-        if (t > snapAt + 0.75) pose = CHEER;
+        if (t > cheerAt) pose = CHEER;
         sprite(pose, kid, ky, m.ground);
-        if (t >= snapAt && t < snapAt + 0.22) {      // the flash: bright white, then fading
-          var f = (t - snapAt) / 0.22;
-          ctx.fillStyle = 'rgba(255,255,240,' + (f < 0.5 ? 1 : 2 - 2 * f) + ')';
+        if (t >= snapAt && t < snapAt + FLASH) {    // the flash: bright white, then fading
+          var f = (t - snapAt) / FLASH;
+          ctx.fillStyle = 'rgba(255,255,240,' + (f < 0.4 ? 1 : (1 - f) / 0.6) + ')';
           var rr = Math.round(2 + f * 7);
           ctx.fillRect(kid + 1 - rr, ky + 9 - Math.round(rr / 2), rr * 2, rr);
           ctx.fillRect(kid + 1 - Math.round(rr / 2), ky + 9 - rr, rr, rr * 2);
         }
         // the instant photo slides out of the bottom of the camera
-        if (t > snapAt + 0.4 && t <= snapAt + 0.75) photo(kid - 5, Math.round(ky + 9 + 6 * ((t - snapAt - 0.4) / 0.35)));
-        if (t > snapAt + 0.75 && ky < m.ground - 4) {
+        if (t > snapAt + SHRINK && t <= cheerAt) photo(kid - 5, Math.round(ky + 9 + 6 * ((t - snapAt - SHRINK) / SLIDE)));
+        if (t > cheerAt && ky < m.ground - 4) {
           // the photo held up high when there's room above, else held out to the side
           var above = ky - 13 >= m.top;
           if (above || kid + 33 <= W) photo(above ? kid - 4 : kid + 17, above ? ky - 12 : ky + 3);
           var tx = above ? kid + 12 : kid + 35, ty = above ? Math.max(m.top, ky - 12) : ky + 4;
-          if (t < snapAt + 2.4 && tx + 43 <= W) {
+          if (t < duckAt && tx + 43 <= W) {
             ctx.font = '700 8px Silkscreen, monospace';
             ctx.textBaseline = 'top';
             ctx.fillStyle = '#0b1022'; ctx.fillText('CAUGHT!', tx + 1, ty + 1);
             ctx.fillStyle = '#ffd84d'; ctx.fillText('CAUGHT!', tx, ty);
           }
         }
-        done = t > snapAt + 3;
+        done = t > duckAt + DUCK;
       } else if (kid == null) {
         done = px > W + 4;
-      } else if (t > snapAt + 3) {
+      } else if (t > duckAt + DUCK) {
         done = true;
       }
-      if (done) { ctx.clearRect(0, 0, W, H); run = null; schedule(22000 + Math.random() * 16000); return; }
+      if (done) { ctx.clearRect(0, 0, W, H); run = null; schedule(30000 + Math.random() * 20000); return; }
       requestAnimationFrame(frame);
     }
 
@@ -1365,7 +1369,7 @@
       if (document.hidden) { schedule(5000); return; }
       var m = measure();
       if (!m) { schedule(5000); return; }
-      run = { m: m, t0: performance.now(), v: scale === 3 ? 95 : 70 };
+      run = { m: m, t0: performance.now(), v: scale === 3 ? 42 : 32 };   // canvas pixels a second: an unhurried flyby
       requestAnimationFrame(frame);
     }
     function schedule(ms) { clearTimeout(timer); timer = setTimeout(go, ms); }

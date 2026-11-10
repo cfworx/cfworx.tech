@@ -3,9 +3,9 @@
    old-school handheld collecting game where the creatures are planes.
 
    - Everything sits in chunky game windows: thick outline, bevel, hard
-     drop shadow. Pixel type everywhere (Silkscreen for labels and
-     numbers, Pixelify Sans for reading, with its digits swapped for
-     clearer ones; see "Planedex Digits" below).
+     drop shadow. Plain system type for all the words and numbers, so it's
+     easy to read; the pixel art is in the sprites, badges and sky, and the
+     PLANEDEX title keeps pixel letters as the logo.
    - The Dex is the main screen: a numbered list with a cursor, and the
      selected plane on a little sky stage beside it, with a dialog-box
      field note. Planes not caught yet are "?????" silhouettes.
@@ -19,58 +19,14 @@
      from classes, bars are <progress> elements.
    ========================================================================== */
 
-@font-face {
-  font-family: "Silkscreen";
-  src: url("/fonts/silkscreen-400-5.3.0.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+/* Regular, easy-to-read type everywhere (the pixel fonts were too hard
+   to read). Only the big PLANEDEX title keeps pixel letters, as the logo. */
 @font-face {
   font-family: "Silkscreen";
   src: url("/fonts/silkscreen-700-5.3.0.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
-}
-@font-face {
-  font-family: "Pixelify Sans";
-  src: url("/fonts/pixelify-sans-wght-5.3.0.woff2") format("woff2");
-  font-weight: 400 700;
-  font-style: normal;
-  font-display: swap;
-}
-/* Pixelify Sans's 2, 5 and 8 look alike at reading sizes, and
-   Silkscreen's bold 4 is a blob, so digits come from other pixel fonts:
-   VT323 (regular) and Jersey 10 (bold) in reading text, Press Start 2P
-   in labels. unicode-range limits these faces to 0-9, and size-adjust
-   matches each font's digit height. */
-@font-face {
-  font-family: "Planedex Label Digits";
-  src: url("/fonts/press-start-2p-400-5.3.0.woff2") format("woff2");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0030-0039;
-  size-adjust: 71%;
-}
-@font-face {
-  font-family: "Planedex Digits";
-  src: url("/fonts/vt323-400-5.3.0.woff2") format("woff2");
-  font-weight: 100 550;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0030-0039;
-  size-adjust: 120%;
-}
-@font-face {
-  font-family: "Planedex Digits";
-  src: url("/fonts/jersey-10-400-5.3.0.woff2") format("woff2");
-  font-weight: 551 900;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0030-0039;
-  size-adjust: 120%;
 }
 
 /* Layout: title bar (logo, level, counters), menu row, then one game
@@ -131,8 +87,9 @@
   --t-fire:      #b91c1c;
   --t-oddball:   #7a3fa0;
 
-  --pixel: "Planedex Label Digits", "Silkscreen", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --text:  "Planedex Digits", "Pixelify Sans", "Trebuchet MS", system-ui, sans-serif;
+  --pixel: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;   /* labels and numbers */
+  --logo: "Silkscreen", system-ui, sans-serif;
+  --text:  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --gutter-l: max(16px, env(safe-area-inset-left, 0px));
   --gutter-r: max(16px, env(safe-area-inset-right, 0px));
 }
@@ -140,9 +97,9 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --sky-1: #08122b; --sky-2: #1a2b57;
-    --win: #16234a; --win-2: #0f1a38; --edge: #a9c1ee; --ink: #eef4ff; --muted: #a9bcdc;
-    --hi: #2a3e72; --lo: #0a1226; --drop: rgba(0, 0, 0, 0.7);
+    --sky-1: #050a18; --sky-2: #0c1530;
+    --win: #1f305f; --win-2: #2a3f78; --edge: #b8ccf2; --ink: #ffffff; --muted: #d0daec;
+    --hi: #3a5294; --lo: #121c3a; --drop: rgba(0, 0, 0, 0.7);
     --hud: #0a1129; --hud-2: #060b1d; --hud-muted: #9fb4d8;
     --track: #24396a; --stage-1: #1d3266; --stage-2: #41609f; --ground-1: #2f6e48; --ground-2: #1f4f33;
     --cloud: #c9d7f2; --focus: #ffd84d; --scrim: rgba(0, 3, 12, 0.8);
@@ -152,9 +109,9 @@
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --sky-1: #08122b; --sky-2: #1a2b57;
-  --win: #16234a; --win-2: #0f1a38; --edge: #a9c1ee; --ink: #eef4ff; --muted: #a9bcdc;
-  --hi: #2a3e72; --lo: #0a1226; --drop: rgba(0, 0, 0, 0.7);
+  --sky-1: #050a18; --sky-2: #0c1530;
+  --win: #1f305f; --win-2: #2a3f78; --edge: #b8ccf2; --ink: #ffffff; --muted: #d0daec;
+  --hi: #3a5294; --lo: #121c3a; --drop: rgba(0, 0, 0, 0.7);
   --hud: #0a1129; --hud-2: #060b1d; --hud-muted: #9fb4d8;
   --track: #24396a; --stage-1: #1d3266; --stage-2: #41609f; --ground-1: #2f6e48; --ground-2: #1f4f33;
   --cloud: #c9d7f2; --focus: #ffd84d; --scrim: rgba(0, 3, 12, 0.8);
@@ -166,10 +123,6 @@
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-/* Pixelify Sans joins "fi" and "fl" into one glyph that reads like an
-   "A" at these sizes ("Arst Nov 8", "Boeing test Aight"), so ligatures
-   stay off. !important because every `font:` shorthand resets them. */
-*, *::before, *::after { font-variant-ligatures: none !important; }
 
 html { background: var(--sky-1); -webkit-text-size-adjust: 100%; }
 /* The live sky canvas sits behind everything (planedex-sky.js); the
@@ -236,7 +189,7 @@ progress::-moz-progress-bar { background: var(--bar, var(--ok)); }
   justify-content: space-between;
   gap: 4px 10px;
   margin-bottom: 10px;
-  font: 700 0.95rem/1.2 var(--pixel);
+  font: 700 1.09rem/1.2 var(--pixel);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -255,7 +208,7 @@ progress::-moz-progress-bar { background: var(--bar, var(--ok)); }
   border-radius: 4px;
   background: var(--win);
   box-shadow: inset 2px 2px 0 var(--hi), inset -2px -2px 0 var(--lo), 3px 3px 0 var(--drop);
-  font: 700 0.85rem var(--pixel);
+  font: 700 0.98rem var(--pixel);
   text-transform: uppercase;
   cursor: pointer;
 }
@@ -284,7 +237,7 @@ progress::-moz-progress-bar { background: var(--bar, var(--ok)); }
 /* the title bar's little show: a plane, our kid spotter, a snapshot (planedex.js) */
 .banner { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; pointer-events: none; }
 .hud-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; }
-.back { color: var(--hud-muted); text-decoration: none; font: 700 0.85rem var(--pixel); }
+.back { color: var(--hud-muted); text-decoration: none; font: 700 0.98rem var(--pixel); }
 .back:hover { color: var(--hud-ink); }
 .hud-btns { display: flex; flex-wrap: wrap; gap: 6px; }
 .hbtn {
@@ -296,7 +249,7 @@ progress::-moz-progress-bar { background: var(--bar, var(--ok)); }
   border-radius: 4px;
   background: transparent;
   color: var(--hud-ink);
-  font: 700 0.72rem var(--pixel);
+  font: 700 0.83rem var(--pixel);
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
@@ -313,14 +266,14 @@ progress::-moz-progress-bar { background: var(--bar, var(--ok)); }
   margin-top: 14px;
 }
 .logo {
-  font: 700 clamp(2.2rem, 7vw, 3.6rem)/1 var(--pixel);
+  font: 700 clamp(2.2rem, 7vw, 3.6rem)/1 var(--logo);
   letter-spacing: 0.03em;
   color: #fff;
   text-shadow: 0 4px 0 var(--teal), 0 8px 0 rgba(0, 0, 0, 0.35);
 }
 /* Spokane right now: weather and air quality (planedex-sky.js fills it in) */
 .sky-now { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 8px; color: var(--hud-muted); font-size: 0.95rem; }
-.sky-where { font: 700 0.66rem var(--pixel); text-transform: uppercase; letter-spacing: 0.06em; }
+.sky-where { font: 700 0.76rem var(--pixel); text-transform: uppercase; letter-spacing: 0.06em; }
 .sky-wx { display: inline-flex; align-items: center; gap: 6px; color: var(--hud-ink); }
 .sky-wx b, .sky-aqi b { font-weight: 700; }
 .sky-aqi { padding: 0 6px; border: 2px solid #000; color: #10182c; font-size: 0.88rem; white-space: nowrap; }
@@ -352,10 +305,10 @@ progress::-moz-progress-bar { background: var(--bar, var(--ok)); }
   box-shadow: inset -4px -4px 0 rgba(0, 0, 0, 0.18), inset 3px 3px 0 rgba(255, 255, 255, 0.5);
   line-height: 1;
 }
-.lv-label { font: 700 0.75rem/1 var(--pixel); }
-.lv-num { font: 700 1.9rem/1 var(--pixel); }
+.lv-label { font: 700 0.86rem/1 var(--pixel); }
+.lv-num { font: 700 2.18rem/1 var(--pixel); }
 .lv-meta { flex: 1; min-width: 0; display: grid; gap: 5px; }
-.lv-title { font: 700 1rem var(--pixel); text-transform: uppercase; }
+.lv-title { font: 700 1.15rem var(--pixel); text-transform: uppercase; }
 .xp { --bar: var(--sel); --track: rgba(255, 255, 255, 0.15); border-color: #000; height: 14px; }
 .xp::-webkit-progress-bar { background: rgba(255, 255, 255, 0.15); }
 .xp-text { color: var(--hud-muted); font-size: 0.9rem; }
@@ -364,9 +317,9 @@ progress::-moz-progress-bar { background: var(--bar, var(--ok)); }
 /* our counts read like sentences: "509 / planes spotted", with today's firsts in green */
 .stats div { display: flex; flex-direction: column; min-width: 0; padding: 8px 10px; border: 2px solid rgba(255, 255, 255, 0.18); background: rgba(0, 0, 0, 0.18); }
 .stats dt { order: 2; margin-top: 2px; color: var(--hud-muted); font: 600 0.92rem/1.2 var(--text); }
-.stats dd { order: 1; margin: 0; font: 700 1.45rem/1.1 var(--pixel); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.stats dd { order: 1; margin: 0; font: 700 1.67rem/1.1 var(--pixel); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .stats dd small { color: var(--hud-muted); font-size: 0.62em; }
-.stats dd.stat-today { order: 3; margin-top: 4px; color: #74e39a; font: 700 0.62rem/1.2 var(--pixel); text-transform: uppercase; letter-spacing: 0.04em; }
+.stats dd.stat-today { order: 3; margin-top: 4px; color: #74e39a; font: 700 0.71rem/1.2 var(--pixel); text-transform: uppercase; letter-spacing: 0.04em; }
 .stats .stat.bump { animation: bump 1.8s ease-out; }
 @keyframes bump { 0%, 30% { background: rgba(255, 216, 77, 0.35); border-color: var(--sel); } 100% { background: rgba(0, 0, 0, 0.18); } }
 
@@ -398,7 +351,7 @@ progress::-moz-progress-bar { background: var(--bar, var(--ok)); }
   border: 2px solid transparent;
   background: transparent;
   color: var(--hud-ink);
-  font: 700 0.85rem var(--pixel);
+  font: 700 0.98rem var(--pixel);
   text-transform: uppercase;
   cursor: pointer;
 }
@@ -420,7 +373,7 @@ progress::-moz-progress-bar { background: var(--bar, var(--ok)); }
   background: var(--win);
   border: 3px solid var(--edge);
   box-shadow: 5px 5px 0 var(--drop);
-  font: 700 0.9rem/1.5 var(--pixel);
+  font: 700 1.03rem/1.5 var(--pixel);
   text-align: center;
 }
 .status-msg:empty { display: none; }
@@ -502,18 +455,18 @@ progress::-moz-progress-bar { background: var(--bar, var(--ok)); }
 .stage.is-airframe .photo-img { object-fit: contain; }
 /* while the exact plane's photo is being looked up: an empty frame, then the photo fades in */
 .stage.is-pending { display: grid; place-items: center; background: linear-gradient(var(--stage-1), var(--stage-2)); }
-.tuning { color: var(--edge); font: 700 0.7rem var(--pixel); text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.7; animation: blink 0.9s steps(2) infinite; }
+.tuning { color: var(--edge); font: 700 0.8rem var(--pixel); text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.7; animation: blink 0.9s steps(2) infinite; }
 .tuning b { color: var(--ink); }
 /* says whether the picture is the exact plane we caught, or a plane of the same model */
 .photo-tag { position: absolute; left: 8px; bottom: 8px; z-index: 3; padding: 3px 7px; border: 2px solid #000; background: rgba(11, 16, 34, 0.8);
-  color: #fff; font: 700 0.6rem/1.2 var(--pixel); text-transform: uppercase; letter-spacing: 0.04em; pointer-events: none; }
+  color: #fff; font: 700 0.69rem/1.2 var(--pixel); text-transform: uppercase; letter-spacing: 0.04em; pointer-events: none; }
 .photo-tag.real { background: var(--gold); color: #1c2b4f; font-size: 0.66rem; box-shadow: 2px 2px 0 #000; }
 .stage.small .photo-tag { left: 6px; bottom: 6px; font-size: 0.55rem; }
 .photo-img.fade { animation: fadein 0.3s ease-out; }
 @keyframes fadein { from { opacity: 0; } }
 .credit { color: var(--muted); font-size: 0.8rem; line-height: 1.3; overflow-wrap: anywhere; }
 .credit a { color: inherit; }
-.credit b { font: 700 0.72rem var(--pixel); color: var(--ink); }
+.credit b { font: 700 0.83rem var(--pixel); color: var(--ink); }
 img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); background: var(--win-2); }
 
 .plate {
@@ -525,7 +478,7 @@ img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); ba
   color: var(--win);
   border-radius: 4px;
 }
-.plate-no { font: 700 0.95rem var(--pixel); color: var(--sel); white-space: nowrap; }
+.plate-no { font: 700 1.09rem var(--pixel); color: var(--sel); white-space: nowrap; }
 .plate-name { font: 700 1.25rem/1.15 var(--text); overflow-wrap: anywhere; }
 :root[data-theme="dark"] .plate { background: #070c1d; color: var(--ink); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .plate { background: #070c1d; color: var(--ink); } }
@@ -538,7 +491,7 @@ img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); ba
   border: 2px solid #000;
   background: var(--tc, var(--t-jet));
   color: #fff;
-  font: 700 0.68rem/1 var(--pixel);
+  font: 700 0.78rem/1 var(--pixel);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -592,19 +545,19 @@ img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); ba
   margin: 0;
 }
 .readout div { min-width: 0; padding: 6px 8px; background: var(--win-2); border: 2px solid var(--lo); }
-.readout dt { color: var(--muted); font: 700 0.66rem var(--pixel); text-transform: uppercase; }
+.readout dt { color: var(--muted); font: 700 0.76rem var(--pixel); text-transform: uppercase; }
 .readout dd { margin: 2px 0 0; font-weight: 600; overflow-wrap: anywhere; }
-.readout dd small { color: var(--muted); font: 700 0.75rem var(--pixel); }
+.readout dd small { color: var(--muted); font: 700 0.86rem var(--pixel); }
 
 
-.mini-h { font: 700 0.75rem var(--pixel); text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.mini-h { font: 700 0.86rem var(--pixel); text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
 
 .tag-new {
   display: inline-block;
   padding: 2px 5px;
   background: var(--coral);
   color: var(--coral-ink);
-  font: 700 0.62rem/1.2 var(--pixel);
+  font: 700 0.71rem/1.2 var(--pixel);
   vertical-align: middle;
   animation: blink 1.2s steps(2) infinite;
 }
@@ -631,7 +584,7 @@ img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); ba
   border-radius: 4px;
   background: var(--win);
   color: var(--rc-text, var(--ink));
-  font: 700 0.75rem var(--pixel);
+  font: 700 0.86rem var(--pixel);
   cursor: pointer;
 }
 .chip[aria-pressed="true"] { background: var(--sel); color: var(--sel-ink); box-shadow: inset 0 0 0 2px var(--edge); }
@@ -648,7 +601,7 @@ img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); ba
   border-radius: 4px;
   background: var(--win);
   color: var(--ink);
-  font: 700 0.72rem var(--pixel);
+  font: 700 0.83rem var(--pixel);
   text-transform: uppercase;
 }
 
@@ -680,7 +633,7 @@ img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); ba
 .row[aria-current="true"] { background: var(--sel); color: var(--sel-ink); border-color: var(--edge); }
 .row .cur { color: var(--cursor); font-size: 0.8rem; visibility: hidden; }
 .row[aria-current="true"] .cur { visibility: visible; animation: blink 1s steps(2) infinite; }
-.row-no { font: 700 0.85rem var(--pixel); }
+.row-no { font: 700 0.98rem var(--pixel); }
 .row .mini { width: 64px; height: 32px; }
 .row-name { font-size: 1.02rem; font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row-r { color: var(--rc, var(--r1)); font-size: 0.8rem; letter-spacing: -1px; }
@@ -691,7 +644,7 @@ img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); ba
 /* the dex tally, between the filters and the list */
 .dex-count { display: grid; grid-template-columns: auto minmax(40px, 1fr) auto; align-items: center; gap: 10px; margin: 0; padding: 8px 12px;
   border: 3px solid var(--edge); border-radius: 4px; background: var(--win); box-shadow: inset 2px 2px 0 var(--hi), inset -2px -2px 0 var(--lo), 4px 4px 0 var(--drop);
-  color: var(--muted); font: 700 0.72rem/1.2 var(--pixel); text-transform: uppercase; }
+  color: var(--muted); font: 700 0.83rem/1.2 var(--pixel); text-transform: uppercase; }
 .dex-count b { color: var(--ink); font-size: 1.25rem; vertical-align: -1px; }
 .dex-count .dc-caught b { color: var(--ok); }
 .dex-count progress { --bar: var(--ok); height: 12px; }
@@ -719,7 +672,7 @@ img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); ba
   height: 28px;
   border: 3px solid var(--edge);
   background: var(--win-2);
-  font: 700 0.95rem var(--pixel);
+  font: 700 1.09rem var(--pixel);
 }
 .mission.done .box-check { background: var(--ok); color: var(--ok-ink); }
 .m-main { display: grid; gap: 6px; min-width: 0; }
@@ -727,23 +680,23 @@ img.thumb { display: block; object-fit: cover; border: 2px solid var(--edge); ba
 .mission progress { --bar: var(--r3); }
 .mission.done progress { --bar: var(--ok); }
 .m-side { display: grid; justify-items: end; gap: 4px; }
-.m-count { font: 700 0.85rem var(--pixel); }
-.tier { display: inline-block; padding: 1px 5px; border: 2px solid #000; color: #000; font: 700 0.58rem/1.3 var(--pixel); text-transform: uppercase; vertical-align: 2px; }
+.m-count { font: 700 0.98rem var(--pixel); }
+.tier { display: inline-block; padding: 1px 5px; border: 2px solid #000; color: #000; font: 700 0.67rem/1.3 var(--pixel); text-transform: uppercase; vertical-align: 2px; }
 .tier.t-easy { background: #9be7a8; }
 .tier.t-medium { background: #ffd84d; }
 .tier.t-hard { background: #ff8f80; }
-.xp-tag { padding: 2px 6px; background: var(--gold); color: var(--gold-ink); border: 2px solid #000; font: 700 0.6rem var(--pixel); white-space: nowrap; }
+.xp-tag { padding: 2px 6px; background: var(--gold); color: var(--gold-ink); border: 2px solid #000; font: 700 0.69rem var(--pixel); white-space: nowrap; }
 
 .cotd-btn { display: grid; gap: 8px; width: 100%; padding: 0; border: 0; background: none; text-align: left; cursor: pointer; }
 .cotd-name { font-size: 1.25rem; font-weight: 700; }
 .cotd-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
-.today-line { font: 700 0.8rem/1.5 var(--pixel); text-transform: uppercase; color: var(--muted); }
+.today-line { font: 700 0.92rem/1.5 var(--pixel); text-transform: uppercase; color: var(--muted); }
 .today-line b { color: var(--ink); }
 
 .radio .log { list-style: none; margin: 0; padding: 6px 10px 10px; background: #0b1428; color: #8ff0c8; border: 3px solid #000; font-size: 0.98rem; max-height: 680px; overflow-y: auto; }
-.log-day { margin: 14px 0 0; color: #ffd84d; font: 700 0.78rem var(--pixel); text-transform: uppercase; letter-spacing: 0.06em; }
+.log-day { margin: 14px 0 0; color: #ffd84d; font: 700 0.9rem var(--pixel); text-transform: uppercase; letter-spacing: 0.06em; }
 .log-day:first-child { margin-top: 4px; }
-.log-hour { display: flex; align-items: center; gap: 8px; margin: 10px 0 2px; color: #9fc0e6; font: 700 0.7rem var(--pixel); }
+.log-hour { display: flex; align-items: center; gap: 8px; margin: 10px 0 2px; color: #9fc0e6; font: 700 0.8rem var(--pixel); }
 .log-hour::after { content: ""; flex: 1; border-top: 2px dashed rgba(127, 163, 200, 0.35); }
 .log-line { display: grid; grid-template-columns: 56px auto minmax(0, 1fr); align-items: center; gap: 10px; margin-top: 4px; padding: 5px 8px 5px 6px;
   border-left: 4px solid #8ff0c8; background: rgba(143, 240, 200, 0.07); }
@@ -754,11 +707,11 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
 .log-pic.flag-pic { display: grid; place-items: center; height: auto; border: 0; background: none; }
 .log-pic.flag-pic .flag.big { width: 40px; height: 30px; border: 2px solid #000; }
 .log-pic.blank { border: 0; background: none; }
-.log-no { color: #ffd84d; font: 700 0.72rem var(--pixel); }
+.log-no { color: #ffd84d; font: 700 0.83rem var(--pixel); }
 .log-x { min-width: 0; overflow-wrap: anywhere; }
 .log-x .stars { margin-left: 2px; font-size: 0.8rem; white-space: nowrap; }
 .log-x .stars .off { display: none; }
-.lt { padding: 2px 5px; font: 700 0.6rem var(--pixel); color: #0b1428; background: #8ff0c8; }
+.lt { padding: 2px 5px; font: 700 0.69rem var(--pixel); color: #0b1428; background: #8ff0c8; }
 .lt-badge { background: #ffd84d; }
 .lt-stamp { background: #c7a3ff; }
 .radio .more-btn { margin-top: 10px; }
@@ -780,9 +733,9 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
 .radar-name { display: -webkit-box; overflow: hidden; font-weight: 700; font-size: 0.95rem; line-height: 1.2; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .radar-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: auto; }
 .radar-meta .stars { font-size: 0.8rem; }
-.radar-n { font: 700 0.75rem var(--pixel); color: var(--muted); white-space: nowrap; }
+.radar-n { font: 700 0.86rem var(--pixel); color: var(--muted); white-space: nowrap; }
 .more-btn { display: block; margin: 14px auto 0; padding: 8px 14px; border: 3px solid var(--edge); background: var(--win-2); color: var(--ink);
-  font: 700 0.72rem var(--pixel); text-transform: uppercase; box-shadow: 3px 3px 0 var(--edge); cursor: pointer; }
+  font: 700 0.83rem var(--pixel); text-transform: uppercase; box-shadow: 3px 3px 0 var(--edge); cursor: pointer; }
 .radio .more-btn { border-color: #8ff0c8; background: #0b1428; color: #8ff0c8; box-shadow: 3px 3px 0 #000; }
 .more-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--edge); }
 .link { padding: 0; border: 0; background: none; color: inherit; text-align: left; text-decoration: underline; text-decoration-color: rgba(143, 240, 200, 0.4); text-underline-offset: 3px; cursor: pointer; }
@@ -806,12 +759,12 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
 }
 .poster:nth-child(odd) { transform: rotate(-1deg); }
 .poster:nth-child(even) { transform: rotate(1deg); }
-.poster-h { font: 700 1.5rem/1 var(--pixel); letter-spacing: 0.08em; }
+.poster-h { font: 700 1.72rem/1 var(--pixel); letter-spacing: 0.05em; }
 .poster-stage { width: 100%; background: linear-gradient(#f9eecf, #ead6a6); border-color: var(--poster-edge); }
 .poster:not(.got) .poster-stage .photo-img { filter: sepia(0.9) contrast(1.05) brightness(0.96); }
 .poster-name { font-weight: 700; font-size: 1.1rem; }
 .poster-hint { font-size: 0.95rem; }
-.poster-reward { font: 700 0.75rem var(--pixel); }
+.poster-reward { font: 700 0.86rem var(--pixel); }
 .poster .stars .off { color: rgba(122, 84, 40, 0.3); }
 .stamp-got {
   position: absolute;
@@ -821,7 +774,7 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
   border: 4px solid #b8202a;
   background: rgba(245, 228, 187, 0.85);
   color: #b8202a;
-  font: 700 1rem var(--pixel);
+  font: 700 1.15rem var(--pixel);
   transform: translate(-50%, -50%) rotate(-12deg);
   cursor: pointer;
 }
@@ -835,11 +788,11 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
 .fam-open { display: grid; gap: 6px; width: 100%; margin: -4px 0 10px; padding: 4px; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
 .fam-open:hover .fam-name, .fam-open:focus-visible .fam-name { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
 .fam-teaser { display: -webkit-box; overflow: hidden; color: var(--muted); font-size: 0.95rem; line-height: 1.35; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-.fam-go { font: 700 0.66rem var(--pixel); color: var(--cursor); text-transform: uppercase; }
+.fam-go { font: 700 0.76rem var(--pixel); color: var(--cursor); text-transform: uppercase; }
 .fam-link { padding: 0; border: 0; background: none; text-align: left; text-decoration: underline; text-decoration-color: var(--lo); text-underline-offset: 3px; cursor: pointer; }
 .fam-link:hover { color: var(--ink); text-decoration-color: currentColor; }
-.fam-n { font: 700 0.8rem var(--pixel); color: var(--muted); }
-.done-tag { padding: 2px 6px; background: var(--gold); color: var(--gold-ink); border: 2px solid #000; font: 700 0.62rem var(--pixel); }
+.fam-n { font: 700 0.92rem var(--pixel); color: var(--muted); }
+.done-tag { padding: 2px 6px; background: var(--gold); color: var(--gold-ink); border: 2px solid #000; font: 700 0.71rem var(--pixel); }
 .chain { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; list-style: none; margin: 0; padding: 0; }
 .chain li { display: flex; align-items: center; gap: 4px; }
 .chain li + li::before { content: "▶"; color: var(--muted); font-size: 0.7rem; }
@@ -853,7 +806,7 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
   cursor: pointer;
 }
 .node .chain-sprite { width: 72px; height: 36px; }
-.node-code { font: 700 0.7rem var(--pixel); }
+.node-code { font: 700 0.8rem var(--pixel); }
 .node.missing { border-style: dashed; color: var(--muted); }
 .node.is-current { background: var(--sel); color: var(--sel-ink); }
 
@@ -879,7 +832,7 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
   margin-bottom: 6px;
   background: var(--gold);
   color: var(--gold-ink);
-  font: 700 1rem var(--pixel);
+  font: 700 1.15rem var(--pixel);
   clip-path: polygon(30% 0, 70% 0, 70% 8%, 85% 8%, 85% 15%, 92% 15%, 92% 30%, 100% 30%, 100% 70%, 92% 70%, 92% 85%, 85% 85%, 85% 92%, 70% 92%, 70% 100%, 30% 100%, 30% 92%, 15% 92%, 15% 85%, 8% 85%, 8% 70%, 0 70%, 0 30%, 8% 30%, 8% 15%, 15% 15%, 15% 8%, 30% 8%);
   box-shadow: inset -6px -6px 0 rgba(0, 0, 0, 0.18), inset 6px 6px 0 rgba(255, 255, 255, 0.45);
 }
@@ -903,12 +856,12 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
 .pip.on.silver { background: #cdd7e4; }
 .pip.on.gold { background: var(--gold); }
 .pip.on.platinum { background: #8fd0ff; }
-.sec-h { margin: 8px 0 -6px; font: 700 0.85rem var(--pixel); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); }
+.sec-h { margin: 8px 0 -6px; font: 700 0.98rem var(--pixel); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); }
 .medal-name { font-weight: 700; font-size: 1.05rem; }
 .medal-how { color: var(--muted); font-size: 0.92rem; }
-.medal-when { color: var(--ok); font: 700 0.7rem var(--pixel); text-transform: uppercase; }
+.medal-when { color: var(--ok); font: 700 0.8rem var(--pixel); text-transform: uppercase; }
 .medal progress { margin-top: 6px; --bar: var(--r3); }
-.medal-prog { color: var(--muted); font: 700 0.7rem var(--pixel); }
+.medal-prog { color: var(--muted); font: 700 0.8rem var(--pixel); }
 
 /* ---- passport --------------------------------------------------------------------------- */
 
@@ -923,7 +876,7 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
 .sk-name small .flag { width: 16px; height: 12px; margin-right: 4px; vertical-align: -1px; }
 .stickers { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 8px; list-style: none; margin: 0; padding: 0; }
 .sticker { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 6px 8px; border: 2px solid var(--edge); background: var(--win-2); }
-.sk-code { display: grid; place-items: center; width: 64px; height: 36px; padding: 0 4px; border: 2px solid #000; background: var(--edge); color: #fff; font: 700 0.72rem var(--pixel); box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.25); }
+.sk-code { display: grid; place-items: center; width: 64px; height: 36px; padding: 0 4px; border: 2px solid #000; background: var(--edge); color: #fff; font: 700 0.83rem var(--pixel); box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.25); }
 .sk-code.c0 { background: #c0392b; } .sk-code.c1 { background: #1f5fbf; } .sk-code.c2 { background: #12806f; }
 .sk-code.c3 { background: #8e44ad; } .sk-code.c4 { background: #d35400; } .sk-code.c5 { background: #2c3e50; }
 .sk-code.c6 { background: #16a085; } .sk-code.c7 { background: #b8860b; } .sk-code.c8 { background: #7f1d1d; }
@@ -933,7 +886,7 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
 .sk-logo img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .sk-name { font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
 .sk-name small { display: block; color: var(--muted); font-weight: 400; }
-.sk-n { font: 700 0.8rem var(--pixel); color: var(--muted); }
+.sk-n { font: 700 0.92rem var(--pixel); color: var(--muted); }
 
 /* ---- detail sheet (phones) ---------------------------------------------------------------- */
 
@@ -959,7 +912,7 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
   border: 3px solid var(--edge);
   background: var(--win);
   color: var(--ink);
-  font: 700 0.9rem var(--pixel);
+  font: 700 1.03rem var(--pixel);
   cursor: pointer;
 }
 
@@ -968,14 +921,14 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
 .fam-page { display: grid; gap: 12px; padding: 2px 2px 6px; }
 .fam-page > .mini-h { margin: 6px 0 -8px; padding-right: 44px; }
 .fp-title { padding-right: 44px; font: 700 1.45rem/1.15 var(--text); }
-.fp-prog { display: flex; align-items: center; gap: 10px; font: 700 0.75rem var(--pixel); color: var(--muted); text-transform: uppercase; }
+.fp-prog { display: flex; align-items: center; gap: 10px; font: 700 0.86rem var(--pixel); color: var(--muted); text-transform: uppercase; }
 .fp-prog progress { flex: 1; --bar: var(--r3); }
 .fp-hero.not-yet .photo-img { filter: grayscale(0.85) contrast(1.05); }
 .fp-about { font-size: 1.05rem; }
 .fp-box { padding: 10px 12px; border: 2px solid var(--edge); border-left-width: 6px; background: var(--win-2); }
 .fp-box.spot { border-left-color: var(--teal); }
 .fp-box.fact { border-left-color: var(--gold); }
-.fp-h { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font: 700 0.75rem var(--pixel); text-transform: uppercase; }
+.fp-h { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font: 700 0.86rem var(--pixel); text-transform: uppercase; }
 .fp-h.members-h { margin: 4px 0 -4px; }
 .pix-ico { flex: none; width: 24px; height: 24px; image-rendering: pixelated; }
 .fp-members { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
@@ -989,11 +942,11 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
 .fp-pic .sprite { width: 82%; height: auto; }
 .fp-name { display: block; font-weight: 700; line-height: 1.2; }
 .fp-fact { display: block; margin-top: 2px; color: var(--muted); font-size: 0.88rem; line-height: 1.3; }
-.fp-status { font: 700 0.66rem var(--pixel); color: var(--muted); text-transform: uppercase; white-space: nowrap; }
+.fp-status { font: 700 0.76rem var(--pixel); color: var(--muted); text-transform: uppercase; white-space: nowrap; }
 .fp-m.caught .fp-status { color: var(--ink); }
 .fp-m.caught .fp-status b { color: var(--ok); }
 .fp-more { text-align: right; }
-.fp-more a { color: inherit; font: 700 0.72rem var(--pixel); text-transform: uppercase; text-underline-offset: 3px; }
+.fp-more a { color: inherit; font: 700 0.83rem var(--pixel); text-transform: uppercase; text-underline-offset: 3px; }
 
 /* ---- new-catch reveal ----------------------------------------------------------------------- */
 
@@ -1030,7 +983,7 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
   animation: pop 0.45s steps(4);
 }
 @keyframes pop { 0% { transform: scale(0.4); } 100% { transform: scale(1); } }
-.reveal-kicker { font: 700 1.6rem/1 var(--pixel); text-align: center; color: var(--cursor); letter-spacing: 0.06em; animation: blink 0.9s steps(2) 3; }
+.reveal-kicker { font: 700 1.84rem/1 var(--pixel); text-align: center; color: var(--cursor); letter-spacing: 0.06em; animation: blink 0.9s steps(2) 3; }
 .reveal-name { text-align: center; font-size: 1.3rem; font-weight: 700; }
 .reveal-btns { display: flex; justify-content: center; gap: 10px; }
 .sparkle {
@@ -1064,7 +1017,7 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
 
 .logbook { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
 .lb-entry .textbox p + p { margin-top: 10px; }
-.report-more { display: block; margin: 10px 0 0 auto; color: var(--muted); font: 700 0.72rem var(--pixel); text-transform: uppercase; text-decoration-color: currentColor; }
+.report-more { display: block; margin: 10px 0 0 auto; color: var(--muted); font: 700 0.83rem var(--pixel); text-transform: uppercase; text-decoration-color: currentColor; }
 .report-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
 .report-actions .report-more { margin: 0 0 0 auto; }
 .report-actions #report-voice:empty { display: none; }
@@ -1072,7 +1025,7 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
 /* ---- the captain's readout ---------------------------------------------------------------- */
 
 .voice-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 8px 14px; border: 3px solid var(--edge);
-  background: var(--gold); color: #1c2b4f; font: 700 0.72rem var(--pixel); text-transform: uppercase; letter-spacing: 0.04em;
+  background: var(--gold); color: #1c2b4f; font: 700 0.83rem var(--pixel); text-transform: uppercase; letter-spacing: 0.04em;
   box-shadow: 3px 3px 0 var(--edge); cursor: pointer; }
 .voice-btn:hover { filter: brightness(1.05); }
 .voice-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--edge); }
@@ -1093,7 +1046,7 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
 .credits .win-title { padding-right: 44px; }
 .credit-list { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; font-size: 0.92rem; }
 .credit-list a { color: inherit; }
-.credit-list .credit-h { margin-top: 10px; font: 700 0.75rem var(--pixel); text-transform: uppercase; }
+.credit-list .credit-h { margin-top: 10px; font: 700 0.86rem var(--pixel); text-transform: uppercase; }
 
 /* ---- footer ---------------------------------------------------------------------------------- */
 
@@ -1108,7 +1061,7 @@ canvas.log-pic.badge-art { width: 40px; height: 34px; justify-self: center; bord
   color: var(--ink);
   font-size: 0.95rem;
 }
-.foot p, .foot .link { font: 700 0.72rem/1.5 var(--pixel); text-transform: uppercase; color: var(--muted); }
+.foot p, .foot .link { font: 700 0.83rem/1.5 var(--pixel); text-transform: uppercase; color: var(--muted); }
 .foot .link { justify-self: start; text-decoration-color: currentColor; }
 
 /* ---- small screens ---------------------------------------------------------------------------- */
