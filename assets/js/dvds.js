@@ -73,6 +73,7 @@
     close: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>',
     drive: '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="1.6" y="4.2" width="12.8" height="7.6" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="11.4" cy="8" r="1.1" fill="currentColor"/><path d="M4.2 8h3.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
     shelf: '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1.8 13.6h12.4M3.6 12.8V4.6M6.2 12.8V3.4M8.8 12.8V5.6M10.8 12.8l2.2-7.6"/></g></svg>',
+    dice: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><g fill="currentColor"><circle cx="8.5" cy="8.5" r="1.6"/><circle cx="15.5" cy="8.5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="8.5" cy="15.5" r="1.6"/><circle cx="15.5" cy="15.5" r="1.6"/></g></svg>',
     box: '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M2 5.2h12v8.4H2zM1.6 2.6h12.8v2.6H1.6z"/><path d="M6.4 8.2h3.2" stroke-linecap="round"/></g></svg>'
   };
 
@@ -793,8 +794,16 @@
     return cover(it.title, it.year, FORMAT_BADGE[f] || f.toUpperCase(), 'band-' + cls(f));
   }
 
+  /* Added in the last week: it gets the red "New" sticker. */
+  var NEW_SINCE = (function () {
+    var d = new Date(Date.now() - 7 * 864e5);
+    var two = function (n) { return (n < 10 ? '0' : '') + n; };
+    return d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate());
+  })();
+  function isNew(it) { return !!it.added && it.added >= NEW_SINCE; }
+
   function row(it, terms) {
-    return '<li><button class="row" type="button" data-id="' + esc(it.id) + '">' +
+    return '<li' + (isNew(it) ? ' class="is-new"' : '') + '><button class="row" type="button" data-id="' + esc(it.id) + '">' +
       caseCover(it) +
       '<span class="row-main"><span class="row-title">' + highlight(it.title, terms) + '</span>' + subLine(it) + '</span>' +
       '<span class="row-end">' + (it.year ? '<span class="row-year">' + it.year + '</span>' : '') +
@@ -984,7 +993,7 @@
     var bucket = [];
     function flush() {
       if (!bucket.length) { return; }
-      html += '<section class="group"><h2>' + esc(current) + '</h2>' + shelf(bucket) + '</section>';
+      html += '<section class="group"><h2 data-count="' + mergeCopies(bucket).length + '">' + esc(current) + '</h2>' + shelf(bucket) + '</section>';
       bucket = [];
     }
     shown.forEach(function (it) {
@@ -1433,7 +1442,21 @@
     if (canDialog) { detail.close(); } else { detail.removeAttribute('open'); }
   }
 
+  /* "Pick tonight's movie": a random title from what the filters show. */
+  var lastPick = null;
+  function pickTonight() {
+    var pool = mergeCopies(items.filter(passes));
+    if (!pool.length) { return; }
+    var it;
+    do { it = pool[Math.floor(Math.random() * pool.length)]; } while (pool.length > 1 && it.id === lastPick);
+    lastPick = it.id;
+    openDetail(it.id, true);
+  }
+  var pickBtn = $('dvd-pick');
+  if (pickBtn) { pickBtn.addEventListener('click', pickTonight); }
+
   detail.addEventListener('click', function (e) {
+    if (e.target.closest('[data-again]')) { pickTonight(); return; }
     if (e.target === detail || e.target.closest('[data-close]')) { closeDetail(); }
   });
 
@@ -1442,7 +1465,8 @@
   }
 
   function showSheet() {
-    if (canDialog) { detail.showModal(); } else { detail.setAttribute('open', ''); }
+    if (canDialog) { if (!detail.open) { detail.showModal(); } } else { detail.setAttribute('open', ''); }
+    detail.scrollTop = 0;   /* the sheet is reused: start each title at the top */
   }
 
   /* A title you don't own yet (Hunt list or Staff pick): what it is,
@@ -1476,11 +1500,12 @@
       '<button class="icon-btn" type="button" data-close aria-label="Close">' + ICON.close + '</button></div>' +
       '<p class="sheet-status">' + esc(status) + ' \u00b7 not in your collection</p>' +
       '<dl class="facts">' + facts + '</dl>' +
-      '<div class="sheet-actions"><a class="btn-quiet" href="' + esc(imdbUrl(lookup)) + '" target="_blank" rel="noopener noreferrer">Look it up on IMDb</a></div>';
+      '<div class="sheet-actions"><a class="btn-quiet" href="' + esc(imdbUrl(lookup)) + '" target="_blank" rel="noopener noreferrer">Look it up on IMDb</a></div>' +
+      '<p class="sheet-fine">Not in stock yet \u00b7 Keep hunting</p>';
     showSheet();
   }
 
-  function openDetail(id) {
+  function openDetail(id, feature) {
     var it = byId.get(id);
     if (!it) { return; }
     var facts = '';
@@ -1504,12 +1529,15 @@
     if (it.added) { facts += '<dt>Added</dt><dd>' + esc(prettyDate(it.added)) + '</dd>'; }
 
     detailBody.innerHTML =
-      '<div class="sheet-case">' + caseCover(it) + '</div>' +
+      '<div class="sheet-case">' + (feature ? '<p class="feature-tag">Tonight\u2019s feature</p>' : '') + caseCover(it) + '</div>' +
       '<div class="sheet-head"><h2 id="dvd-detail-title">' + esc(it.title) + '</h2>' +
       '<button class="icon-btn" type="button" data-close aria-label="Close">' + ICON.close + '</button></div>' +
-      '<div class="detail-fmts">' + badges(it) + '</div>' +
+      '<div class="detail-fmts">' + badges(it) + (isNew(it) ? '<span class="new-pill">New arrival</span>' : '') + '</div>' +
       '<dl class="facts">' + facts + '</dl>' +
-      '<div class="sheet-actions"><a class="btn-quiet" href="' + esc(imdbUrl(it)) + '" target="_blank" rel="noopener noreferrer">Look it up on IMDb</a></div>';
+      '<div class="sheet-actions">' +
+      (feature ? '<button class="btn-quiet btn-loud" type="button" data-again>' + ICON.dice + 'Pick another</button>' : '') +
+      '<a class="btn-quiet" href="' + esc(imdbUrl(it)) + '" target="_blank" rel="noopener noreferrer">Look it up on IMDb</a></div>' +
+      '<p class="sheet-fine">No late fees \u00b7 Be kind, rewind</p>';
     showSheet();
   }
 
