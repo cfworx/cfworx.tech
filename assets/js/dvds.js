@@ -1067,12 +1067,9 @@
   function renderHunt() {
     var hunting = huntingSets();
     var complete = sets.filter(function (x) { return !x.missing; }).sort(setOrder);
-    var toFind = hunting.reduce(function (n, x) { return n + x.missing; }, 0);
     var html = '';
     if (hunting.length) {
-      html += '<p class="hunt-intro">' + plural(toFind, 'title') + ' to find across ' + plural(hunting.length, 'series', 'series') +
-        ', A to Z.</p>' +
-        '<div class="search hunt-find"><label class="visually-hidden" for="hunt-find">Find a series on the hunt list</label>' +
+      html += '<div class="search hunt-find"><label class="visually-hidden" for="hunt-find">Find a series on the hunt list</label>' +
         '<svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></g></svg>' +
         '<input id="hunt-find" type="search" placeholder="Find a series\u2026" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="search"></div>' +
         '<p class="hunt-intro" id="hunt-none" hidden>No series on the list matches that.</p>';
