@@ -11,7 +11,7 @@
 #   films    { title: "...", year: 2004 }
 
 - shelf: "Frat Pack comedies"
-  because: ["Blades of Glory", "Wedding Crashers", "The 40-Year-Old Virgin", "Dodgeball: A True Underdog Story", "Knocked Up", "I Love You, Man", "Forgetting Sarah Marshall", "Dinner for Schmucks", "Couples Retreat"]
+  because: ["Blades of Glory", "Wedding Crashers", "The 40-Year-Old Virgin", "Dodgeball: A True Underdog Story", "Knocked Up", "I Love You, Man", "Forgetting Sarah Marshall", "Dinner for Schmucks", "Couples Retreat", "Tropic Thunder", "Anchorman: The Legend of Ron Burgundy", "Talladega Nights: The Ballad of Ricky Bobby", "Old School"]
   films:
     - { title: "Anchorman: The Legend of Ron Burgundy", year: 2004 }
     - { title: "Talladega Nights: The Ballad of Ricky Bobby", year: 2006 }
@@ -25,9 +25,12 @@
     - { title: "The Other Guys", year: 2010 }
     - { title: "Get Him to the Greek", year: 2010 }
     - { title: "Hot Rod", year: 2007 }
+    - { title: "Walk Hard: The Dewey Cox Story", year: 2007 }
+    - { title: "Semi-Pro", year: 2008 }
+    - { title: "Starsky & Hutch", year: 2004 }
 
 - shelf: "Sandler, Spade & friends"
-  because: ["Big Daddy", "Mr. Deeds", "Joe Dirt", "Bio-Dome", "Superstar", "Fat Albert"]
+  because: ["Big Daddy", "Mr. Deeds", "Joe Dirt", "Bio-Dome", "Superstar", "Fat Albert", "You Don't Mess with the Zohan"]
   films:
     - { title: "Happy Gilmore", year: 1996 }
     - { title: "Billy Madison", year: 1995 }
@@ -37,6 +40,9 @@
     - { title: "Tommy Boy", year: 1995 }
     - { title: "Deuce Bigalow: Male Gigolo", year: 1999 }
     - { title: "Grown Ups", year: 2010 }
+    - { title: "Click", year: 2006 }
+    - { title: "The Longest Yard", year: 2005 }
+    - { title: "Anger Management", year: 2003 }
 
 - shelf: "Road trips & party comedies"
   because: ["Super Troopers", "Beerfest", "EuroTrip", "Orange County", "Detroit Rock City", "Napoleon Dynamite", "Nacho Libre", "Reno 911!: Miami"]
@@ -66,7 +72,7 @@
     - { title: "Friends with Benefits", year: 2011 }
 
 - shelf: "Stallone, Statham & the action aisle"
-  because: ["The Expendables", "Transporter 2", "Rocky Balboa", "Universal Soldier: The Return", "Tears of the Sun", "Max Payne", "Miami Vice", "Phone Booth"]
+  because: ["The Expendables", "Transporter 2", "Rocky Balboa", "Universal Soldier: The Return", "Tears of the Sun", "Max Payne", "Miami Vice", "Phone Booth", "Collateral Damage", "Shooter", "xXx", "Ballistic: Ecks vs. Sever"]
   films:
     - { title: "First Blood", year: 1982 }
     - { title: "Cliffhanger", year: 1993 }
@@ -79,9 +85,13 @@
     - { title: "Heat", year: 1995 }
     - { title: "Shooter", year: 2007 }
     - { title: "The Rundown", year: 2003 }
+    - { title: "Commando", year: 1985 }
+    - { title: "Eraser", year: 1996 }
+    - { title: "S.W.A.T.", year: 2003 }
+    - { title: "Con Air", year: 1997 }
 
 - shelf: "War stories"
-  because: ["Platoon", "Jarhead", "Lone Survivor", "American Sniper", "Tears of the Sun", "Pain & Gain"]
+  because: ["Platoon", "Jarhead", "Lone Survivor", "American Sniper", "Tears of the Sun", "Pain & Gain", "Black Hawk Down", "The Patriot", "Sniper 2"]
   films:
     - { title: "Black Hawk Down", year: 2001 }
     - { title: "Saving Private Ryan", year: 1998 }
@@ -91,9 +101,12 @@
     - { title: "Hacksaw Ridge", year: 2016 }
     - { title: "Fury", year: 2014 }
     - { title: "13 Hours: The Secret Soldiers of Benghazi", year: 2016 }
+    - { title: "Behind Enemy Lines", year: 2001 }
+    - { title: "Enemy at the Gates", year: 2001 }
+    - { title: "Windtalkers", year: 2002 }
 
 - shelf: "Sci-fi & disaster"
-  because: ["I Am Legend", "Deep Impact", "The Perfect Storm", "Starship Troopers", "The Terminator", "The Matrix Reloaded", "Avatar", "Star Trek"]
+  because: ["I Am Legend", "Deep Impact", "The Perfect Storm", "Starship Troopers", "The Terminator", "The Matrix Reloaded", "Avatar", "Star Trek", "War of the Worlds", "The Chronicles of Riddick", "Transformers: Revenge of the Fallen", "King Kong", "Godzilla"]
   films:
     - { title: "Armageddon", year: 1998 }
     - { title: "Independence Day", year: 1996 }
@@ -105,6 +118,53 @@
     - { title: "District 9", year: 2009 }
     - { title: "Edge of Tomorrow", year: 2014 }
     - { title: "Pacific Rim", year: 2013 }
+    - { title: "I, Robot", year: 2004 }
+    - { title: "The Fifth Element", year: 1997 }
+    - { title: "Cloverfield", year: 2008 }
+
+- shelf: "Spies & secret agents"
+  because: ["Casino Royale", "Die Another Day", "Licence to Kill", "The Bourne Identity", "Spy Game", "The Recruit", "The Jackal", "The Peacemaker", "The Manchurian Candidate", "Bad Company", "I Spy", "The Tuxedo"]
+  films:
+    - { title: "Mission: Impossible", year: 1996 }
+    - { title: "Enemy of the State", year: 1998 }
+    - { title: "Ronin", year: 1998 }
+    - { title: "True Lies", year: 1994 }
+    - { title: "Patriot Games", year: 1992 }
+    - { title: "Clear and Present Danger", year: 1994 }
+    - { title: "The Sum of All Fears", year: 2002 }
+    - { title: "Body of Lies", year: 2008 }
+    - { title: "Salt", year: 2010 }
+    - { title: "Mr. & Mrs. Smith", year: 2005 }
+    - { title: "Kingsman: The Secret Service", year: 2014 }
+    - { title: "Austin Powers: International Man of Mystery", year: 1997 }
+
+- shelf: "Buddy comedies & bad ideas"
+  because: ["The Hangover", "21 Jump Street", "Get Hard", "Wild Hogs", "Bridesmaids", "Hot Tub Time Machine", "Paul Blart: Mall Cop 2", "Beer League", "The Other Guys"]
+  films:
+    - { title: "Due Date", year: 2010 }
+    - { title: "Horrible Bosses", year: 2011 }
+    - { title: "We're the Millers", year: 2013 }
+    - { title: "The Heat", year: 2013 }
+    - { title: "This Is the End", year: 2013 }
+    - { title: "Neighbors", year: 2014 }
+    - { title: "Ride Along", year: 2014 }
+    - { title: "Central Intelligence", year: 2016 }
+    - { title: "Daddy's Home", year: 2015 }
+    - { title: "Game Night", year: 2018 }
+
+- shelf: "Modern classics"
+  because: ["The Shawshank Redemption", "True Grit", "Scarface", "Blood Diamond", "Garden State", "Black Hawk Down", "Chicago"]
+  films:
+    - { title: "The Green Mile", year: 1999 }
+    - { title: "Forrest Gump", year: 1994 }
+    - { title: "Good Will Hunting", year: 1997 }
+    - { title: "Gladiator", year: 2000 }
+    - { title: "Catch Me If You Can", year: 2002 }
+    - { title: "Cast Away", year: 2000 }
+    - { title: "The Departed", year: 2006 }
+    - { title: "No Country for Old Men", year: 2007 }
+    - { title: "Gran Torino", year: 2008 }
+    - { title: "Goodfellas", year: 1990 }
 
 - shelf: "Quests & chosen ones"
   because: ["The Hunger Games", "Divergent", "The Maze Runner", "Percy Jackson & the Olympians: The Lightning Thief", "Twilight", "Harry Potter and the Sorcerer's Stone", "The Lord of the Rings: The Fellowship of the Ring"]

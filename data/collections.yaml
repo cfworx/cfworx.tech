@@ -596,3 +596,85 @@
     - { title: "Tomorrow Never Dies", year: 1997 }
     - { title: "The World Is Not Enough", year: 1999 }
     - { title: "Die Another Day", year: 2002 }
+
+- name: "21 Jump Street"
+  films:
+    - { title: "21 Jump Street", year: 2012 }
+    - { title: "22 Jump Street", year: 2014 }
+
+- name: "The Hangover"
+  films:
+    - { title: "The Hangover", year: 2009 }
+    - { title: "The Hangover Part II", year: 2011 }
+    - { title: "The Hangover Part III", year: 2013 }
+
+- name: "James Bond (Timothy Dalton)"
+  films:
+    - { title: "The Living Daylights", year: 1987 }
+    - { title: "Licence to Kill", year: 1989 }
+
+- name: "Legally Blonde"
+  films:
+    - { title: "Legally Blonde", year: 2001 }
+    - { title: "Legally Blonde 2: Red, White & Blonde", year: 2003 }
+
+- name: "Paul Blart: Mall Cop"
+  films:
+    - { title: "Paul Blart: Mall Cop", year: 2009 }
+    - { title: "Paul Blart: Mall Cop 2", year: 2015 }
+
+- name: "Sniper"
+  films:
+    - { title: "Sniper", year: 1993 }
+    - { title: "Sniper 2", year: 2002 }
+    - { title: "Sniper 3", year: 2004 }
+    - { title: "Sniper: Reloaded", year: 2011 }
+    - { title: "Sniper: Legacy", year: 2014 }
+    - { title: "Sniper: Ghost Shooter", year: 2016 }
+    - { title: "Sniper: Ultimate Kill", year: 2017 }
+    - { title: "Sniper: Assassin's End", year: 2020 }
+    - { title: "Sniper: Rogue Mission", year: 2022 }
+    - { title: "Sniper: G.R.I.T.", year: 2023 }
+
+- name: "Riddick"
+  films:
+    - { title: "Pitch Black", year: 2000 }
+    - { title: "The Chronicles of Riddick", year: 2004 }
+    - { title: "Riddick", year: 2013 }
+
+- name: "Transformers"
+  films:
+    - { title: "Transformers", year: 2007 }
+    - { title: "Transformers: Revenge of the Fallen", year: 2009 }
+    - { title: "Transformers: Dark of the Moon", year: 2011 }
+    - { title: "Transformers: Age of Extinction", year: 2014 }
+    - { title: "Transformers: The Last Knight", year: 2017 }
+    - { title: "Bumblebee", year: 2018 }
+    - { title: "Transformers: Rise of the Beasts", year: 2023 }
+
+- name: "xXx"
+  films:
+    - { title: "xXx", year: 2002 }
+    - { title: "xXx: State of the Union", year: 2005 }
+    - { title: "xXx: Return of Xander Cage", year: 2017 }
+
+- name: "Hot Tub Time Machine"
+  films:
+    - { title: "Hot Tub Time Machine", year: 2010 }
+    - { title: "Hot Tub Time Machine 2", year: 2015 }
+
+- name: "Dragon Ball Z"
+  show:
+    title: "Dragon Ball Z"
+    year: 1989
+    seasons: 9
+    names:
+      - "Saiyan Saga"
+      - "Namek Saga"
+      - "Frieza Saga"
+      - "Androids Saga"
+      - "Cell Saga"
+      - "Cell Games Saga"
+      - "World Tournament Saga"
+      - "Majin Buu Saga"
+      - "Kid Buu Saga"

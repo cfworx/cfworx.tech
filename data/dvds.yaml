@@ -42,6 +42,7 @@
 # Movies
 - { title: "10 Things I Hate About You", year: 1999, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-31" }
 - { title: "2 Fast 2 Furious", year: 2003, format: dvd, location: "hdd01", genre: "Action", added: "2026-10-31" }
+- { title: "21 Jump Street", year: 2012, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-11-12" }
 - { title: "28 Days", year: 2000, format: dvd, location: "hdd01", genre: "Drama", added: "2026-10-22" }
 - { title: "The 40-Year-Old Virgin", year: 2005, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-20" }
 - { title: "American Sniper", year: 2014, format: dvd, location: "hdd01", genre: "War", added: "2026-10-22" }
@@ -51,11 +52,14 @@
 - { title: "Arizona Bound", year: 1941, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
 - { title: "Assassin's Creed", year: 2016, format: dvd, location: "hdd01", genre: "Action", added: "2026-10-23" }
 - { title: "Avatar", year: 2009, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-23" }
+- { title: "Bad Company", year: 2002, format: dvd, location: "hdd01", genre: "Action", added: "2026-11-13" }
 - { title: "Ballistic: Ecks vs. Sever", year: 2002, format: dvd, location: "hdd01", genre: "Action", added: "2026-11-10" }
+- { title: "Beer League", year: 2006, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-11-12" }
 - { title: "Beerfest", year: 2006, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-22" }
 - { title: "Below the Border", year: 1942, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
 - { title: "Big Daddy", year: 1999, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-21" }
 - { title: "Bio-Dome", year: 1996, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-20" }
+- { title: "Black Hawk Down", year: 2001, format: dvd, location: "hdd01", genre: "War", added: "2026-11-11" }
 - { title: "Blades of Glory", year: 2007, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-22" }
 - { title: "Blood Diamond", year: 2006, format: dvd, location: "hdd01", genre: "Drama", added: "2026-10-31" }
 - { title: "Blue Steel", year: 1934, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-20" }
@@ -65,12 +69,16 @@
 - { title: "The Bourne Legacy", year: 2012, format: dvd, location: "hdd01", genre: "Action", added: "2026-11-10" }
 - { title: "The Bourne Supremacy", year: 2004, format: dvd, location: "hdd01", genre: "Action", added: "2026-10-31" }
 - { title: "The Bourne Ultimatum", year: 2007, format: dvd, location: "hdd01", genre: "Action", added: "2026-11-10" }
+- { title: "Bridesmaids", year: 2011, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-11-11" }
 - { title: "Bridget Jones's Diary", year: 2001, format: dvd, location: "hdd01", genre: "Romance", added: "2026-10-22" }
 - { title: "Call the Mesquiteers", year: 1938, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
+- { title: "Casino Royale", year: 2006, format: dvd, location: "hdd01", genre: "Action", added: "2026-11-15" }
 - { title: "Charlie's Angels", year: 2000, format: dvd, location: "hdd01", genre: "Action", added: "2026-11-01" }
 - { title: "Chicago", year: 2002, format: dvd, location: "hdd01", genre: "Musical", added: "2026-11-01" }
 - { title: "Christmas with the Kranks", year: 2004, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-22" }
+- { title: "The Chronicles of Riddick", year: 2004, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-11-12" }
 - { title: "Clueless", year: 1995, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-22" }
+- { title: "Collateral Damage", year: 2002, format: dvd, location: "hdd01", genre: "Action", added: "2026-11-12" }
 - { title: "Come On, Cowboys", year: 1937, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
 - { title: "Confessions of a Teenage Drama Queen", year: 2004, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-22" }
 - { title: "Couples Retreat", year: 2009, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-22" }
@@ -100,6 +108,8 @@
 - { title: "Forgetting Sarah Marshall", year: 2008, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-23" }
 - { title: "Forks Over Knives", year: 2011, format: dvd, location: "hdd01", genre: "Documentary", added: "2026-10-20" }
 - { title: "Gangster Squad", year: 2013, format: dvd, location: "hdd01", genre: "Crime", added: "2026-10-24" }
+- { title: "Garden State", year: 2004, format: dvd, location: "hdd01", genre: "Drama", added: "2026-11-12" }
+- { title: "Get Hard", year: 2015, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-11-14" }
 - { title: "Ghost Town Gold", year: 1936, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
 - { title: "Ghost Town Law", year: 1942, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
 - { title: "Godzilla", year: 1998, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-31" }
@@ -108,6 +118,8 @@
 - { title: "Grease", year: 1978, format: dvd, location: "hdd01", genre: "Musical", added: "2026-10-24" }
 - { title: "The Gunman from Bodie", year: 1941, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
 - { title: "Gunsmoke Ranch", year: 1937, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
+- { title: "The Hangover", year: 2009, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-11-12" }
+- { title: "The Hangover Part II", year: 2011, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-11-14" }
 - { title: "Hell Town", year: 1937, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
 - { title: "Here Comes the Boom", year: 2012, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-31" }
 - { title: "His Private Secretary", year: 1933, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-21" }
@@ -115,6 +127,7 @@
 - { title: "Hocus Pocus", year: 1993, format: dvd, location: "hdd01", genre: "Family", added: "2026-10-21" }
 - { title: "Hollow Man", year: 2000, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-31" }
 - { title: "Hook", year: 1991, format: dvd, location: "hdd01", genre: "Family", added: "2026-10-22" }
+- { title: "Hot Tub Time Machine", year: 2010, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-11-13" }
 - { title: "The Hunger Games", year: 2012, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-20" }
 - { title: "The Hunger Games: Catching Fire", year: 2013, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-20" }
 - { title: "The Hunger Games: Mockingjay – Part 1", year: 2014, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-11-01" }
@@ -122,16 +135,21 @@
 - { title: "The Hurricane Express", year: 1932, format: dvd, location: "hdd01", genre: "Action", added: "2026-10-21" }
 - { title: "I Am Legend", year: 2007, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-20" }
 - { title: "I Love You, Man", year: 2009, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-21" }
+- { title: "I Spy", year: 2002, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-11-12" }
 - { title: "Insurgent", year: 2015, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-31" }
+- { title: "The Jackal", year: 1997, format: dvd, location: "hdd01", genre: "Thriller", added: "2026-11-14" }
 - { title: "Jarhead", year: 2005, format: dvd, location: "hdd01", genre: "War", added: "2026-10-20" }
 - { title: "Joe Dirt", year: 2001, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-20" }
 - { title: "Juno", year: 2007, format: dvd, location: "hdd01", genre: "Drama", added: "2026-10-24" }
 - { title: "Jurassic Park III", year: 2001, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-20" }
 - { title: "The Kid's Last Ride", year: 1941, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
+- { title: "King Kong", year: 2005, format: dvd, location: "hdd01", genre: "Action", added: "2026-11-14" }
 - { title: "A Knight's Tale", year: 2001, format: dvd, location: "hdd01", genre: "Action", added: "2026-11-03" }
 - { title: "Knocked Up", year: 2007, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-21" }
 - { title: "Land of the Lost", year: 2009, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-22" }
 - { title: "The Lawless Frontier", year: 1934, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-20" }
+- { title: "Legally Blonde 2: Red, White & Blonde", year: 2003, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-11-11" }
+- { title: "Licence to Kill", year: 1989, format: dvd, location: "hdd01", genre: "Action", added: "2026-11-10" }
 - { title: "Little Miss Sunshine", year: 2006, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-20" }
 - { title: "Lone Survivor", year: 2013, format: dvd, location: "hdd01", genre: "War", added: "2026-10-21" }
 - { title: "The Lord of the Rings: The Fellowship of the Ring", year: 2001, format: dvd, location: "hdd01", genre: "Fantasy", added: "2026-10-20" }
@@ -139,6 +157,7 @@
 - { title: "The Lord of the Rings: The Two Towers", year: 2002, format: dvd, location: "hdd01", genre: "Fantasy", added: "2026-11-10" }
 - { title: "The Lucky Texan", year: 1934, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-20" }
 - { title: "The Man from Utah", year: 1934, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-20" }
+- { title: "The Manchurian Candidate", year: 2004, format: dvd, location: "hdd01", genre: "Thriller", added: "2026-11-11" }
 - { title: "The Matrix Reloaded", year: 2003, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-31" }
 - { title: "Max Payne", year: 2008, format: dvd, location: "hdd01", genre: "Action", added: "2026-10-31" }
 - { title: "The Maze Runner", year: 2014, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-24" }
@@ -158,6 +177,8 @@
 - { title: "Pain & Gain", year: 2013, format: dvd, location: "hdd01", genre: "Crime", added: "2026-10-21" }
 - { title: "Paradise Canyon", year: 1935, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
 - { title: "The Patriot", year: 2000, format: dvd, location: "hdd01", genre: "War", added: "2026-11-01" }
+- { title: "Paul Blart: Mall Cop 2", year: 2015, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-11-11" }
+- { title: "The Peacemaker", year: 1997, format: dvd, location: "hdd01", genre: "Action", added: "2026-11-12" }
 - { title: "Percy Jackson & the Olympians: The Lightning Thief", year: 2010, format: dvd, location: "hdd01", genre: "Fantasy", added: "2026-10-24" }
 - { title: "The Perfect Storm", year: 2000, format: dvd, location: "hdd01", genre: "Drama", added: "2026-10-20" }
 - { title: "Phone Booth", year: 2002, format: dvd, location: "hdd01", genre: "Thriller", added: "2026-10-24" }
@@ -188,11 +209,13 @@
 - { title: "Sagebrush Trail", year: 1933, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
 - { title: "Scarface", year: 1983, format: dvd, location: "hdd01", genre: "Crime", added: "2026-10-31" }
 - { title: "The Shadow of the Eagle", year: 1932, format: dvd, location: "hdd01", genre: "Action", added: "2026-10-21" }
+- { title: "The Shawshank Redemption", year: 1994, format: dvd, location: "hdd01", genre: "Drama", added: "2026-11-14" }
 - { title: "Shooter", year: 2007, format: dvd, location: "hdd01", genre: "Action", added: "2026-11-10" }
 - { title: "Silver Linings Playbook", year: 2012, format: dvd, location: "hdd01", genre: "Romance", added: "2026-10-23" }
 - { title: "Sin City", year: 2005, format: dvd, location: "hdd01", genre: "Crime", added: "2026-11-01" }
 - { title: "Skyfall", year: 2012, format: dvd, location: "hdd01", genre: "Action", added: "2026-10-21" }
 - { title: "Slumdog Millionaire", year: 2008, format: dvd, location: "hdd01", genre: "Drama", added: "2026-10-21" }
+- { title: "Sniper 2", year: 2002, format: dvd, location: "hdd01", genre: "Action", added: "2026-11-12" }
 - { title: "Spider-Man", year: 2002, format: dvd, location: "hdd01", genre: "Action", added: "2026-10-21" }
 - { title: "Spy Game", year: 2001, format: dvd, location: "hdd01", genre: "Thriller", added: "2026-11-10" }
 - { title: "The Star Packer", year: 1934, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-20" }
@@ -203,6 +226,7 @@
 - { title: "Star Wars: Episode II – Attack of the Clones", year: 2002, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-11-01" }
 - { title: "Star Wars: Episode III – Revenge of the Sith", year: 2005, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-21" }
 - { title: "Starship Troopers", year: 1997, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-31" }
+- { title: "Starship Troopers 2: Hero of the Federation", year: 2004, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-11-15" }
 - { title: "Starship Troopers 3: Marauder", year: 2008, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-10-21" }
 - { title: "Super 8", year: 2011, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-11-01" }
 - { title: "Super Troopers", year: 2001, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-21" }
@@ -220,19 +244,28 @@
 - { title: "The Three Stooges Meet Hercules", year: 1962, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-20" }
 - { title: "The Trail Beyond", year: 1934, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-20" }
 - { title: "Trail of the Silver Spurs", year: 1941, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
+- { title: "Transformers: Revenge of the Fallen", year: 2009, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-11-14" }
 - { title: "Transporter 2", year: 2005, format: dvd, location: "hdd01", genre: "Action", added: "2026-10-24" }
+- { title: "Tropic Thunder", year: 2008, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-11-11" }
+- { title: "True Grit", year: 2010, format: dvd, location: "hdd01", genre: "Western", added: "2026-11-15" }
+- { title: "The Tuxedo", year: 2002, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-11-14" }
 - { title: "Twilight", year: 2008, format: dvd, location: "hdd01", genre: "Fantasy", added: "2026-10-21" }
 - { title: "The Twilight Saga: Breaking Dawn – Part 1", year: 2011, format: dvd, location: "hdd01", genre: "Fantasy", added: "2026-10-22" }
 - { title: "The Twilight Saga: Eclipse", year: 2010, format: dvd, location: "hdd01", genre: "Fantasy", added: "2026-10-22" }
 - { title: "Two-Fisted Law", year: 1932, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-20" }
 - { title: "Universal Soldier: The Return", year: 1999, format: dvd, location: "hdd01", genre: "Action", added: "2026-10-31" }
 - { title: "Walk the Line", year: 2005, format: dvd, location: "hdd01", genre: "Drama", added: "2026-10-21" }
+- { title: "War of the Worlds", year: 2005, format: dvd, location: "hdd01", genre: "Sci-Fi", added: "2026-11-11" }
 - { title: "Wedding Crashers", year: 2005, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-10-24" }
 - { title: "West of the Divide", year: 1934, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
+- { title: "Wild Hogs", year: 2007, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-11-11" }
 - { title: "Winds of the Wasteland", year: 1936, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
 - { title: "Wonder", year: 2017, format: dvd, location: "hdd01", genre: "Drama", added: "2026-10-23" }
 - { title: "Wrangler's Roost", year: 1941, format: dvd, location: "hdd01", genre: "Western", added: "2026-10-21" }
 - { title: "X2: X-Men United", year: 2003, format: dvd, location: "hdd01", genre: "Action", added: "2026-10-31" }
+- { title: "xXx", year: 2002, format: dvd, location: "hdd01", genre: "Action", added: "2026-11-14" }
+- { title: "xXx: State of the Union", year: 2005, format: dvd, location: "hdd01", genre: "Action", added: "2026-11-14" }
+- { title: "You Don't Mess with the Zohan", year: 2008, format: dvd, location: "hdd01", genre: "Comedy", added: "2026-11-13" }
 
 # Kids' movies
 - { title: "101 Dalmatians", year: 1961, format: dvd, location: "hdd01", kids: true, genre: "Family", added: "2026-11-01" }
@@ -290,6 +323,7 @@
 # TV
 - { title: "Arrested Development", year: 2003, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Comedy", added: "2026-11-02" }
 - { title: "Dragon Ball", year: 1986, format: dvd, location: "hdd01", type: tv, seasons: "1", notes: "153 episodes", genre: "Action", added: "2026-11-05" }
+- { title: "Dragon Ball Z", year: 1989, format: dvd, location: "hdd01", type: tv, genre: "Action", added: "2026-11-15" }
 - { title: "Family Guy", year: 1999, format: dvd, location: "hdd01", type: tv, seasons: "1-2", genre: "Comedy", added: "2026-10-20" }
 - { title: "Game of Thrones", year: 2011, format: dvd, location: "hdd01", type: tv, seasons: "1", genre: "Fantasy", added: "2026-11-02" }
 - { title: "The IT Crowd", year: 2006, format: dvd, location: "hdd01", type: tv, seasons: "1-4", notes: "Plus specials", genre: "Comedy", added: "2026-11-02" }

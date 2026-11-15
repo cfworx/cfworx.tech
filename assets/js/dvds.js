@@ -803,6 +803,12 @@
   function isNew(it) { return !!it.added && it.added >= NEW_SINCE; }
 
   function row(it, terms) {
+    var avg = ratingAverage(copyKey(it));
+    if (avg) { return rowHtml(it, terms).replace('<span class="row-end">', '<span class="row-end"><span class="row-stars" title="Our rating">\u2605 ' + avg + '</span>'); }
+    return rowHtml(it, terms);
+  }
+
+  function rowHtml(it, terms) {
     return '<li' + (isNew(it) ? ' class="is-new"' : '') + '><button class="row" type="button" data-id="' + esc(it.id) + '">' +
       caseCover(it) +
       '<span class="row-main"><span class="row-title">' + highlight(it.title, terms) + '</span>' + subLine(it) + '</span>' +
@@ -1441,10 +1447,122 @@
     if (canDialog) { detail.close(); } else { detail.removeAttribute('open'); }
   }
 
+  /* ---- Cory's and Shana's star ratings ----------------------------------
+     Kept by /api/dvd-ratings. Anyone can see them; changing one needs
+     that person's password, remembered on this device once it works. */
+  var RATERS = [['cory', 'Cory'], ['shana', 'Shana']];
+  var ratings = {};
+  var pendingRating = null;
+
+  function ratingAverage(key) {
+    var r = ratings[key];
+    if (!r) { return ''; }
+    var vals = RATERS.map(function (p) { return r[p[0]]; }).filter(Boolean);
+    if (!vals.length) { return ''; }
+    var avg = vals.reduce(function (a, b) { return a + b; }, 0) / vals.length;
+    return String(Math.round(avg * 10) / 10);
+  }
+
+  function ratingsHtml(key, lockFor, message) {
+    var r = ratings[key] || {};
+    var html = '<h3>Our ratings</h3>';
+    RATERS.forEach(function (p) {
+      var mine = r[p[0]] || 0;
+      html += '<div class="rate-row"><span class="rate-name">' + p[1] + '</span>' +
+        '<span class="stars" role="group" aria-label="' + p[1] + '\u2019s rating">';
+      for (var n = 1; n <= 5; n++) {
+        html += '<button class="star' + (n <= mine ? ' is-on' : '') + '" type="button" data-who="' + p[0] + '" data-star="' + n +
+          '" aria-label="' + p[1] + ': ' + n + (n === 1 ? ' star' : ' stars') + '" aria-pressed="' + (n === mine) + '">\u2605</button>';
+      }
+      html += '</span><span class="rate-num">' + (mine ? mine + '/5' : 'Not yet') + '</span></div>';
+    });
+    if (lockFor) {
+      var name = RATERS.filter(function (p) { return p[0] === lockFor; })[0][1];
+      html += '<form class="rate-lock" id="dvd-rate-lock" autocomplete="off">' +
+        '<label for="dvd-rate-pw">' + name + '\u2019s password</label>' +
+        '<div class="rate-lock-row"><input id="dvd-rate-pw" type="password" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" required>' +
+        '<button class="btn-quiet" type="submit">Save</button></div></form>';
+    }
+    html += '<p class="rate-msg" role="status">' + esc(message || '') + '</p>';
+    return html;
+  }
+
+  function drawRatings(lockFor, message) {
+    var box = $('dvd-ratings');
+    if (!box) { return; }
+    box.innerHTML = ratingsHtml(box.dataset.key, lockFor, message);
+    if (lockFor) { var pw = $('dvd-rate-pw'); if (pw) { pw.focus(); } }
+  }
+
+  function savedPassword(who) {
+    try { return localStorage.getItem('dvd-rate-' + who) || ''; } catch (e) { return ''; }
+  }
+  function rememberPassword(who, pw) {
+    try { if (pw) { localStorage.setItem('dvd-rate-' + who, pw); } else { localStorage.removeItem('dvd-rate-' + who); } } catch (e) { /* fine */ }
+  }
+
+  function sendRating(job, password) {
+    drawRatings(null, 'Saving\u2026');
+    fetch('/api/dvd-ratings', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ who: job.who, password: password, key: job.key, stars: job.stars })
+    }).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (body) { return { status: res.status, body: body }; });
+    }).then(function (r) {
+      if (r.status === 200 && r.body.ratings) {
+        ratings = r.body.ratings;
+        rememberPassword(job.who, password);
+        pendingRating = null;
+        drawRatings(null, job.stars ? 'Saved.' : 'Rating cleared.');
+        render();
+      } else if (r.status === 403) {
+        rememberPassword(job.who, '');
+        pendingRating = job;
+        drawRatings(job.who, 'That password isn\u2019t right.');
+      } else {
+        drawRatings(null, (r.body && r.body.error) || 'Couldn\u2019t save that. Try again.');
+      }
+    }).catch(function () {
+      drawRatings(null, 'You\u2019re offline. Ratings need a connection.');
+    });
+  }
+
+  detailBody.addEventListener('click', function (e) {
+    var star = e.target.closest('.star');
+    var box = $('dvd-ratings');
+    if (!star || !box) { return; }
+    var who = star.dataset.who;
+    var n = parseInt(star.dataset.star, 10);
+    var mine = (ratings[box.dataset.key] || {})[who] || 0;
+    var job = { who: who, key: box.dataset.key, stars: n === mine ? 0 : n };   /* tap your rating again to clear it */
+    var pw = savedPassword(who);
+    if (pw) { sendRating(job, pw); } else { pendingRating = job; drawRatings(who, ''); }
+  });
+  detailBody.addEventListener('submit', function (e) {
+    if (e.target.id !== 'dvd-rate-lock') { return; }
+    e.preventDefault();
+    var pw = $('dvd-rate-pw');
+    if (pendingRating && pw && pw.value) { sendRating(pendingRating, pw.value); }
+  });
+
+  function loadRatings() {
+    fetch('/api/dvd-ratings', { cache: 'no-store' }).then(function (res) {
+      return res.ok ? res.json() : null;
+    }).then(function (body) {
+      if (body && body.ratings) {
+        ratings = body.ratings;
+        render();
+        if (detail.open) { drawRatings(); }
+      }
+    }).catch(function () { /* offline: the stars just stay empty */ });
+  }
+
   /* "Pick tonight's movie": a random title from what the filters show. */
   var lastPick = null;
   function pickTonight() {
-    var pool = mergeCopies(items.filter(passes));
+    /* Grown-up movie night: kids' titles only come up under the Kids filter. */
+    var pool = mergeCopies(items.filter(passes).filter(function (x) { return prefs.kind === 'kids' || !x.kids; }));
     if (!pool.length) { return; }
     var it;
     do { it = pool[Math.floor(Math.random() * pool.length)]; } while (pool.length > 1 && it.id === lastPick);
@@ -1533,6 +1651,7 @@
       '<button class="icon-btn" type="button" data-close aria-label="Close">' + ICON.close + '</button></div>' +
       '<div class="detail-fmts">' + badges(it) + (isNew(it) ? '<span class="new-pill">New arrival</span>' : '') + '</div>' +
       '<dl class="facts">' + facts + '</dl>' +
+      '<div class="ratings" id="dvd-ratings" data-key="' + esc(copyKey(it)) + '">' + ratingsHtml(copyKey(it)) + '</div>' +
       '<div class="sheet-actions">' +
       (feature ? '<button class="btn-quiet btn-loud" type="button" data-again>' + ICON.dice + 'Pick another</button>' : '') +
       '<a class="btn-quiet" href="' + esc(imdbUrl(it)) + '" target="_blank" rel="noopener noreferrer">Look it up on IMDb</a></div>' +
@@ -1750,6 +1869,7 @@
     clearBtn.hidden = false;
   }
   render();
+  loadRatings();
 
   var popped = false;
   try { popped = sessionStorage.getItem(POP_KEY) === '1'; sessionStorage.setItem(POP_KEY, '1'); } catch (e) { /* no storage: pop anyway */ }
