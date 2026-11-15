@@ -88,7 +88,8 @@ def scan_folder(path, tv):
     newest, size, copying, seasons = None, 0, False, []
     for dirpath, dirs, files in os.walk(path):
         if tv:
-            m = re.search(r"season\s*0*(\d+)", os.path.basename(dirpath), re.I)
+            # "Season 01" itself, or a disc folder inside it (Season 01/disc1)
+            m = re.search(r"season\s*0*(\d+)", os.path.relpath(dirpath, path), re.I)
             if m and int(m.group(1)) > 0 and any(f.lower().endswith(VIDEO) for f in files):  # Season 00 = specials
                 seasons.append(int(m.group(1)))
         for f in files:

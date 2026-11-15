@@ -447,10 +447,13 @@
       }
       if (!entries.length) { return; }
       var have = entries.filter(function (e) { return e.owned.length; }).length;
-      var set = { name: String(c.name), tv: tv, entries: entries, have: have, missing: entries.length - have };
+      /* A show counts as started once it's in the collection, even before
+         any of its seasons have finished copying. */
+      var started = have > 0 || (tv && shows.length > 0);
+      var set = { name: String(c.name), tv: tv, entries: entries, have: have, missing: entries.length - have, started: started };
       sets.push(set);
 
-      if (have && set.missing) {
+      if (started && set.missing) {
         entries.forEach(function (e, i) {
           if (e.owned.length) { return; }
           var it = makeItem({ title: e.title, year: e.year, type: tv ? 'tv' : '', seasons: e.season ? String(e.season) : '' }, 'h' + ci + '-' + i);
@@ -466,7 +469,7 @@
   }
 
   function huntingSets() {
-    return sets.filter(function (x) { return x.have && x.missing; }).sort(setOrder);
+    return sets.filter(function (x) { return x.started && x.missing; }).sort(setOrder);
   }
 
   /* Words a series can be found by: its name and every title in it. */
